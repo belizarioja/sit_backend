@@ -4,8 +4,10 @@ import fs from 'fs';
 export async function getFactura (req: Request, res: Response): Promise<Response | void> {
     try {
         const rifid = req.params.rifid
+        const rif = req.params.rif
+        const anniomes = req.params.anniomes
         console.log(__dirname)
-        const path = __dirname + '/temp/' + rifid + '.pdf'
+        const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf'
         console.log(path)
         if (fs.existsSync(path)) {
             fs.readFile(path , function (err, data){

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.envioCorreo = exports.crearFactura = exports.setFacturacion = void 0;
+exports.envioCorreo = exports.crearFactura = exports.getNumerointerno = exports.setFacturacion = void 0;
 const moment_1 = __importDefault(require("moment"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const fs_1 = __importDefault(require("fs"));
@@ -29,10 +29,13 @@ function setFacturacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { id, rif, enviocorreo, razonsocial, email, direccion, validarinterno } = req;
-            const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf } = req.body;
-            const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago } = req.body;
+            const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
+            const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
             // console.log(req.body)
+            // console.log('baseigtf, impuestog')
+            // console.log(baseigtf, impuestog)
             yield database_1.pool.query('BEGIN');
+            const _tasacambio = tasacambio || 0;
             const lotepiedepagina = yield obtenerLote(res, id);
             if (lotepiedepagina === '0') {
                 yield database_1.pool.query('ROLLBACK');
@@ -56,7 +59,7 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const piedepagina = 'ESTE DOCUMENTO SE EMITE BAJO LA PROVIDENCIA ADMINISTRATIVA Nro. SNAT/2014/0032 DE FECHA 31/07/2014. Imprenta TECNOLOGIAS Y DESARROLLOS DIGITALES, C.A. RIF J-503000902, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/007 de fecha 09/11/2022.' + lotepiedepagina;
+            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta NOVUS DESARROLLO DIGITAL, C.A. RIF J-503000902, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/007 de fecha 09/11/2022.' + lotepiedepagina;
             if (rifcedulacliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
@@ -266,42 +269,36 @@ function setFacturacion(req, res) {
                         });
                     }
                     else {
-                        // console.log('Aqui función para validar numero interno 3 :', numerointerno)
-                        const sqlinterno2 = "SELECT MAX(secuencial) FROM t_registros";
-                        const whareinterno2 = " WHERE idtipodocumento = " + idtipodocumento + " AND idserviciosmasivo = " + id;
-                        // console.log(sqlinterno2 + whareinterno2)
-                        const respinterno2 = yield database_1.pool.query(sqlinterno2 + whareinterno2);
-                        // console.log(respinterno2.rows[0].max, parseInt(numerointerno))
-                        // console.log(Number(respinterno2.rows[0].max) + 1 , Number(numerointerno))
-                        // console.log('Aqui función para validar numero interno 5 :', numerointerno)
-                        if (Number(respinterno2.rows[0].max) > 0 && (Number(respinterno2.rows[0].max) + 1 !== Number(numerointerno))) {
-                            // console.log('ES EL NUMERO INTERNO QUE no VIENE')
+                        // console.log('Aqui función para validar numero interno 3 :', numerointerno)                  
+                        const respinterno2 = yield obtenerNumInterno(idtipodocumento, id);
+                        if (Number(respinterno2) > 0 && (Number(respinterno2) + 1 !== Number(numerointerno))) {
                             yield database_1.pool.query('ROLLBACK');
                             return res.status(202).json({
                                 success: false,
                                 data: null,
                                 error: {
                                     code: 9,
-                                    message: 'NÚMERO INTERNO no corresponde numeración esperada! Actual:' + respinterno2.rows[0].max
+                                    message: 'NÚMERO INTERNO no corresponde numeración esperada! Actual:' + respinterno2
                                 }
                             });
                         }
                     }
                 }
-                console.log('Aqui función para validar numero interno :', numerointerno);
+                // console.log('Aqui función para validar numero interno :', numerointerno)
             }
             const numerocompleto = identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0');
             const relacionadoBD = relacionado || '';
+            const observacionBD = observacion || '';
             const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
-            const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial ) ';
-            const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28) RETURNING id ';
-            const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fechaenvio, exento, tasar, baser, impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno)]);
+            const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion ) ';
+            const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30) RETURNING id ';
+            const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fechaenvio, exento, tasar, baser, impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD]);
             // console.log(respReg.rows[0].id)
             const idRegistro = respReg.rows[0].id;
             for (const ind in cuerpofactura) {
                 const item = cuerpofactura[ind];
-                // console.log((Number(item.precio) * Number(item.cantidad) + Number(item.impuesto)).toFixed(2), Number(item.monto).toFixed(2))
-                if (((Number(item.precio) * Number(item.cantidad)) - Number(item.descuento)).toFixed(2) !== Number(item.monto).toFixed(2)) {
+                // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
+                if (Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
                     yield database_1.pool.query('ROLLBACK');
                     return res.status(202).json({
                         success: false,
@@ -338,14 +335,12 @@ function setFacturacion(req, res) {
             }
             yield database_1.pool.query('COMMIT');
             console.log('Envio de correo', enviocorreo, sendmail, cuerpofactura.length, emailcliente);
-            if ((emailcliente === null || emailcliente === void 0 ? void 0 : emailcliente.length) > 0) {
-                if (enviocorreo == 1 && sendmail == 1 && cuerpofactura.length > 0) {
-                    console.log('va a Crear pdf correo');
-                    yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago);
-                }
+            if (cuerpofactura.length > 0) {
+                console.log('va a Crear pdf correo');
+                yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD);
             }
             else {
-                console.log('Sin correo');
+                console.log('Sin Factura pdf correo');
             }
             const data = {
                 success: true,
@@ -367,7 +362,38 @@ function setFacturacion(req, res) {
     });
 }
 exports.setFacturacion = setFacturacion;
-function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago) {
+function obtenerNumInterno(idtipodocumento, idserviciosmasivo) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const sql = "SELECT MAX(secuencial) FROM t_registros";
+        const where = " WHERE idtipodocumento = " + idtipodocumento + " AND idserviciosmasivo = " + idserviciosmasivo;
+        // console.log(sqlinterno2 + whareinterno2)
+        const resp = yield database_1.pool.query(sql + where);
+        return resp.rows[0].max;
+    });
+}
+function getNumerointerno(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { id } = req;
+            const { idtipodocumento } = req.body;
+            const resp = yield obtenerNumInterno(idtipodocumento, id);
+            const numeronext = Number(resp) + 1;
+            const data = {
+                success: true,
+                error: null,
+                data: {
+                    numerointerno: numeronext.toString().padStart(8, '0')
+                }
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Obteniendo numero Interno ' + e);
+        }
+    });
+}
+exports.getNumerointerno = getNumerointerno;
+function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _enviocorreo, _sendmail, _tasacambio, _observacion) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sqlsede = "SELECT a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner  ";
@@ -384,18 +410,20 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const textoemail = respsede.rows[0].textoemail || '0';
             const banner = respsede.rows[0].banner || '1';
             const _telefono = respsede.rows[0].telefono;
-            const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
+            // const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
+            const ubicacionPlantilla = require.resolve("../plantillas/" + _rif + ".html");
             let contenidoHtml = fs_1.default.readFileSync(ubicacionPlantilla, 'utf8');
             // Estos productos podrían venir de cualquier lugar
             // Nota: el formateador solo es para, valga la redundancia, formatear el dinero. No es requerido, solo que quiero que se vea bonito
             // https://parzibyte.me/blog/2021/05/03/formatear-dinero-javascript/
-            const formateador = new Intl.NumberFormat("eu");
+            // const formateador = new Intl.NumberFormat("eu");
             // Generar el HTML de la tabla
             let tabla = "";
             let subtotal = 0;
             let exentos = 0;
             // let descuento = 0;
             let impuestos = 0;
+            let baseiva = 0;
             for (const producto of productos) {
                 // Aumentar el total
                 const totalProducto = (producto.cantidad * producto.precio) - producto.descuento;
@@ -406,6 +434,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 }
                 else {
                     impuestos += totalProducto * producto.tasa / 100;
+                    baseiva += totalProducto;
                 }
                 let productoitem = `<span>${producto.descripcion}</span>`;
                 if (producto.comentario.length > 0) {
@@ -413,32 +442,57 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 }
                 // Y concatenar los productos
                 tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;">${producto.codigo}</td>
-            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;">${productoitem}</td>
-            <td class="text-center" style="vertical-align: baseline;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
-            <td class="text-right" style="vertical-align: baseline;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.precio))}</td>
-            <td class="text-center" style="vertical-align: baseline;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
-            <td class="text-right" style="vertical-align: baseline;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
-            <td class="text-right" style="vertical-align: baseline;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${producto.codigo}</td>
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${productoitem}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.precio))}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-right: 1px solid; border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
             </tr>`;
             }
             const coletillaigtf = "En caso de Factura emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. ";
             const coletillabcv = "Artículo 25: ";
-            const coletillabcv2 = "En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación.";
-            const coletilla = coletillaigtf + coletillabcv + coletillabcv2;
+            const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."';
+            let coletilla = coletillaigtf + coletillabcv + coletillabcv2;
+            const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
+            tabla += `<tr style="height: 25px;">
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;"></td>
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${_observacion}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-right: 1px solid; border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            </tr>`;
             tabla += `<tr style="height: auto;">
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 1px solid;border-right: 1px solid; border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
         </tr>`;
-            const trbaseigtf = `<tr>
-            <td class=" text-right" style="font-size: 10px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-            <td class="text-right" style="font-size: 10px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            let trbaseigtf = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`;
+            let _impuestoigtfusd = 0;
+            let _baseigtfusd = 0;
+            let _baseivausd = 0;
+            if (_tasacambio > 0) {
+                _impuestoigtfusd = Number(_impuestoigtf) / Number(_tasacambio);
+                _baseigtfusd = Number(_baseigtf) / Number(_tasacambio);
+                _baseivausd = Number(baseiva) / Number(_tasacambio);
+                trbaseigtf = `<tr>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            </tr>`;
+                contenidoHtml = contenidoHtml.replace("{{tasatotales}}", _tasacambio.toString().padEnd(9, '0'));
+            }
             // const subtotalConDescuento = subtotal - descuento;        
             const subtotalConDescuento = subtotal;
             // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
@@ -451,15 +505,11 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             for (const forma of _formasdepago) {
                 formasdepago += `${forma.forma} Bs.: ${completarDecimales(Number(forma.valor))}<br>`;
             }
-            const emailpdf = _emailcliente.replace('|', ' ');
+            const emailpdf = _emailcliente.split('|').join(', ');
             const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF';
-            const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : 'Nota de entrega';
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
-            const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : 'Nota de entrega';
+            const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
-            // console.log(SERVERIMG+_rif + ".png")
-            contenidoHtml = contenidoHtml.replace("{{codigoqr}}", SERVERIMG + "codigoqr.png");
-            // contenidoHtml = contenidoHtml.replace("{{fondoimagen}}", SERVERIMG+_rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -475,31 +525,51 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{telefonocliente}}", _telefonocliente);
             contenidoHtml = contenidoHtml.replace("{{emailcliente}}", emailpdf);
             contenidoHtml = contenidoHtml.replace("{{cedulacliente}}", _rifcliente);
+            contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
             contenidoHtml = contenidoHtml.replace("{{nombrecliente}}", _nombrecliente);
+            contenidoHtml = contenidoHtml.replace("{{fechaasignacion}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{fecha}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
-            contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
-            contenidoHtml = contenidoHtml.replace("{{subtotal}}", completarDecimales(Number(subtotal)));
-            contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
-            // if(_impuestoigtf > 0) {
             contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
-            // } else {
-            // contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", '');
-            // }
+            let subtotalusd = 0;
+            let impuestosusd = 0;
+            let exentosusd = 0;
+            let totalusd = 0;
+            if (_tasacambio > 0) {
+                subtotalusd = Number(subtotal) / Number(_tasacambio);
+                impuestosusd = Number(impuestos) / Number(_tasacambio);
+                exentosusd = Number(exentos) / Number(_tasacambio);
+                totalusd = Number(total) / Number(_tasacambio);
+                contenidoHtml = contenidoHtml.replace("{{baseivausd}}", completarDecimales(Number(_baseivausd)));
+                contenidoHtml = contenidoHtml.replace("{{subtotalusd}}", completarDecimales(Number(subtotalusd)));
+                contenidoHtml = contenidoHtml.replace("{{impuestosusd}}", completarDecimales(Number(impuestosusd)));
+                contenidoHtml = contenidoHtml.replace("{{exentosusd}}", completarDecimales(Number(exentosusd)));
+                contenidoHtml = contenidoHtml.replace("{{totalusd}}", completarDecimales(Number(totalusd)));
+            }
+            contenidoHtml = contenidoHtml.replace("{{subtotal}}", completarDecimales(Number(subtotal)));
+            contenidoHtml = contenidoHtml.replace("{{baseiva}}", completarDecimales(Number(baseiva)));
+            contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
             contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));
-            contenidoHtml = contenidoHtml.replace("{{baseigtf}}", completarDecimales(Number(_baseigtf)));
             contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
-            html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
+            contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
+            const annioenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY");
+            const mesenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM");
+            html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
                     console.log("Error creando PDF: " + error);
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
                     console.log("PDF creado correctamente");
-                    console.log('va a Enviar correo');
-                    yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc);
+                    if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
+                        console.log('va a Enviar correo');
+                        // await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
+                    }
+                    else {
+                        console.log('Sin correo');
+                    }
                 }
             }));
         }
@@ -556,17 +626,17 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let transporter = nodemailer_1.default.createTransport({
-                service: 'gmail',
+                /* service: 'gmail',
                 host: 'smtp.gmail.com',
                 port: 465,
                 secure: true,
                 auth: {
                     user: USERMAIL,
                     pass: PASSMAIL
-                }
-                /* host: HOSTSMTP,
+                } */
+                host: HOSTSMTP,
                 port: 25,
-                secure: false */
+                secure: false
             });
             const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
             const footer = `<tr height="50px">
@@ -718,9 +788,9 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             let p = 0;
             for (let i = 0; i < arregloemail.length; i++) {
                 let mail_options = {
-                    from: 'Factura Digital<info@smartit.net>',
+                    from: 'SIT <info@smart.com>',
                     to: arregloemail[i],
-                    subject: 'Su Factura Digital',
+                    subject: 'Smart - Factura Digital',
                     html: htmlfinal,
                     attachments: [
                         {

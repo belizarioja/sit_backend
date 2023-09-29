@@ -18,8 +18,10 @@ function getFactura(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const rifid = req.params.rifid;
+            const rif = req.params.rif;
+            const anniomes = req.params.anniomes;
             console.log(__dirname);
-            const path = __dirname + '/temp/' + rifid + '.pdf';
+            const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf';
             console.log(path);
             if (fs_1.default.existsSync(path)) {
                 fs_1.default.readFile(path, function (err, data) {

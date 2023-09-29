@@ -10,7 +10,7 @@ export async function sendFacturaEmail (req: Request, res: Response): Promise<Re
         
         const { rif, email, numerodocumento } = req.body;
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion  ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
         const respdoc = await pool.query(sql + from + where, [numerodocumento, rif]); 
@@ -30,7 +30,13 @@ export async function sendFacturaEmail (req: Request, res: Response): Promise<Re
         const baseigtf = respdoc.rows[0].baseigtf     
         const numerointerno = respdoc.rows[0].numerointerno     
         const piedepagina = respdoc.rows[0].piedepagina     
-        const fechaenvio =  moment(respdoc.rows[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
+        const enviocorreo = respdoc.rows[0].enviocorreo     
+        const tasacambio = respdoc.rows[0].tasacambio     
+        const observacion = respdoc.rows[0].observacion || ''
+        const sendmail = 1 
+        const fechaenvio =  moment(respdoc.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss')
+        // console.log('respdoc.rows[0].fecha, fechaenvio')
+        // console.log(respdoc.rows[0].fecha, fechaenvio)
         let numeroafectado = respdoc.rows[0].relacionado.length > 0 ? respdoc.rows[0].relacionado : ''
         
         let fechaafectado = ''    
@@ -65,7 +71,7 @@ export async function sendFacturaEmail (req: Request, res: Response): Promise<Re
         // console.log(respdet.rows)
         const formasdepago = respformas.rows
         // console.log('va a Crear PDF')
-        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago)
+        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, tasacambio, observacion)
         .then(()=> {
             const data = {
                 success: true,
