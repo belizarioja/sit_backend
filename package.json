@@ -1,7 +1,7 @@
 {
-  "name": "impredigital_backend",
+  "name": "sit_backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "sit_backend",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""

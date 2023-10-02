@@ -12,7 +12,7 @@ const SERVERFILE = process.env.SERVERFILE
 const SERVERIMG = process.env.SERVERIMG
 const HOSTSMTP = process.env.HOSTSMTP
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 
 export async function setFacturacion (req: Request, res: Response): Promise<Response | void> {
@@ -52,7 +52,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 }
             });
         } 
-        const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta NOVUS DESARROLLO DIGITAL, C.A. RIF J-503000902, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/007 de fecha 09/11/2022.' + lotepiedepagina
+        const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/008 de fecha 02/10/2023.' + lotepiedepagina
         if(rifcedulacliente.length === 0) {
 
             await pool.query('ROLLBACK')
@@ -626,7 +626,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
 
                     console.log('va a Enviar correo')
-                    // await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
+                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
 
                 } else {
                     console.log('Sin correo')
@@ -687,18 +687,20 @@ async function obtenerLote (res: Response, id: any) {
 
 export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any) {
     try {
+        console.log('USERMAIL, PASSMAIL')
+        console.log(USERMAIL, PASSMAIL)
         let transporter = nodemailer.createTransport({
-            /* service: 'gmail',
+            service: 'gmail',
             host: 'smtp.gmail.com',
             port: 465,
             secure: true,
             auth: {
                 user: USERMAIL,
                 pass: PASSMAIL
-            } */            
-            host: HOSTSMTP,
+            }            
+            /* host: HOSTSMTP,
             port: 25,
-            secure: false
+            secure: false */
         });
         
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
@@ -854,13 +856,13 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                 from: 'SIT <info@smart.com>',
                 to: arregloemail[i],
                 subject: 'Smart - Factura Digital',
-                html: htmlfinal,
+                html: htmlfinal /* ,
                 attachments: [
                 {
                     filename: _tipodoc + '-' + numerocuerpo + '.pdf',
                     path: SERVERFILE + _prif + _pnumero
-                }
-            ]
+                } 
+            ] */
             };
             transporter.sendMail(mail_options, async (error: any, info: { response: string; }) => {
                 if (error) {

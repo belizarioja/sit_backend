@@ -23,7 +23,7 @@ const PASSMAIL = process.env.PASSMAIL;
 const SERVERFILE = process.env.SERVERFILE;
 const SERVERIMG = process.env.SERVERIMG;
 const HOSTSMTP = process.env.HOSTSMTP;
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 function setFacturacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -565,7 +565,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     console.log("PDF creado correctamente");
                     if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
-                        // await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
+                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc);
                     }
                     else {
                         console.log('Sin correo');
@@ -625,18 +625,20 @@ function obtenerLote(res, id) {
 function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            console.log('USERMAIL, PASSMAIL');
+            console.log(USERMAIL, PASSMAIL);
             let transporter = nodemailer_1.default.createTransport({
-                /* service: 'gmail',
+                service: 'gmail',
                 host: 'smtp.gmail.com',
                 port: 465,
                 secure: true,
                 auth: {
                     user: USERMAIL,
                     pass: PASSMAIL
-                } */
-                host: HOSTSMTP,
+                }
+                /* host: HOSTSMTP,
                 port: 25,
-                secure: false
+                secure: false */
             });
             const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
             const footer = `<tr height="50px">
@@ -791,13 +793,13 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                     from: 'SIT <info@smart.com>',
                     to: arregloemail[i],
                     subject: 'Smart - Factura Digital',
-                    html: htmlfinal,
+                    html: htmlfinal /* ,
                     attachments: [
-                        {
-                            filename: _tipodoc + '-' + numerocuerpo + '.pdf',
-                            path: SERVERFILE + _prif + _pnumero
-                        }
-                    ]
+                    {
+                        filename: _tipodoc + '-' + numerocuerpo + '.pdf',
+                        path: SERVERFILE + _prif + _pnumero
+                    }
+                ] */
                 };
                 transporter.sendMail(mail_options, (error, info) => __awaiter(this, void 0, void 0, function* () {
                     if (error) {
