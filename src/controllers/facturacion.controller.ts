@@ -626,7 +626,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
 
                     console.log('va a Enviar correo')
-                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
+                    // await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
 
                 } else {
                     console.log('Sin correo')
