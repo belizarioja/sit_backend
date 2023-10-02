@@ -59,7 +59,7 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta NOVUS DESARROLLO DIGITAL, C.A. RIF J-503000902, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/007 de fecha 09/11/2022.' + lotepiedepagina;
+            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/008 de fecha 02/10/2023.' + lotepiedepagina;
             if (rifcedulacliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
@@ -565,7 +565,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     console.log("PDF creado correctamente");
                     if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
-                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc);
+                        // await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc)
                     }
                     else {
                         console.log('Sin correo');
