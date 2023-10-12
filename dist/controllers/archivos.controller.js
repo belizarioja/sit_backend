@@ -20,7 +20,7 @@ function getFactura(req, res) {
             const rifid = req.params.rifid;
             const rif = req.params.rif;
             const anniomes = req.params.anniomes;
-            console.log(__dirname);
+            // console.log(__dirname)
             const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf';
             console.log(path);
             if (fs_1.default.existsSync(path)) {
