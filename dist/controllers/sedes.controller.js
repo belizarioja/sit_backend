@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateEstatus = exports.updateSede = exports.getSedeCorelativo = exports.setSede = exports.getSedes = exports.getCodes = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const SECRET = process.env.SECRET || '123456';
 // DB
 const database_1 = require("../database");
@@ -82,10 +84,18 @@ function setSede(req, res) {
             const values2 = "('2', '#0d3b81', '#e3e4e5', '#FFFFFF', '#575756', $1), ";
             const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
             yield database_1.pool.query(insertplantilla + values1 + values2 + values3, [id]);
+            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura.html');
+            const datafile = fs_1.default.readFileSync(archivoplantilla);
+            const nuevaplantilla = path_1.default.join(__dirname, '../plantillas/' + rif + '.html');
+            if (fs_1.default.existsSync(archivoplantilla)) {
+                // console.log('Existe!!!')
+                fs_1.default.renameSync(archivoplantilla, nuevaplantilla);
+                fs_1.default.writeFileSync(archivoplantilla, datafile);
+            }
             const data = {
                 success: true,
                 resp: {
-                    message: "Servicios creado con éxito"
+                    message: "Cliente Emisor creado con éxito"
                 }
             };
             return res.status(200).json(data);

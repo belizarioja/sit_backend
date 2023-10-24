@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
 
 const SECRET = process.env.SECRET || '123456';
 // DB
@@ -63,12 +65,21 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
         const values1 = "('1', '#BCE4FA', '#EAF6FE', '#000000', '#575756', $1), ";
         const values2 = "('2', '#0d3b81', '#e3e4e5', '#FFFFFF', '#575756', $1), ";
         const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
-        await pool.query(insertplantilla + values1 + values2 + values3, [id])        
-        
+        await pool.query(insertplantilla + values1 + values2 + values3, [id])
+
+        const archivoplantilla = path.join(__dirname, '../plantillas/factura.html')
+        const datafile = fs.readFileSync(archivoplantilla)
+        const nuevaplantilla = path.join(__dirname, '../plantillas/' + rif + '.html')
+
+        if (fs.existsSync(archivoplantilla)) {
+            // console.log('Existe!!!')
+            fs.renameSync(archivoplantilla, nuevaplantilla)
+            fs.writeFileSync(archivoplantilla, datafile)
+        }
         const data = {
             success: true,
             resp: {
-                message: "Servicios creado con éxito"
+                message: "Cliente Emisor creado con éxito"
             }
         };
         return res.status(200).json(data);
