@@ -79,7 +79,7 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
         const data = {
             success: true,
             resp: {
-                message: "Cliente Emisor creado con éxito"
+                message: "Cliente Emisor y su plantilla creado con éxito"
             }
         };
         return res.status(200).json(data);
