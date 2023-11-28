@@ -11,9 +11,8 @@ const PASSMAIL = process.env.PASSMAIL
 const SERVERFILE = process.env.SERVERFILE
 const SERVERIMG = process.env.SERVERIMG
 const HOSTSMTP = process.env.HOSTSMTP
-let  EMAILBCC = ''
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 
 export async function setFacturacion (req: Request, res: Response): Promise<Response | void> {
@@ -22,8 +21,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const { id, rif, enviocorreo, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
         const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
-        const { tasaa, basea, impuestoa } = req.body;
-        // console.log(req)
+        // console.log(req.body)
         // console.log('baseigtf, impuestog')
         // console.log(baseigtf, impuestog)
         await pool.query('BEGIN')
@@ -54,7 +52,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 }
             });
         } 
-        const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.' + lotepiedepagina
+        const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/008 de fecha 02/10/2023.' + lotepiedepagina
         if(rifcedulacliente.length === 0) {
 
             await pool.query('ROLLBACK')
@@ -123,24 +121,6 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 totalbase += Number(baser)
             }
         }
-        if(Number(basea) > 0 && Number(tasaa) > 0) {
-            if((Number(basea) * (Number(tasaa) / 100)).toFixed(2) !== Number(impuestoa).toFixed(2)) {
-
-                await pool.query('ROLLBACK')
-
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 4,
-                        message: 'Valor de IMPUESTO AL LUJO ' + tasar + '% MAL CALCULADO!'
-                    }
-                });
-            } else {
-                totalimp += Number(impuestoa)
-                totalbase += Number(basea)
-            }
-        }
         if(Number(baseigtf) > 0 && Number(tasaigtf) > 0) {
             if((Number(baseigtf) * (Number(tasaigtf) / 100)).toFixed(2) !== Number(impuestoigtf).toFixed(2)) {
 
@@ -156,8 +136,6 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 });
             } else {
                 totalimp += Number(impuestoigtf)
-                // console.log(totalimp, Number(impuestoigtf))
-
                 // totalbase += Number(baseigtf)
             }
         }
@@ -453,13 +431,12 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
 
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _enviocorreo: any, _sendmail: any, _tasacambio: any, _observacion: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
+        const sqlsede = "SELECT a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         const wheresede = " WHERE a.id = $1";
         const respsede = await pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]); 
         // console.log(respsede.rows[0])
-        const emailbcc = respsede.rows[0].emailbcc || ''
         const sitioweb = respsede.rows[0].sitioweb
         const colorfondo1 = respsede.rows[0].colorfondo1 || '#d4e5ff'
         const colorfuente1 = respsede.rows[0].colorfuente1 || '#000000'
@@ -477,7 +454,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
         // Nota: el formateador solo es para, valga la redundancia, formatear el dinero. No es requerido, solo que quiero que se vea bonito
         // https://parzibyte.me/blog/2021/05/03/formatear-dinero-javascript/
-        const formateador = new Intl.NumberFormat("eu");
+        // const formateador = new Intl.NumberFormat("eu");
         // Generar el HTML de la tabla
         let tabla = "";
         let subtotal = 0;
@@ -504,7 +481,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 productoitem += `<br><span>${producto.comentario}</span>`
             }
             // Y concatenar los productos
-            
+          
             tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${producto.codigo}</td>
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${productoitem}</td>
@@ -514,14 +491,14 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
             <td class="text-right" style="vertical-align: baseline;border-right: 1px solid; border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
             </tr>`;
-            
+        
         }
         const coletillaigtf = "En caso de Factura emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. "
         const coletillabcv = "Artículo 25: "
         const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."'
         let coletilla = coletillaigtf + coletillabcv + coletillabcv2
         const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
-        
+            
         tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;"></td>
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${_observacion}</td>
@@ -540,7 +517,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
             <td style="border-bottom: 1px solid;border-right: 1px solid; border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
         </tr>`;
-        
+            
         let trbaseigtf = `<tr>
             <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
@@ -554,16 +531,15 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             _impuestoigtfusd = Number(_impuestoigtf)/Number(_tasacambio)
             _baseigtfusd = Number(_baseigtf)/Number(_tasacambio)
             _baseivausd = Number(baseiva)/Number(_tasacambio)
-           
+            
             trbaseigtf = `<tr>
-            <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
-            <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
             </tr>` 
-                   
+          
             contenidoHtml = contenidoHtml.replace("{{tasatotales}}", _tasacambio.toString().padEnd(9, '0'));           
-
         }
         // const subtotalConDescuento = subtotal - descuento;        
         const subtotalConDescuento = subtotal;
@@ -586,7 +562,6 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
         const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
         
-        contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "anulado.gif");
         contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG+_rif + ".png");
         contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
         contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -603,12 +578,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{emailcliente}}", emailpdf);
         contenidoHtml = contenidoHtml.replace("{{cedulacliente}}", _rifcliente);
 
-        // contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
+        contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
 
         contenidoHtml = contenidoHtml.replace("{{nombrecliente}}", _nombrecliente);
-        // console.log('moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))')
-        // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))
-        // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss a").format("DD/MM/YYYY"))
+    
         contenidoHtml = contenidoHtml.replace("{{fechaasignacion}}", moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
         contenidoHtml = contenidoHtml.replace("{{fecha}}", moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
         contenidoHtml = contenidoHtml.replace("{{hora}}", moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
@@ -627,7 +600,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             impuestosusd = Number(impuestos)/Number(_tasacambio)
             exentosusd = Number(exentos)/Number(_tasacambio)
             totalusd = Number(total)/Number(_tasacambio)
-         
+        
             contenidoHtml = contenidoHtml.replace("{{baseivausd}}", completarDecimales(Number(_baseivausd)));
             contenidoHtml = contenidoHtml.replace("{{subtotalusd}}", completarDecimales(Number(subtotalusd)));
             contenidoHtml = contenidoHtml.replace("{{impuestosusd}}", completarDecimales(Number(impuestosusd)));
@@ -640,23 +613,19 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
         contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));        
         contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
-            
         
-        contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);        
-        // console.log(contenidoHtml)
+        contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
         const annioenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY")
         const mesenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM")
         pdf.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-"  + mesenvio + "/" + _rif + _pnumero + ".pdf", async (error) => {
             if (error) {
-                // console.log("Error creando PDF: " + error)
+                console.log("Error creando PDF: " + error)
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
             } else {
-                // console.log("PDF creado correctamente");               
+                console.log("PDF creado correctamente");               
                 if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
 
                     console.log('va a Enviar correo')
-                    // console.log('_emailemisor')
-                    // console.log(_emailemisor)
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, emailbcc)
 
                 } else {
@@ -676,6 +645,7 @@ function completarDecimales (cadena: any) {
     cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena
     return cadena
 }
+
 async function obtenerLote (res: Response, id: any) {
     try {
 
@@ -727,7 +697,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             auth: {
                 user: USERMAIL,
                 pass: PASSMAIL
-            }
+            }            
             /* host: HOSTSMTP,
             port: 25,
             secure: false */
@@ -736,81 +706,80 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
         const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
-                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="max-width: 82px;">
+                                <img src="${SERVERFILE}utils/logonovuscorreo.png" style="max-width: 82px;">
                             </td>
                             <td style="text-align:left;"  colspan="3">
-                                <span style="font-weight: bolder;font-size: 11px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
+                                <span style="font-weight: bolder;">Este documento está avalado por NOVUS, Imprenta Digital autorizada por
+                                el SENIAT, bajo el No. INTI/0007, según la providencia 0032.</span>
                             </td>
                         </tr>`;
         const texto_1 = _texto !== '0' ? `<tr>  
-                            <td colspan="3">      
-                                <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
-                                <p style="text-align:left;">
-                                    ${_texto}
+                    <td colspan="3">      
+                        <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
+                        <p style="text-align:left;">
+                            ${_texto}
+                        </p>
+                    </div> 
+                    </td>
+                </tr>` : ''
+                const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
+                <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
+                    <tr height="240px">  
+                        <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 75px;">
+                            <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
+                        </td>
+                    </tr>
+                    <tr>  
+                        <td style="text-align:center" colspan="3">      
+                            <div style="background: ${_colorfondo1}; margin: 30px; padding: 30px; border-radius: 15px; font-size: 24px; color: ${_colorfuente1};">
+                                <p style="text-align:center; display: grid;">
+                                    <span>Saludos: <span style="color: #9d9456; font-weight: bolder;">${_pnombre}.</span></span>
+                                    <span>Con gusto le notificamos que su ${_tipodoc},</span>
+                                    <span>No.: <span style="color: #9d9456; font-weight: bolder;">${numerocuerpo},</span></span>
+                                    <span>está disponible. </span>
+                                </p>
+                                <p style="text-align:center">
+                                    La puede obtener, accediendo a este enlace 
+                                    <span style="color: #9d9456; font-weight: bolder;">
+                                        <a href="${SERVERFILE}${_prif}${_pnumero}">Ver ${_tipodoc}</a>.                                
+                                    </span> 
                                 </p>
                             </div> 
-                            </td>
-                        </tr>` : ''
-        const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
-            <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
-                <tr height="240px">  
-                    <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 50px; padding-top: 30px;">
-                        <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
-                    </td>
-                </tr>
-                <tr>  
-                    <td style="text-align:center" colspan="3">      
-                        <div style="background: ${_colorfondo1}; margin: 30px; padding: 30px; border-radius: 15px; font-size: 20px; color: ${_colorfuente1};">
-                            <p style="text-align:center; display: grid;">
-                                <span>Saludos: <span style="color: #9d9456; font-weight: bolder;">${_pnombre}.</span></span>
-                                <span>Con gusto le notificamos que su ${_tipodoc},</span>
-                                <span>No.: <span style="color: #9d9456; font-weight: bolder;">${numerocuerpo},</span></span>
-                                <span>está disponible como archivo adjunto. </span>
-                            </p>
-                            <p style="text-align:center">
-                                La puede obtener, accediendo a este enlace <br>
-                                <span style="color: #9d9456; font-weight: bolder;">
-                                    <a href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.                                
-                                </span> 
-                            </p>
-                        </div> 
-                    </td>
-                </tr>
-                ${texto_1}
-                <tr height="80px" style="background: url(${SERVERFILE}utils/fondofootercorreo.png);">
-                    <td style="text-align:center; width: 20%;">
-                        <img src="${SERVERFILE}utils/logobiocorreo.png" style="max-width: 50px;">
-                    </td>
-                    <td style="text-align:left; width: 24%">
-                        <span style="color: #fff; font-weight: bolder;">Nuestro sistema SIN impresiones protege el medio ambiente.</span>
-                    </td>
-                    <td style=" text-align: right; display: grid; padding: 10px;">
-                        <span style="color: #000; font-weight: bolder;">${_telefono}</span>
-                        <span style="color: #000; font-weight: bolder;">${_emailemisor}</span>
-                        <span style="color: #000; font-weight: bolder;">${_sitioweb}</span>
-                    </td>
-                </tr>
-                ${footer}
-            </table></div>
-            `;            
-        // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
-        const htmlfinal = html_1
-        const arregloemail = _email.split('|')
-        const correobcc = (_prif === 'J-00075363-6' && _tipodoc === 'Guía de despacho') ? _emailbcc : ''
+                        </td>
+                    </tr>
+                    ${texto_1}
+                    <tr height="80px" style="background: url(${SERVERFILE}utils/fondofootercorreo.png);">
+                        <td style="text-align:center; width: 20%;">
+                            <img src="${SERVERFILE}utils/logobiocorreo.png" style="max-width: 50px;">
+                        </td>
+                        <td style="text-align:left; width: 24%">
+                            <span style="color: #fff; font-weight: bolder;">Nuestro sistema SIN impresiones protege el medio ambiente.</span>
+                        </td>
+                        <td style=" text-align: right; display: grid; padding: 10px;">
+                            <span style="color: #000; font-weight: bolder;">${_telefono}</span>
+                            <span style="color: #000; font-weight: bolder;">${_emailemisor}</span>
+                            <span style="color: #000; font-weight: bolder;">${_sitioweb}</span>
+                        </td>
+                    </tr>
+                    ${footer}
+                </table></div>
+                `;
+            // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
+            const htmlfinal = html_1
+            const arregloemail = _email.split('|')
         let p = 0;
          for(let i = 0; i< arregloemail.length; i++) {
             let mail_options = {
-                from: 'Documento digital <info@smart.com>',
+                from: 'SIT <' + _emailemisor + '>',
                 to: arregloemail[i],
-                bcc: correobcc,
                 subject: 'Envío de: ' + _tipodoc + ' Digital',
-                html: htmlfinal,
+                html: htmlfinal ,
                 attachments: [
-                {
-                    filename: _tipodoc + '-' + numerocuerpo + '.pdf',
-                    path: SERVERFILE + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
-                }
-            ]
+                    {
+                        filename: _tipodoc + '-' + numerocuerpo + '.pdf',
+                        path: SERVERFILE + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
+                    }
+            ] 
             };
             transporter.sendMail(mail_options, async (error: any, info: { response: string; }) => {
                 if (error) {

@@ -326,22 +326,32 @@ function getDocProcesados(req, res) {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
             let sql = "SELECT a.id, a.tipodocumento, ";
-            sql += " (select COUNT (*) from t_registros b where b.idtipodocumento = a.id and b.estatus = 1 ) AS totaldoc,  ";
-            sql += " (select SUM (b.impuestog) from t_registros b where b.idtipodocumento = a.id and b.estatus = 1) AS sumadocg,  ";
-            sql += " (select SUM (b.impuestoigtf) from t_registros b where b.idtipodocumento = a.id and b.estatus = 1) AS sumadocigtf  ";
-            const from = " from t_tipodocumentos a order by a.id";
-            /* let where = " where a.estatus = 1 ";
-            
+            sql += " (select COUNT (*) from t_registros b where b.idtipodocumento = a.id ";
+            if (idserviciosmasivo) {
+                sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            sql += " and b.estatus = 1 ) AS totaldoc,  ";
+            sql += " (select SUM (b.impuestog) from t_registros b where b.idtipodocumento = a.id ";
+            if (idserviciosmasivo) {
+                sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            sql += " and b.estatus = 1 ) AS sumadocg,  ";
+            sql += " (select SUM (b.impuestoigtf) from t_registros b where b.idtipodocumento = a.id ";
+            if (idserviciosmasivo) {
+                sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            sql += " and b.estatus = 1 ) AS sumadocigtf ";
+            const from = " from t_tipodocumentos a ";
+            /*
+            let where = " where a.estatus = 1 ";
             if(idcodigocomercial) {
                 where += " and a.idserviciosmasivo in (select id from t_serviciosmasivos where idcodigocomercial = " + idcodigocomercial + ") ";
             }
-            if(idserviciosmasivo) {
-                where += " and a.idserviciosmasivo = " + idserviciosmasivo;
-            }
+           
             if(desde.length > 0 && hasta.length > 0) {
                 where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             } */
-            // console.log(sql + from )
+            console.log(sql + from);
             const resp = yield database_1.pool.query(sql + from);
             // console.log('resp.rows despues')
             // console.log(resp.rows)
@@ -376,20 +386,21 @@ function getUltimaSemana(req, res) {
             sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $5 ) AS hace4dia, ";
             sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $6 ) AS hace5dia, ";
             sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $7 ) AS hace6dia ";
-            const from = " from t_serviciosmasivos a order by a.id";
-            /* let where = " where a.estatus = 1 ";
-            
-            if(idcodigocomercial) {
+            const from = " from t_serviciosmasivos a ";
+            let where = " where a.estatus = 1 ";
+            if (idserviciosmasivo) {
+                where += " and a.id = " + idserviciosmasivo;
+            }
+            /* if(idcodigocomercial) {
                 where += " and a.idserviciosmasivo in (select id from t_serviciosmasivos where idcodigocomercial = " + idcodigocomercial + ") ";
             }
-            if(idserviciosmasivo) {
-                where += " and a.idserviciosmasivo = " + idserviciosmasivo;
-            }
+            
             if(desde.length > 0 && hasta.length > 0) {
                 where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             } */
-            console.log(sql + from);
-            const resp = yield database_1.pool.query(sql + from, [hoy, hace1dia, hace2dia, hace3dia, hace4dia, hace5dia, hace6dia]);
+            const orderby = " order by a.id ";
+            // console.log(sql + from + where + orderby)
+            const resp = yield database_1.pool.query(sql + from + where + orderby, [hoy, hace1dia, hace2dia, hace3dia, hace4dia, hace5dia, hace6dia]);
             // console.log('resp.rows despues')
             // console.log(resp.rows)
             const data = {

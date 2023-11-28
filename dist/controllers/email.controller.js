@@ -29,7 +29,7 @@ function sendFacturaEmail(req, res) {
         const idregistro = respdoc.rows[0].id;
         const idserviciosmasivo = respdoc.rows[0].idserviciosmasivo;
         const razonsocial = respdoc.rows[0].razonsocial;
-        const emailemisor = respdoc.rows[0].email;
+        const emailemisor = email || respdoc.rows[0].email;
         const nombrecliente = respdoc.rows[0].nombrecliente;
         const direccion = respdoc.rows[0].direccion;
         const cedulacliente = respdoc.rows[0].cedulacliente;

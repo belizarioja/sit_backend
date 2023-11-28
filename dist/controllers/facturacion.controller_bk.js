@@ -23,8 +23,7 @@ const PASSMAIL = process.env.PASSMAIL;
 const SERVERFILE = process.env.SERVERFILE;
 const SERVERIMG = process.env.SERVERIMG;
 const HOSTSMTP = process.env.HOSTSMTP;
-let EMAILBCC = '';
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 function setFacturacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -32,8 +31,7 @@ function setFacturacion(req, res) {
             const { id, rif, enviocorreo, razonsocial, email, direccion, validarinterno } = req;
             const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
             const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
-            const { tasaa, basea, impuestoa } = req.body;
-            // console.log(req)
+            // console.log(req.body)
             // console.log('baseigtf, impuestog')
             // console.log(baseigtf, impuestog)
             yield database_1.pool.query('BEGIN');
@@ -61,7 +59,7 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.' + lotepiedepagina;
+            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/008 de fecha 02/10/2023.' + lotepiedepagina;
             if (rifcedulacliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
@@ -123,23 +121,6 @@ function setFacturacion(req, res) {
                     totalbase += Number(baser);
                 }
             }
-            if (Number(basea) > 0 && Number(tasaa) > 0) {
-                if ((Number(basea) * (Number(tasaa) / 100)).toFixed(2) !== Number(impuestoa).toFixed(2)) {
-                    yield database_1.pool.query('ROLLBACK');
-                    return res.status(202).json({
-                        success: false,
-                        data: null,
-                        error: {
-                            code: 4,
-                            message: 'Valor de IMPUESTO AL LUJO ' + tasar + '% MAL CALCULADO!'
-                        }
-                    });
-                }
-                else {
-                    totalimp += Number(impuestoa);
-                    totalbase += Number(basea);
-                }
-            }
             if (Number(baseigtf) > 0 && Number(tasaigtf) > 0) {
                 if ((Number(baseigtf) * (Number(tasaigtf) / 100)).toFixed(2) !== Number(impuestoigtf).toFixed(2)) {
                     yield database_1.pool.query('ROLLBACK');
@@ -154,7 +135,6 @@ function setFacturacion(req, res) {
                 }
                 else {
                     totalimp += Number(impuestoigtf);
-                    // console.log(totalimp, Number(impuestoigtf))
                     // totalbase += Number(baseigtf)
                 }
             }
@@ -416,13 +396,12 @@ exports.getNumerointerno = getNumerointerno;
 function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _enviocorreo, _sendmail, _tasacambio, _observacion) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
+            const sqlsede = "SELECT a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner  ";
             const fromsede = " FROM t_serviciosmasivos a ";
             let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
             const wheresede = " WHERE a.id = $1";
             const respsede = yield database_1.pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]);
             // console.log(respsede.rows[0])
-            const emailbcc = respsede.rows[0].emailbcc || '';
             const sitioweb = respsede.rows[0].sitioweb;
             const colorfondo1 = respsede.rows[0].colorfondo1 || '#d4e5ff';
             const colorfuente1 = respsede.rows[0].colorfuente1 || '#000000';
@@ -437,7 +416,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // Estos productos podrían venir de cualquier lugar
             // Nota: el formateador solo es para, valga la redundancia, formatear el dinero. No es requerido, solo que quiero que se vea bonito
             // https://parzibyte.me/blog/2021/05/03/formatear-dinero-javascript/
-            const formateador = new Intl.NumberFormat("eu");
+            // const formateador = new Intl.NumberFormat("eu");
             // Generar el HTML de la tabla
             let tabla = "";
             let subtotal = 0;
@@ -507,10 +486,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 _baseigtfusd = Number(_baseigtf) / Number(_tasacambio);
                 _baseivausd = Number(baseiva) / Number(_tasacambio);
                 trbaseigtf = `<tr>
-            <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
-            <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
+                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
             </tr>`;
                 contenidoHtml = contenidoHtml.replace("{{tasatotales}}", _tasacambio.toString().padEnd(9, '0'));
             }
@@ -531,7 +510,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
-            contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
             contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -547,11 +525,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{telefonocliente}}", _telefonocliente);
             contenidoHtml = contenidoHtml.replace("{{emailcliente}}", emailpdf);
             contenidoHtml = contenidoHtml.replace("{{cedulacliente}}", _rifcliente);
-            // contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
+            contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
             contenidoHtml = contenidoHtml.replace("{{nombrecliente}}", _nombrecliente);
-            // console.log('moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))')
-            // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))
-            // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss a").format("DD/MM/YYYY"))
             contenidoHtml = contenidoHtml.replace("{{fechaasignacion}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{fecha}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
@@ -579,20 +554,17 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));
             contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
             contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
-            // console.log(contenidoHtml)
             const annioenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY");
             const mesenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM");
             html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
-                    // console.log("Error creando PDF: " + error)
+                    console.log("Error creando PDF: " + error);
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
-                    // console.log("PDF creado correctamente");               
+                    console.log("PDF creado correctamente");
                     if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
-                        // console.log('_emailemisor')
-                        // console.log(_emailemisor)
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, emailbcc);
                     }
                     else {
@@ -671,73 +643,72 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
             const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
-                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="max-width: 82px;">
+                                <img src="${SERVERFILE}utils/logonovuscorreo.png" style="max-width: 82px;">
                             </td>
                             <td style="text-align:left;"  colspan="3">
-                                <span style="font-weight: bolder;font-size: 11px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
+                                <span style="font-weight: bolder;">Este documento está avalado por NOVUS, Imprenta Digital autorizada por
+                                el SENIAT, bajo el No. INTI/0007, según la providencia 0032.</span>
                             </td>
                         </tr>`;
             const texto_1 = _texto !== '0' ? `<tr>  
-                            <td colspan="3">      
-                                <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
-                                <p style="text-align:left;">
-                                    ${_texto}
+                    <td colspan="3">      
+                        <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
+                        <p style="text-align:left;">
+                            ${_texto}
+                        </p>
+                    </div> 
+                    </td>
+                </tr>` : '';
+            const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
+                <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
+                    <tr height="240px">  
+                        <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 75px;">
+                            <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
+                        </td>
+                    </tr>
+                    <tr>  
+                        <td style="text-align:center" colspan="3">      
+                            <div style="background: ${_colorfondo1}; margin: 30px; padding: 30px; border-radius: 15px; font-size: 24px; color: ${_colorfuente1};">
+                                <p style="text-align:center; display: grid;">
+                                    <span>Saludos: <span style="color: #9d9456; font-weight: bolder;">${_pnombre}.</span></span>
+                                    <span>Con gusto le notificamos que su ${_tipodoc},</span>
+                                    <span>No.: <span style="color: #9d9456; font-weight: bolder;">${numerocuerpo},</span></span>
+                                    <span>está disponible. </span>
+                                </p>
+                                <p style="text-align:center">
+                                    La puede obtener, accediendo a este enlace 
+                                    <span style="color: #9d9456; font-weight: bolder;">
+                                        <a href="${SERVERFILE}${_prif}${_pnumero}">Ver ${_tipodoc}</a>.                                
+                                    </span> 
                                 </p>
                             </div> 
-                            </td>
-                        </tr>` : '';
-            const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
-            <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
-                <tr height="240px">  
-                    <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 50px; padding-top: 30px;">
-                        <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
-                    </td>
-                </tr>
-                <tr>  
-                    <td style="text-align:center" colspan="3">      
-                        <div style="background: ${_colorfondo1}; margin: 30px; padding: 30px; border-radius: 15px; font-size: 20px; color: ${_colorfuente1};">
-                            <p style="text-align:center; display: grid;">
-                                <span>Saludos: <span style="color: #9d9456; font-weight: bolder;">${_pnombre}.</span></span>
-                                <span>Con gusto le notificamos que su ${_tipodoc},</span>
-                                <span>No.: <span style="color: #9d9456; font-weight: bolder;">${numerocuerpo},</span></span>
-                                <span>está disponible como archivo adjunto. </span>
-                            </p>
-                            <p style="text-align:center">
-                                La puede obtener, accediendo a este enlace <br>
-                                <span style="color: #9d9456; font-weight: bolder;">
-                                    <a href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.                                
-                                </span> 
-                            </p>
-                        </div> 
-                    </td>
-                </tr>
-                ${texto_1}
-                <tr height="80px" style="background: url(${SERVERFILE}utils/fondofootercorreo.png);">
-                    <td style="text-align:center; width: 20%;">
-                        <img src="${SERVERFILE}utils/logobiocorreo.png" style="max-width: 50px;">
-                    </td>
-                    <td style="text-align:left; width: 24%">
-                        <span style="color: #fff; font-weight: bolder;">Nuestro sistema SIN impresiones protege el medio ambiente.</span>
-                    </td>
-                    <td style=" text-align: right; display: grid; padding: 10px;">
-                        <span style="color: #000; font-weight: bolder;">${_telefono}</span>
-                        <span style="color: #000; font-weight: bolder;">${_emailemisor}</span>
-                        <span style="color: #000; font-weight: bolder;">${_sitioweb}</span>
-                    </td>
-                </tr>
-                ${footer}
-            </table></div>
-            `;
+                        </td>
+                    </tr>
+                    ${texto_1}
+                    <tr height="80px" style="background: url(${SERVERFILE}utils/fondofootercorreo.png);">
+                        <td style="text-align:center; width: 20%;">
+                            <img src="${SERVERFILE}utils/logobiocorreo.png" style="max-width: 50px;">
+                        </td>
+                        <td style="text-align:left; width: 24%">
+                            <span style="color: #fff; font-weight: bolder;">Nuestro sistema SIN impresiones protege el medio ambiente.</span>
+                        </td>
+                        <td style=" text-align: right; display: grid; padding: 10px;">
+                            <span style="color: #000; font-weight: bolder;">${_telefono}</span>
+                            <span style="color: #000; font-weight: bolder;">${_emailemisor}</span>
+                            <span style="color: #000; font-weight: bolder;">${_sitioweb}</span>
+                        </td>
+                    </tr>
+                    ${footer}
+                </table></div>
+                `;
             // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
             const htmlfinal = html_1;
             const arregloemail = _email.split('|');
-            const correobcc = (_prif === 'J-00075363-6' && _tipodoc === 'Guía de despacho') ? _emailbcc : '';
             let p = 0;
             for (let i = 0; i < arregloemail.length; i++) {
                 let mail_options = {
-                    from: 'Documento digital <info@smart.com>',
+                    from: 'SIT <' + _emailemisor + '>',
                     to: arregloemail[i],
-                    bcc: correobcc,
                     subject: 'Envío de: ' + _tipodoc + ' Digital',
                     html: htmlfinal,
                     attachments: [
