@@ -582,6 +582,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // console.log(contenidoHtml)
             const annioenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY");
             const mesenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM");
+            const diaenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD");
             html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
                     // console.log("Error creando PDF: " + error)
@@ -593,7 +594,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                         console.log('va a Enviar correo');
                         // console.log('_emailemisor')
                         // console.log(_emailemisor)
-                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, emailbcc);
+                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc);
                     }
                     else {
                         console.log('Sin correo');
@@ -650,7 +651,7 @@ function obtenerLote(res, id) {
         }
     });
 }
-function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _emailbcc) {
+function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _diaenvio, _emailbcc) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log('USERMAIL, PASSMAIL');
@@ -671,10 +672,10 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
             const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
-                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="max-width: 82px;">
+                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 140px;">
                             </td>
-                            <td style="text-align:left;"  colspan="3">
-                                <span style="font-weight: bolder;font-size: 11px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
+                            <td style="text-align:center;"  colspan="2">
+                                <span style="font-size: 10px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
                             </td>
                         </tr>`;
             const texto_1 = _texto !== '0' ? `<tr>  
@@ -693,36 +694,28 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                         <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
                     </td>
                 </tr>
-                <tr>  
-                    <td style="text-align:center" colspan="3">      
-                        <div style="background: ${_colorfondo1}; margin: 30px; padding: 30px; border-radius: 15px; font-size: 20px; color: ${_colorfuente1};">
-                            <p style="text-align:center; display: grid;">
-                                <span>Saludos: <span style="color: #9d9456; font-weight: bolder;">${_pnombre}.</span></span>
-                                <span>Con gusto le notificamos que su ${_tipodoc},</span>
-                                <span>No.: <span style="color: #9d9456; font-weight: bolder;">${numerocuerpo},</span></span>
-                                <span>está disponible como archivo adjunto. </span>
-                            </p>
-                            <p style="text-align:center">
-                                La puede obtener, accediendo a este enlace <br>
-                                <span style="color: #9d9456; font-weight: bolder;">
-                                    <a href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.                                
-                                </span> 
-                            </p>
-                        </div> 
+                <tr>
+                    <td style="padding: 30px;" colspan="3">
+                        <p style="text-align:left; display: grid;">
+                            <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
+                            <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
+                            <span style="color: #632508; font-size: 16px;">ya está disponible. </span>
+                        </p>
+                        <p style="text-align:right; color: #632508; font-size: 16px;">
+                            <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                            <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
+                                <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
+                            </span><br>
+                        </p>
                     </td>
-                </tr>
+                </tr>                
                 ${texto_1}
-                <tr height="80px" style="background: url(${SERVERFILE}utils/fondofootercorreo.png);">
-                    <td style="text-align:center; width: 20%;">
-                        <img src="${SERVERFILE}utils/logobiocorreo.png" style="max-width: 50px;">
-                    </td>
-                    <td style="text-align:left; width: 24%">
-                        <span style="color: #fff; font-weight: bolder;">Nuestro sistema SIN impresiones protege el medio ambiente.</span>
-                    </td>
-                    <td style=" text-align: right; display: grid; padding: 10px;">
-                        <span style="color: #000; font-weight: bolder;">${_telefono}</span>
-                        <span style="color: #000; font-weight: bolder;">${_emailemisor}</span>
-                        <span style="color: #000; font-weight: bolder;">${_sitioweb}</span>
+                <tr height="40px" style="background: #f25004;">
+                    <td colspan="3" style="text-align: center;">
+                        <span style="color: #fff; font-weight: bolder;">${_telefono}</span>
+                        <span style="text-decoration: none; color: #ffffff; font-weight: bolder;margin: 30px;">${_emailemisor}</span>
+                        <span style="text-decoration: none; color: #ffffff; font-weight: bolder;">${_sitioweb}</span>
                     </td>
                 </tr>
                 ${footer}
@@ -730,12 +723,13 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             `;
             // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
             const htmlfinal = html_1;
+            console.log(htmlfinal);
             const arregloemail = _email.split('|');
             const correobcc = (_prif === 'J-00075363-6' && _tipodoc === 'Guía de despacho') ? _emailbcc : '';
             let p = 0;
             for (let i = 0; i < arregloemail.length; i++) {
                 let mail_options = {
-                    from: 'Documento digital <info@smart.com>',
+                    from: 'Mi Documento Digital<no-reply@smartfactura.com>',
                     to: arregloemail[i],
                     bcc: correobcc,
                     subject: 'Envío de: ' + _tipodoc + ' Digital',
