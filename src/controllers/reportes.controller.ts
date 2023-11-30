@@ -40,7 +40,10 @@ export async function getFacturas (req: Request, res: Response): Promise<Respons
         leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
         leftjoin += " left join t_tipocedulacliente d ON a.idtipocedulacliente = d.id  ";     
         
-        let where = " where a.estatus = " + estatus;
+        let where = " where a.idserviciosmasivo > 0 ";
+        if(estatus !== 4) {
+            where += " and a.estatus = " + estatus;
+        }
         if(idcodigocomercial) {
             where += " and c.idcodigocomercial = " + idcodigocomercial;
         }
