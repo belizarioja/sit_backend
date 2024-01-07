@@ -531,14 +531,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
-            const path = __dirname;
-            console.log('path');
-            console.log(path);
-            const carpetaimg = path + "/images/";
-            console.log(carpetaimg);
             contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
-            console.log(carpetaimg + _rif + ".png");
-            contenidoHtml = contenidoHtml.replace("{{logo}}", carpetaimg + _rif + ".png");
+            contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
             contenidoHtml = contenidoHtml.replace("{{rif}}", _rif);
@@ -655,8 +649,6 @@ function obtenerLote(res, id) {
 function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _diaenvio, _emailbcc) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log('USERMAIL, PASSMAIL');
-            console.log(USERMAIL, PASSMAIL);
             let transporter = nodemailer_1.default.createTransport({
                 service: 'gmail',
                 host: 'smtp.gmail.com',

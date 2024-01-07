@@ -585,14 +585,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : ''
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
         const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
-        const path = __dirname
-        console.log('path')
-        console.log(path)
-        const carpetaimg = path + "/images/"
-        console.log(carpetaimg)
         contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "anulado.gif");
-        console.log(carpetaimg+_rif + ".png")
-        contenidoHtml = contenidoHtml.replace("{{logo}}", carpetaimg+_rif + ".png");
+        contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG+_rif + ".png");
         contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
         contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
         contenidoHtml = contenidoHtml.replace("{{rif}}", _rif);
@@ -718,8 +712,6 @@ async function obtenerLote (res: Response, id: any) {
 
 export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any) {
     try {
-        console.log('USERMAIL, PASSMAIL')
-        console.log(USERMAIL, PASSMAIL)
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
