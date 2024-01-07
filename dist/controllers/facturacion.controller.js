@@ -531,8 +531,14 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
+            const path = __dirname;
+            console.log('path');
+            console.log(path);
+            const carpetaimg = path + "/images/";
+            console.log(carpetaimg);
             contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
-            contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG + _rif + ".png");
+            console.log(carpetaimg + _rif + ".png");
+            contenidoHtml = contenidoHtml.replace("{{logo}}", carpetaimg + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
             contenidoHtml = contenidoHtml.replace("{{rif}}", _rif);
@@ -549,9 +555,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{cedulacliente}}", _rifcliente);
             // contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
             contenidoHtml = contenidoHtml.replace("{{nombrecliente}}", _nombrecliente);
-            // console.log('moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))')
-            // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"))
-            // console.log(moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss a").format("DD/MM/YYYY"))
             contenidoHtml = contenidoHtml.replace("{{fechaasignacion}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{fecha}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
             contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
@@ -592,8 +595,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     // console.log("PDF creado correctamente");               
                     if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
-                        // console.log('_emailemisor')
-                        // console.log(_emailemisor)
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc);
                     }
                     else {
@@ -723,7 +724,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             `;
             // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
             const htmlfinal = html_1;
-            console.log(htmlfinal);
+            // console.log(htmlfinal)
             const arregloemail = _email.split('|');
             const correobcc = (_prif === 'J-00075363-6' && _tipodoc === 'Guía de despacho') ? _emailbcc : '';
             let p = 0;

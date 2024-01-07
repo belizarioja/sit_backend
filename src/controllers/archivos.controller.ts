@@ -12,7 +12,7 @@ export async function getFactura (req: Request, res: Response): Promise<Response
         const anniomes = req.params.anniomes
         // console.log(__dirname)
         const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf'
-        console.log(path)
+        // console.log(path)
         if (fs.existsSync(path)) {
             fs.readFile(path , function (err, data){
                 res.contentType("application/pdf");
@@ -107,7 +107,7 @@ export async function exportFacturas (req: Request, res: Response): Promise<Resp
         const archive = archiver('zip', { zlib: { level: 9 } });
         const output = fs.createWriteStream(outputPath);
         const ttal = seleccion.length
-        console.log(ttal)
+        // console.log(ttal)
         for(let i=0; i< ttal; i++) {
           
             const annio = seleccion[i].annio
@@ -175,9 +175,9 @@ export async function exportFacturas (req: Request, res: Response): Promise<Resp
     }
 }
 async function init() {
-    console.log(1);
+    // console.log(1);
     await sleep(4000);
-    console.log(2);
+    // console.log(2);
 }
 function sleep(ms: any) {
     return new Promise((resolve) => {
