@@ -80,7 +80,7 @@ function setSede(req, res) {
             yield database_1.pool.query(insertselect, [id]);
             // crear plantillas por defectos a clientes
             const insertplantilla = "INSERT INTO public.t_plantillacorreos(banner, colorfondo1, colorfondo2, colorfuente1, colorfuente2, idserviciosmasivo) VALUES ";
-            const values1 = "('1', '#F3C492', '#EAF6FE', '#000000', '#575756', $1), ";
+            const values1 = "('1', '#F3C492', '#EAF6FE', '#000000', '#575756', $1) ";
             // const values2 = "('2', '#0d3b81', '#e3e4e5', '#FFFFFF', '#575756', $1), ";
             // const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
             yield database_1.pool.query(insertplantilla + values1, [id]);

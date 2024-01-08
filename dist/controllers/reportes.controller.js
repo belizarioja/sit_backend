@@ -354,7 +354,7 @@ function getDocProcesados(req, res) {
             if(desde.length > 0 && hasta.length > 0) {
                 where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             } */
-            console.log(sql + from);
+            // console.log(sql + from )
             const resp = yield database_1.pool.query(sql + from);
             // console.log('resp.rows despues')
             // console.log(resp.rows)

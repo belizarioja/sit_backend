@@ -27,9 +27,9 @@ function getLogin(req, res) {
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
             const where = " where a.usuario ='" + usuario + "' and a.clave = '" + clave + "'";
-            console.log(sql + from + leftjoin + where);
+            // console.log(sql + from + leftjoin + where);
             const resp = yield database_1.pool.query(sql + from + leftjoin + where);
-            console.log(resp.rows[0]);
+            // console.log(resp.rows[0])
             const cant = resp.rows.length;
             if (cant > 0) {
                 if (resp.rows[0].estatus === '0') {
