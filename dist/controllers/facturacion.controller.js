@@ -22,6 +22,7 @@ const USERMAIL = process.env.USERMAIL;
 const PASSMAIL = process.env.PASSMAIL;
 const SERVERFILE = process.env.SERVERFILE;
 const SERVERIMG = process.env.SERVERIMG;
+const IMGPDF = process.env.IMGPDF;
 const HOSTSMTP = process.env.HOSTSMTP;
 let EMAILBCC = '';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
@@ -531,8 +532,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
+            console.log(IMGPDF + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
-            contenidoHtml = contenidoHtml.replace("{{logo}}", SERVERIMG + _rif + ".png");
+            contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
             contenidoHtml = contenidoHtml.replace("{{rif}}", _rif);
