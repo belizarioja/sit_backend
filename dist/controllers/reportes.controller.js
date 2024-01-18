@@ -62,7 +62,8 @@ function getFacturas(req, res) {
                 where += " and a.idserviciosmasivo = " + idserviciosmasivo;
             }
             if (idtipodocumento) {
-                where += " and a.idtipodocumento = " + idtipodocumento;
+                console.log(idtipodocumento);
+                where += " and a.idtipodocumento in (" + idtipodocumento + ")";
             }
             if (numerodocumento) {
                 where += " and a.numerodocumento = '" + numerodocumento + "'";

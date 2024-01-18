@@ -51,7 +51,8 @@ export async function getFacturas (req: Request, res: Response): Promise<Respons
             where += " and a.idserviciosmasivo = " + idserviciosmasivo;
         }
         if(idtipodocumento) {
-            where += " and a.idtipodocumento = " + idtipodocumento;
+            console.log(idtipodocumento)
+            where += " and a.idtipodocumento in (" + idtipodocumento + ")";
         }
         if(numerodocumento) {
             where += " and a.numerodocumento = '" + numerodocumento + "'";
