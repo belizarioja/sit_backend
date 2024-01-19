@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import { getSedes, setSede, updateSede, updateEstatus, getSedeCorelativo, getCodes } from '../controllers/sedes.controller';
+import { getSedes, setSede, updateSede, updateEstatus, getSedeCorelativo, getCodes, getTodosCorelativo } from '../controllers/sedes.controller';
 
 const router = Router();
 
 router.route('/')
     .get(getSedes)
     .post(setSede)
-router.route('/codes')
-    .get(getCodes)
+router.route('/codes').get(getCodes)
+router.route('/lotes').post(getTodosCorelativo)
     
-    router.route('/:id')
+router.route('/:id')
     .get(getSedeCorelativo)
     .put(updateSede)
 

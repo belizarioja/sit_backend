@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
+exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica_BK = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
 const moment_1 = __importDefault(require("moment"));
 // DB
 const database_1 = require("../database");
@@ -298,7 +298,7 @@ function getGrafica(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-            const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf";
+            const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
             let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";
             const groupBy = " group by 1 ORDER BY 1 ASC ";
@@ -325,6 +325,37 @@ function getGrafica(req, res) {
     });
 }
 exports.getGrafica = getGrafica;
+function getGrafica_BK(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+            const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf";
+            const from = " FROM t_registros a, t_serviciosmasivos c  ";
+            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";
+            const groupBy = " group by 1 ORDER BY 1 ASC ";
+            if (idtipodocumento) {
+                where += " and a.idtipodocumento = " + idtipodocumento;
+            }
+            if (idserviciosmasivo) {
+                where += " and a.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            if (idcodigocomercial) {
+                where += " and c.idcodigocomercial = " + idcodigocomercial;
+            }
+            // console.log(sql + from + where + groupBy)
+            const resp = yield database_1.pool.query(sql + from + where + groupBy);
+            const data = {
+                succes: true,
+                data: resp.rows
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Reporte GRAFICA' + e);
+        }
+    });
+}
+exports.getGrafica_BK = getGrafica_BK;
 function getDocProcesados(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

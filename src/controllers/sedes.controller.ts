@@ -113,6 +113,28 @@ export async function getSedeCorelativo (req: Request, res: Response): Promise<R
         return res.status(400).send('Error Listando Corelativos de Servicios masivos ' + e);
     }
 }
+export async function getTodosCorelativo (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { id } = req.body;       
+
+        let sqllote = "SELECT * FROM t_tranzascorrelativo where estatus = 1 ";
+        if (id) {
+            sqllote += " and idserviciosmasivo = " + id;
+        }
+        sqllote += " order by id asc ";
+        const resplote = await pool.query(sqllote);   
+
+        const data = {
+            success: true,
+            data: resplote.rows
+        };  
+        return res.status(200).json(data);
+        
+    }
+    catch (e) {
+        return res.status(400).send('Error Listando Corelativos de Servicios masivos ' + e);
+    }
+}
 
 export async function updateSede (req: Request, res: Response): Promise<Response | void> {
     try {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEstatus = exports.updateSede = exports.getSedeCorelativo = exports.setSede = exports.getSedes = exports.getCodes = void 0;
+exports.updateEstatus = exports.updateSede = exports.getTodosCorelativo = exports.getSedeCorelativo = exports.setSede = exports.getSedes = exports.getCodes = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -130,6 +130,28 @@ function getSedeCorelativo(req, res) {
     });
 }
 exports.getSedeCorelativo = getSedeCorelativo;
+function getTodosCorelativo(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { id } = req.body;
+            let sqllote = "SELECT * FROM t_tranzascorrelativo where estatus = 1 ";
+            if (id) {
+                sqllote += " and idserviciosmasivo = " + id;
+            }
+            sqllote += " order by id asc ";
+            const resplote = yield database_1.pool.query(sqllote);
+            const data = {
+                success: true,
+                data: resplote.rows
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Listando Corelativos de Servicios masivos ' + e);
+        }
+    });
+}
+exports.getTodosCorelativo = getTodosCorelativo;
 function updateSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
