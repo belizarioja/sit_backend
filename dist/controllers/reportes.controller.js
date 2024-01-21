@@ -204,7 +204,7 @@ function getAnulados(req, res) {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
             let sql = "select COUNT (*) AS totalanu ";
             const from = " from t_registros a ";
-            let where = " where a.estatus = 2 ";
+            let where = " where (a.estatus = 2 or a.idtipodocumento = 3) ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
             }
@@ -214,9 +214,9 @@ function getAnulados(req, res) {
             if (idserviciosmasivo) {
                 where += " and a.idserviciosmasivo = " + idserviciosmasivo;
             }
-            if (desde.length > 0 && hasta.length > 0) {
+            /* if(desde.length > 0 && hasta.length > 0) {
                 where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
-            }
+            } */
             const resp = yield database_1.pool.query(sql + from + where);
             const data = {
                 succes: true,

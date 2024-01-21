@@ -190,7 +190,7 @@ export async function getAnulados (req: Request, res: Response): Promise<Respons
 
         let sql = "select COUNT (*) AS totalanu ";
         const from = " from t_registros a ";
-        let where = " where a.estatus = 2 ";
+        let where = " where (a.estatus = 2 or a.idtipodocumento = 3) ";
         if(idtipodocumento) {
             where += " and a.idtipodocumento = " + idtipodocumento;
         }
@@ -200,9 +200,9 @@ export async function getAnulados (req: Request, res: Response): Promise<Respons
         if(idserviciosmasivo) {
             where += " and a.idserviciosmasivo = " + idserviciosmasivo;
         }
-        if(desde.length > 0 && hasta.length > 0) {
+        /* if(desde.length > 0 && hasta.length > 0) {
             where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
-        }
+        } */
         const resp = await pool.query(sql + from + where);
         const data = {
             succes: true,
