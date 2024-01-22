@@ -114,7 +114,7 @@ export async function exportFacturas (req: Request, res: Response): Promise<Resp
             const mes = seleccion[i].mes
             const correlativo = seleccion[i].correlativo
             const folderPath = __dirname + '/temp/' + rif + '/' + annio + '-' + mes + '/'; // Reemplaza con la ruta de tu carpeta
-            // console.log(folderPath)
+            console.log(folderPath)
 
             fs.readdir(folderPath, (err, files) => {
                 if (err) {

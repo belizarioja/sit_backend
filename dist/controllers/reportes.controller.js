@@ -298,14 +298,15 @@ function getGrafica(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+            const annio = (0, moment_1.default)().format('YYYY');
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
-            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";
+            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
             const groupBy = " group by 1 ORDER BY 1 ASC ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
             }
-            if (idserviciosmasivo) {
+            if (idserviciosmasivo > 0) {
                 where += " and a.idserviciosmasivo = " + idserviciosmasivo;
             }
             if (idcodigocomercial) {
@@ -329,9 +330,10 @@ function getGrafica_BK(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+            const annio = (0, moment_1.default)().format('YYYY');
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
-            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";
+            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
             const groupBy = " group by 1 ORDER BY 1 ASC ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;

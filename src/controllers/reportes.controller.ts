@@ -278,15 +278,16 @@ export async function getTopClientes (req: Request, res: Response): Promise<Resp
 export async function getGrafica (req: Request, res: Response): Promise<Response | void> {
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+        const annio = moment().format('YYYY')
 
         const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
         const from = " FROM t_registros a, t_serviciosmasivos c  ";
-        let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";     
+        let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";     
         const groupBy = " group by 1 ORDER BY 1 ASC ";
         if(idtipodocumento) {
             where += " and a.idtipodocumento = " + idtipodocumento;
         }
-        if(idserviciosmasivo) {
+        if(idserviciosmasivo > 0) {
             where += " and a.idserviciosmasivo = " + idserviciosmasivo;
         } 
         if(idcodigocomercial) {
@@ -307,10 +308,10 @@ export async function getGrafica (req: Request, res: Response): Promise<Response
 export async function getGrafica_BK (req: Request, res: Response): Promise<Response | void> {
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-
+        const annio = moment().format('YYYY')
         const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf";
         const from = " FROM t_registros a, t_serviciosmasivos c  ";
-        let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '2023'  ";     
+        let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";     
         const groupBy = " group by 1 ORDER BY 1 ASC ";
         if(idtipodocumento) {
             where += " and a.idtipodocumento = " + idtipodocumento;
