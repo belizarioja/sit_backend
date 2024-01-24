@@ -298,7 +298,8 @@ function getGrafica(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-            const annio = (0, moment_1.default)().format('YYYY');
+            // const annio = moment().format('YYYY')
+            const annio = '2023';
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
             let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
@@ -367,27 +368,27 @@ function getDocProcesados(req, res) {
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
             }
+            if (desde.length > 0 && hasta.length > 0) {
+                sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+            }
             sql += " and b.estatus = 1 ) AS totaldoc,  ";
             sql += " (select SUM (b.impuestog) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            if (desde.length > 0 && hasta.length > 0) {
+                sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
             sql += " and b.estatus = 1 ) AS sumadocg,  ";
             sql += " (select SUM (b.impuestoigtf) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
             }
+            if (desde.length > 0 && hasta.length > 0) {
+                sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+            }
             sql += " and b.estatus = 1 ) AS sumadocigtf ";
             const from = " from t_tipodocumentos a ";
-            /*
-            let where = " where a.estatus = 1 ";
-            if(idcodigocomercial) {
-                where += " and a.idserviciosmasivo in (select id from t_serviciosmasivos where idcodigocomercial = " + idcodigocomercial + ") ";
-            }
-           
-            if(desde.length > 0 && hasta.length > 0) {
-                where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
-            } */
             // console.log(sql + from )
             const resp = yield database_1.pool.query(sql + from);
             // console.log('resp.rows despues')

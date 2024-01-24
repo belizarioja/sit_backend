@@ -278,7 +278,8 @@ export async function getTopClientes (req: Request, res: Response): Promise<Resp
 export async function getGrafica (req: Request, res: Response): Promise<Response | void> {
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-        const annio = moment().format('YYYY')
+        // const annio = moment().format('YYYY')
+        const annio = '2023'
 
         const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
         const from = " FROM t_registros a, t_serviciosmasivos c  ";
@@ -343,11 +344,17 @@ export async function getDocProcesados (req: Request, res: Response): Promise<Re
         if(idserviciosmasivo) {
             sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
         }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
         sql += " and b.estatus = 1 ) AS totaldoc,  ";
 
         sql += " (select SUM (b.impuestog) from t_registros b where b.idtipodocumento = a.id ";
         if(idserviciosmasivo) {
             sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+        }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
         }
         sql += " and b.estatus = 1 ) AS sumadocg,  ";
 
@@ -355,19 +362,12 @@ export async function getDocProcesados (req: Request, res: Response): Promise<Re
         if(idserviciosmasivo) {
             sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
         }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
         sql += " and b.estatus = 1 ) AS sumadocigtf ";
         const from = " from t_tipodocumentos a ";
         
-        
-        /*
-        let where = " where a.estatus = 1 ";
-        if(idcodigocomercial) {
-            where += " and a.idserviciosmasivo in (select id from t_serviciosmasivos where idcodigocomercial = " + idcodigocomercial + ") ";
-        }
-       
-        if(desde.length > 0 && hasta.length > 0) {
-            where += " and a.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
-        } */
         // console.log(sql + from )
         const resp = await pool.query(sql + from);        
         // console.log('resp.rows despues')
