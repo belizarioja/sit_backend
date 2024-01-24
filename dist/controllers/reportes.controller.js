@@ -298,8 +298,8 @@ function getGrafica(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-            // const annio = moment().format('YYYY')
-            const annio = '2023';
+            const annio = (0, moment_1.default)().format('YYYY');
+            // const annio = '2023'
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
             let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";

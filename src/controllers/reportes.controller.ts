@@ -278,8 +278,8 @@ export async function getTopClientes (req: Request, res: Response): Promise<Resp
 export async function getGrafica (req: Request, res: Response): Promise<Response | void> {
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-        // const annio = moment().format('YYYY')
-        const annio = '2023'
+        const annio = moment().format('YYYY')
+        // const annio = '2023'
 
         const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
         const from = " FROM t_registros a, t_serviciosmasivos c  ";
