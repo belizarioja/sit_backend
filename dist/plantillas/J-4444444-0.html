@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Factura SMART</title>
+</head>
+
+<body>
+    <div class="container-fluid" style="margin-top: 2rem;">
+        <div class="row">
+            <div class="col-xs-3">
+                <table>
+                    <tr style="height: 80px;">
+                        <td class="text-center">
+                            <img class="img-fluid" src="{{logo}}" alt="Logotipo" >
+                        </td>
+                    </tr>
+                </table>                
+            </div>
+            <div class="col-xs-4">
+                <p style="font-weight: 700;font-size: 10px;line-height: 1;">{{razonsocial}}
+                </p>
+                <p style="font-size: 9px;line-height: 1;">
+                    {{direccion}}
+                    <br>{{rif}}
+                    <br>{{telefono}}
+                </p>
+            </div>
+            <div class="col-xs-5">
+                <table>                  
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;width: 150px;">N° de Control:</td>
+                        <td class="textorojo text-center" style="font-size: 10px;width: 150px;">{{numerodocumento}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;">{{tipodocumento}}:</td>
+                        <td class="text-center" style="font-size: 10px;">{{numerointerno}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;">{{documentoafectado}}</td>
+                        <td class="text-center" style="font-size: 8px;">{{numeroafectado}}</td>
+                    </tr>
+                </table>         
+            </div>
+        </div>
+        <div class="row text-center" style="margin-top: 10px;margin-bottom: 1rem;">
+            <div class="col-xs-12">
+                <table>
+                    <tr>
+                        <td class="text-right" style="width: 15%;font-weight: 700;vertical-align: baseline;font-size: 10px;">Cliente:</td>
+                        <td class="text-left" style="width: 45%;padding-left: 10px;font-size: 10px;">{{nombrecliente}}</td>
+                        <td class="text-right" style="width: 20%;font-weight: 700;font-size: 10px;">Fecha de emisión:</td>
+                        <td class="text-left" style="width: 15%;padding-left: 10px;font-size: 10px;">{{fecha}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;">{{tipocedula}}:</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 10px;">{{cedulacliente}}</td>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;">Hora de emisión:</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 10px;">{{hora}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;vertical-align: baseline;font-size: 10px;">Dirección:</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 10px;">{{direccioncliente}}</td>
+                        <td class="text-right" style="font-weight: 700;font-size: 8px;">Fecha de asignación de N° de control:</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 8px;">{{fechaasignacion}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;vertical-align: baseline; font-size: 10px;">Email:</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 10px;">{{emailcliente}}</td>
+                        <td class="text-right"></td>
+                        <td class="text-left"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="font-weight: 700;font-size: 10px;">Teléfono</td>
+                        <td class="text-left" style="padding-left: 10px;font-size: 10px;">{{telefonocliente}}</td>
+                        <td class="text-right"></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row" style="margin-left: 5px; margin-right: 5px;">
+            <table style="width: 100%;height: 330px">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 14%;border: 1px solid;">Cod. Operación</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 32%;border: 1px solid;">Descripción</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border: 1px solid;">Cantidad</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border: 1px solid;">P. Unit.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 8%;border: 1px solid;">% Imp.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border: 1px solid;">Monto Desc.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border: 1px solid;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{tablaProductos}}
+                </tbody>
+            </table>
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 50%;font-size: 10px;vertical-align: baseline">
+                        <p style="font-size: 12px; font-weight: 700;">Formas de pago:<p>
+                        {{formasdepago}}
+                    </td>
+                    <td style="width: 50%;">
+                        <table style="width: 100%;margin-top: 5px;">
+                            <tr>
+                                <td class="text-right" style="font-size: 10px;">Subtotal Bs.:</td>
+                                <td class="text-right" style="font-size: 10px;">{{subtotal}}</td>
+                            </tr>
+                            <tr>
+                                <td class=" text-right" style="font-size: 10px;">Impuestos Bs.:</td>
+                                <td class="text-right" style="font-size: 10px;">{{impuestos}}</td>
+                            </tr>
+                            {{trbaseigtf}}                       
+                            <tr>
+                                <td class="text-right" style="font-size: 10px;">Exento Bs.:</td>
+                                <td class="text-right" style="font-size: 10px;">{{exentos}}</td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td class="text-right" style="font-size: 10px;">Total Bs.:</td>
+                                <td class="text-right" style="font-size: 10px;">{{total}}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding-top:5px;">
+                        <p style="font-size: 7px;font-family:'Calibri'; text-align: justify;">{{coletilla}}</p>
+                    </td>
+                </tr><tr>
+                    <td colspan="2" class="text-center" style="padding-left:20px;padding-right:20px;padding-top:5px;">
+                        <p style="font-size: 8px;font-family:'Calibri'">{{piedepagina}}<br><span class="textorojo">ORIGINAL</span></p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<style>
+    .textorojo {
+        color: #e40a0a !important;
+        font-weight: 700;
+    }
+</style>

@@ -59,10 +59,10 @@ exports.getSedes = getSedes;
 function setSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb } = req.body;
-            const insert = "insert into t_serviciosmasivos (rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, banner, estatus) ";
-            const values = " values ($1, $2, $3, $4, $5, $6, $7, $8, 1, 1) RETURNING id";
-            let resp = yield database_1.pool.query(insert + values, [rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb]);
+            const { rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno } = req.body;
+            const insert = "insert into t_serviciosmasivos (rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno, banner, estatus) ";
+            const values = " values ($1, $2, $3, $4, $5, $6, $7, $8, $9, 1, 1) RETURNING id";
+            let resp = yield database_1.pool.query(insert + values, [rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno]);
             // console.log(resp.rows[0].id)
             const id = resp.rows[0].id;
             const datatoken = {
