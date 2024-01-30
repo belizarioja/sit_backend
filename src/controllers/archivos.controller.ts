@@ -69,7 +69,7 @@ export async function exportFacturas (req: Request, res: Response): Promise<Resp
             where += " and a.idserviciosmasivo = " + idserviciosmasivo;
         }
         if(idtipodocumento) {
-            where += " and a.idtipodocumento = " + idtipodocumento;
+            where += " and a.idtipodocumento in (" + idtipodocumento + ")";
         }
         if(numerodocumento) {
             where += " and a.numerodocumento = '" + numerodocumento + "'";
