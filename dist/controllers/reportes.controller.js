@@ -44,8 +44,8 @@ function getFacturas(req, res) {
             const { page, size } = req.body;
             let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, c.enviocorreo, a.estatuscorreo, a.emailcliente, c.idcodigocomercial, ";
             sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado, a.fechaanulado, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, ";
-            sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 2 ) as notadebito, ";
-            sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 3 ) as notacredito ";
+            sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 2 limit 1) as notadebito, ";
+            sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 3 limit 1) as notacredito ";
             const sqlCount = "select count (*) ";
             // const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d, t_registros e,  ";
             const from = " from t_registros a  ";
