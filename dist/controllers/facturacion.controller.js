@@ -21,6 +21,7 @@ const database_1 = require("../database");
 const USERMAIL = process.env.USERMAIL;
 const PASSMAIL = process.env.PASSMAIL;
 const SERVERFILE = process.env.SERVERFILE;
+const FILEPDF = process.env.FILEPDF;
 const SERVERIMG = process.env.SERVERIMG;
 const IMGPDF = process.env.IMGPDF;
 const HOSTSMTP = process.env.HOSTSMTP;
@@ -745,7 +746,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                     attachments: [
                         {
                             filename: _tipodoc + '-' + numerocuerpo + '.pdf',
-                            path: SERVERFILE + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
+                            path: FILEPDF + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
                         }
                     ]
                 };

@@ -9,6 +9,7 @@ import { pool } from '../database'
 const USERMAIL = process.env.USERMAIL
 const PASSMAIL = process.env.PASSMAIL
 const SERVERFILE = process.env.SERVERFILE
+const FILEPDF = process.env.FILEPDF
 const SERVERIMG = process.env.SERVERIMG
 const IMGPDF = process.env.IMGPDF
 const HOSTSMTP = process.env.HOSTSMTP
@@ -807,7 +808,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                 attachments: [
                 {
                     filename: _tipodoc + '-' + numerocuerpo + '.pdf',
-                    path: SERVERFILE + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
+                    path: FILEPDF + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
                 }
             ]
             };
