@@ -24,6 +24,7 @@ const SERVERFILE = process.env.SERVERFILE;
 const SERVERIMG = process.env.SERVERIMG;
 const IMGPDF = process.env.IMGPDF;
 const HOSTSMTP = process.env.HOSTSMTP;
+const AMBIENTE = process.env.AMBIENTE;
 let EMAILBCC = '';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
@@ -358,7 +359,7 @@ function setFacturacion(req, res) {
             console.log('Envio de correo', enviocorreo, sendmail, cuerpofactura.length, emailcliente);
             if (cuerpofactura.length > 0) {
                 console.log('va a Crear pdf correo');
-                yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD);
+                yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD, 1);
             }
             else {
                 console.log('Sin Factura pdf correo');
@@ -414,7 +415,7 @@ function getNumerointerno(req, res) {
     });
 }
 exports.getNumerointerno = getNumerointerno;
-function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _enviocorreo, _sendmail, _tasacambio, _observacion) {
+function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _enviocorreo, _sendmail, _tasacambio, _observacion, _estatus) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
@@ -532,8 +533,18 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : '';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
-            console.log(IMGPDF + _rif + ".png");
-            contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
+            console.log("AMBIENTE");
+            console.log(AMBIENTE);
+            console.log("Estatus");
+            console.log(_estatus);
+            if (Number(_estatus) === 2) {
+                contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "anulado.gif");
+            }
+            else {
+                if (AMBIENTE === 'local' || AMBIENTE === 'test') {
+                    contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG + "borrador.png");
+                }
+            }
             contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
             contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -591,7 +602,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     // console.log("PDF creado correctamente");               
                     if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
-                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc);
+                        yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus);
                     }
                     else {
                         console.log('Sin correo');
@@ -648,7 +659,7 @@ function obtenerLote(res, id) {
         }
     });
 }
-function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _diaenvio, _emailbcc) {
+function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _diaenvio, _emailbcc, _estatus) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let transporter = nodemailer_1.default.createTransport({
@@ -682,6 +693,8 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                             </div> 
                             </td>
                         </tr>` : '';
+            // console.log(_estatus)
+            const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.';
             const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
@@ -694,7 +707,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
-                            <span style="color: #632508; font-size: 16px;">ya está disponible. </span>
+                            <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
                         <p style="text-align:right; color: #632508; font-size: 16px;">
                             <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
@@ -724,10 +737,10 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             let p = 0;
             for (let i = 0; i < arregloemail.length; i++) {
                 let mail_options = {
-                    from: 'Mi Documento Digital<no-reply@smartfactura.com>',
+                    from: 'Mi Factura Digital<no-reply@smartfactura.net>',
                     to: arregloemail[i],
                     bcc: correobcc,
-                    subject: 'Envío de: ' + _tipodoc + ' Digital',
+                    subject: 'Envío de ' + _tipodoc + ' digital',
                     html: htmlfinal,
                     attachments: [
                         {

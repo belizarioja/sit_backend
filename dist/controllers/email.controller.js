@@ -21,7 +21,7 @@ function sendFacturaEmail(req, res) {
         // try {
         const { rif, email, numerodocumento } = req.body;
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion  ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus  ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
         const respdoc = yield database_1.pool.query(sql + from + where, [numerodocumento, rif]);
@@ -44,6 +44,7 @@ function sendFacturaEmail(req, res) {
         const enviocorreo = respdoc.rows[0].enviocorreo;
         const tasacambio = respdoc.rows[0].tasacambio;
         const observacion = respdoc.rows[0].observacion || '';
+        const estatus = respdoc.rows[0].estatus;
         const sendmail = 1;
         const fechaenvio = (0, moment_1.default)(respdoc.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss');
         // console.log('respdoc.rows[0].fecha, fechaenvio')
@@ -77,7 +78,7 @@ function sendFacturaEmail(req, res) {
         // console.log(respdet.rows)
         const formasdepago = respformas.rows;
         // console.log('va a Crear PDF')
-        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, tasacambio, observacion)
+        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, tasacambio, observacion, estatus)
             .then(() => {
             const data = {
                 success: true,

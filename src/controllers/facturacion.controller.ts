@@ -12,6 +12,7 @@ const SERVERFILE = process.env.SERVERFILE
 const SERVERIMG = process.env.SERVERIMG
 const IMGPDF = process.env.IMGPDF
 const HOSTSMTP = process.env.HOSTSMTP
+const AMBIENTE = process.env.AMBIENTE
 let  EMAILBCC = ''
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
@@ -401,7 +402,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         console.log('Envio de correo', enviocorreo, sendmail, cuerpofactura.length, emailcliente)
         if (cuerpofactura.length > 0) {
             console.log('va a Crear pdf correo')
-            await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD)
+            await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD, 1)
             
         } else {
             console.log('Sin Factura pdf correo')
@@ -452,7 +453,7 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
     }
 }
 
-export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _enviocorreo: any, _sendmail: any, _tasacambio: any, _observacion: any) {
+export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _enviocorreo: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any) {
     try {
         const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
         const fromsede = " FROM t_serviciosmasivos a ";
@@ -586,8 +587,17 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : ''
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
         const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
-        console.log(IMGPDF+_rif + ".png")
-        contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "anulado.gif");
+        console.log("AMBIENTE")
+        console.log(AMBIENTE)
+        console.log("Estatus")
+        console.log(_estatus)
+        if(Number(_estatus) === 2) {
+            contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "anulado.gif");
+        } else {
+            if(AMBIENTE === 'local' || AMBIENTE === 'test') {
+                contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "borrador.png");
+            }
+        }
         contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF+_rif + ".png");
         contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
         contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -654,7 +664,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
 
                     console.log('va a Enviar correo')
-                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc)
+                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus)
 
                 } else {
                     console.log('Sin correo')
@@ -693,7 +703,6 @@ async function obtenerLote (res: Response, id: any) {
             if(!respReg.rows[0].fechaproduccion || respReg.rows[0].fechaproduccion == null || respReg.rows[0].fechaproduccion == 'null') {
                 // console.log('respReg.rows[0].fechaproduccion')
                 set += ", fechaproduccion = '" + moment().format("YYYY-MM-DD") + "'";                
-
             } else {
                 fechapiedepagina = moment(respReg.rows[0].fechaproduccion).format('DD/MM/YYYY')
             }
@@ -712,7 +721,7 @@ async function obtenerLote (res: Response, id: any) {
     }
 }
 
-export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any) {
+export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any, _estatus: any) {
     try {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -746,6 +755,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                             </div> 
                             </td>
                         </tr>` : ''
+        // console.log(_estatus)
+        const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.' 
         const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
@@ -758,7 +769,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
-                            <span style="color: #632508; font-size: 16px;">ya está disponible. </span>
+                            <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
                         <p style="text-align:right; color: #632508; font-size: 16px;">
                             <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
@@ -788,10 +799,10 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         let p = 0;
          for(let i = 0; i< arregloemail.length; i++) {
             let mail_options = {
-                from: 'Mi Documento Digital<no-reply@smartfactura.com>',
+                from: 'Mi Factura Digital<no-reply@smartfactura.net>',
                 to: arregloemail[i],
                 bcc: correobcc,
-                subject: 'Envío de: ' + _tipodoc + ' Digital',
+                subject: 'Envío de ' + _tipodoc + ' digital',
                 html: htmlfinal,
                 attachments: [
                 {
