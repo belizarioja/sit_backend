@@ -38,6 +38,24 @@ export async function getSedes (req: Request, res: Response): Promise<Response |
         return res.status(400).send('Error Listando Servicios masivos ' + e);
     }
 }
+export async function getSede (req: Request, res: Response): Promise<Response | void> {
+    const { rif } = req.body;
+
+    try {
+        const sql = "select id  ";
+        const from = " from t_serviciosmasivos where rif = $1 ";
+        const resp = await pool.query(sql + from, [rif]);        
+        console.log(resp)
+        const data = {
+            success: true,
+            data: resp.rows[0]
+        };
+        return res.status(200).json(data);        
+    }
+    catch (e) {
+        return res.status(400).send('Error Buscando ID de Servicio masivos ' + e);
+    }
+}
 export async function setSede (req: Request, res: Response): Promise<Response | void> {
     try {
         const { rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno } = req.body;

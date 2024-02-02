@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEstatus = exports.updateSede = exports.getTodosCorelativo = exports.getSedeCorelativo = exports.setSede = exports.getSedes = exports.getCodes = void 0;
+exports.updateEstatus = exports.updateSede = exports.getTodosCorelativo = exports.getSedeCorelativo = exports.setSede = exports.getSede = exports.getSedes = exports.getCodes = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -56,6 +56,26 @@ function getSedes(req, res) {
     });
 }
 exports.getSedes = getSedes;
+function getSede(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { rif } = req.body;
+        try {
+            const sql = "select id  ";
+            const from = " from t_serviciosmasivos where rif = $1 ";
+            const resp = yield database_1.pool.query(sql + from, [rif]);
+            console.log(resp);
+            const data = {
+                success: true,
+                data: resp.rows[0]
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Buscando ID de Servicio masivos ' + e);
+        }
+    });
+}
+exports.getSede = getSede;
 function setSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

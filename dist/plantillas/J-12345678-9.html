@@ -7,18 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Factura NOVUS</title>
+    <title>Factura SMART</title>
 </head>
 
 <body >
-    <div class="container-fluid fondoanulado" style="margin-top: 2rem; position: relative;">        
-        <img src="{{anulado}}" style="position: absolute;
-            left:0;
-            top:0;
-            z-index:-10;
-            width: 100%;    
-            height: 100%;
-        "/>   
+    <div class="container-fluid" style="margin-top: 2rem; position: relative;">        
+        {{fondomarca}}
         <div class="row">
             <div class="col-xs-3">
                 <table>
@@ -30,7 +24,7 @@
                 </table>                             
             </div>
             <div class="col-xs-5">
-                <p style="font-weight: 700;font-size: 10px;line-height: 1;">Prueba anulado {{razonsocial}}
+                <p style="font-weight: 700;font-size: 10px;line-height: 1;">{{razonsocial}}
                 </p>
                 <p style="font-size: 8px;line-height: 1;">
                     {{direccion}}
@@ -155,8 +149,5 @@
     .textorojo {
         color: #e40a0a !important;
         font-weight: 700 !important;
-    }
-    .fondoanulado {
-        background-image: url('anulado.gif') !important;
     }
 </style>

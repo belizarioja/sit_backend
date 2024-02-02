@@ -48,9 +48,7 @@ function getUtils(req, res) {
             const img = req.params.img;
             const path = __dirname + '/utils/' + img;
             if (fs_1.default.existsSync(path)) {
-                // const imgbase64 = fs.readFileSync(path, { encoding: 'base64' })
                 return res.sendFile(path);
-                // return res.status(200).send({ imgbase64, message: 'Imagen encontrada!' })
             }
             else {
                 return res.status(202).send({ message: 'Imagen de formato de correo no encontrada!' });

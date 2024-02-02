@@ -592,11 +592,20 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         console.log(AMBIENTE)
         console.log("Estatus")
         console.log(_estatus)
-        if(Number(_estatus) === 2) {
-            contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "anulado.gif");
+        const ANULADO = FILEPDF + 'utils/anulado.gif'
+        const BORRADOR = FILEPDF + 'utils/borrador.png'
+        const fondoanulado= `<img src="${ANULADO}" style="position: absolute; left:0; top:0; z-index:-10; width: 100%; height: 100%; "/>`
+        const fondoborrador = `<img src="${BORRADOR}" style="position: absolute; left:0; top:0; z-index:-10; width: 100%; height: 100%; "/>`
+        contenidoHtml = contenidoHtml.replace("{{fondomarca}}", '');
+        if(Number(_estatus) === 2) { // Si es anulado
+            console.log("AQUI 1")
+            console.log(ANULADO)
+            contenidoHtml = contenidoHtml.replace("{{fondomarca}}", fondoanulado);
         } else {
-            if(AMBIENTE === 'local' || AMBIENTE === 'test') {
-                contenidoHtml = contenidoHtml.replace("{{anulado}}", SERVERIMG+ "borrador.png");
+            if(AMBIENTE === 'local' || AMBIENTE === 'test') { // Si NO es Produccion
+                console.log("AQUI 2")
+                console.log(BORRADOR)
+                contenidoHtml = contenidoHtml.replace("{{fondomarca}}", fondoborrador);
             }
         }
         contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF+_rif + ".png");
