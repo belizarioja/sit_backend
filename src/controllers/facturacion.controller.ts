@@ -566,7 +566,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`
         let publicidad = `<tr>
             <td colspan="2" class="text-center" style="padding-top:5px;">
-                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="90" >
+                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
             </td>
         </tr>`
         
