@@ -27,7 +27,7 @@ process.env['OPENSSL_CONF'] = '/dev/null';
 export async function setFacturacion (req: Request, res: Response): Promise<Response | void> {
     try {
         
-        const { id, rif, enviocorreo, razonsocial, email, direccion, validarinterno } = req;
+        const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
         const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
         const { tasaa, basea, impuestoa } = req.body;
@@ -263,7 +263,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 
             }
         }
-        if (enviocorreo == 1 && cuerpofactura.length === 0) {
+        if (cuerpofactura.length === 0) {
 
             await pool.query('ROLLBACK')
 
@@ -404,11 +404,9 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
        
         await pool.query('COMMIT')
        
-
-        console.log('Envio de correo', enviocorreo, sendmail, cuerpofactura.length, emailcliente)
         if (cuerpofactura.length > 0) {
             console.log('va a Crear pdf correo')
-            await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD, 1)
+            await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1)
             
         } else {
             console.log('Sin Factura pdf correo')
@@ -459,14 +457,15 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
     }
 }
 
-export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _enviocorreo: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any) {
+export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         const wheresede = " WHERE a.id = $1";
         const respsede = await pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]); 
         // console.log(respsede.rows[0])
+        const enviocorreo = respsede.rows[0].enviocorreo || 0
         const emailbcc = respsede.rows[0].emailbcc || ''
         const sitioweb = respsede.rows[0].sitioweb
         const colorfondo1 = respsede.rows[0].colorfondo1 || '#d4e5ff'
@@ -694,7 +693,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
             } else {
                 // console.log("PDF creado correctamente");               
-                if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
+                if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
 
                     console.log('va a Enviar correo')
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus)

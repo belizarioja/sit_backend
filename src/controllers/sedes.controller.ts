@@ -71,7 +71,8 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
             razonsocial, 
             direccion, 
             email, 
-            telefono            
+            telefono,
+            validarinterno
         }
         const tokenservicios: string = jwt.sign({ user: datatoken }, SECRET);
         const sqlupd = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";
@@ -167,7 +168,8 @@ export async function updateSede (req: Request, res: Response): Promise<Response
             razonsocial, 
             direccion, 
             email, 
-            telefono            
+            telefono,
+            validarinterno
         }
         const tokenservicios: string = jwt.sign({ user: datatoken }, SECRET);
         const sqlupd2 = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";

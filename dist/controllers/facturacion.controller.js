@@ -36,7 +36,7 @@ process.env['OPENSSL_CONF'] = '/dev/null';
 function setFacturacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { id, rif, enviocorreo, razonsocial, email, direccion, validarinterno } = req;
+            const { id, rif, razonsocial, email, direccion, validarinterno } = req;
             const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
             const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
             const { tasaa, basea, impuestoa } = req.body;
@@ -246,7 +246,7 @@ function setFacturacion(req, res) {
                     idtipoafectado = resprel.rows[0].idtipodocumento;
                 }
             }
-            if (enviocorreo == 1 && cuerpofactura.length === 0) {
+            if (cuerpofactura.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
@@ -361,10 +361,9 @@ function setFacturacion(req, res) {
                 // console.log(insertDet + valuesDet)
             }
             yield database_1.pool.query('COMMIT');
-            console.log('Envio de correo', enviocorreo, sendmail, cuerpofactura.length, emailcliente);
             if (cuerpofactura.length > 0) {
                 console.log('va a Crear pdf correo');
-                yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, _tasacambio, observacionBD, 1);
+                yield crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1);
             }
             else {
                 console.log('Sin Factura pdf correo');
@@ -420,15 +419,16 @@ function getNumerointerno(req, res) {
     });
 }
 exports.getNumerointerno = getNumerointerno;
-function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _enviocorreo, _sendmail, _tasacambio, _observacion, _estatus) {
+function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc  ";
+            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo  ";
             const fromsede = " FROM t_serviciosmasivos a ";
             let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
             const wheresede = " WHERE a.id = $1";
             const respsede = yield database_1.pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]);
             // console.log(respsede.rows[0])
+            const enviocorreo = respsede.rows[0].enviocorreo || 0;
             const emailbcc = respsede.rows[0].emailbcc || '';
             const sitioweb = respsede.rows[0].sitioweb;
             const colorfondo1 = respsede.rows[0].colorfondo1 || '#d4e5ff';
@@ -635,7 +635,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 }
                 else {
                     // console.log("PDF creado correctamente");               
-                    if (_enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
+                    if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus);
                     }

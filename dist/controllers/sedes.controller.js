@@ -91,7 +91,8 @@ function setSede(req, res) {
                 razonsocial,
                 direccion,
                 email,
-                telefono
+                telefono,
+                validarinterno
             };
             const tokenservicios = jsonwebtoken_1.default.sign({ user: datatoken }, SECRET);
             const sqlupd = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";
@@ -185,7 +186,8 @@ function updateSede(req, res) {
                 razonsocial,
                 direccion,
                 email,
-                telefono
+                telefono,
+                validarinterno
             };
             const tokenservicios = jsonwebtoken_1.default.sign({ user: datatoken }, SECRET);
             const sqlupd2 = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";

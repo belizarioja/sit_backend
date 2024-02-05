@@ -41,7 +41,6 @@ function sendFacturaEmail(req, res) {
         const baseigtf = respdoc.rows[0].baseigtf;
         const numerointerno = respdoc.rows[0].numerointerno;
         const piedepagina = respdoc.rows[0].piedepagina;
-        const enviocorreo = respdoc.rows[0].enviocorreo;
         const tasacambio = respdoc.rows[0].tasacambio;
         const observacion = respdoc.rows[0].observacion || '';
         const estatus = respdoc.rows[0].estatus;
@@ -78,7 +77,7 @@ function sendFacturaEmail(req, res) {
         // console.log(respdet.rows)
         const formasdepago = respformas.rows;
         // console.log('va a Crear PDF')
-        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, enviocorreo, sendmail, tasacambio, observacion, estatus)
+        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus)
             .then(() => {
             const data = {
                 success: true,
