@@ -63,7 +63,7 @@ function getSede(req, res) {
             const sql = "select id  ";
             const from = " from t_serviciosmasivos where rif = $1 ";
             const resp = yield database_1.pool.query(sql + from, [rif]);
-            console.log(resp);
+            // console.log(resp)
             const data = {
                 success: true,
                 data: resp.rows[0]
@@ -185,9 +185,7 @@ function updateSede(req, res) {
                 razonsocial,
                 direccion,
                 email,
-                telefono,
-                enviocorreo,
-                validarinterno
+                telefono
             };
             const tokenservicios = jsonwebtoken_1.default.sign({ user: datatoken }, SECRET);
             const sqlupd2 = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";

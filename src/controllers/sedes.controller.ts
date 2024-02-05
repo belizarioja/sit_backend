@@ -45,7 +45,7 @@ export async function getSede (req: Request, res: Response): Promise<Response | 
         const sql = "select id  ";
         const from = " from t_serviciosmasivos where rif = $1 ";
         const resp = await pool.query(sql + from, [rif]);        
-        console.log(resp)
+        // console.log(resp)
         const data = {
             success: true,
             data: resp.rows[0]
@@ -65,7 +65,7 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
         let resp = await pool.query(insert + values, [rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno]);
         // console.log(resp.rows[0].id)
         const id = resp.rows[0].id
-         const datatoken = {
+        const datatoken = {
             id,
             rif, 
             razonsocial, 
@@ -167,9 +167,7 @@ export async function updateSede (req: Request, res: Response): Promise<Response
             razonsocial, 
             direccion, 
             email, 
-            telefono,
-            enviocorreo,
-            validarinterno
+            telefono            
         }
         const tokenservicios: string = jwt.sign({ user: datatoken }, SECRET);
         const sqlupd2 = "update t_serviciosmasivos set tokenservicios = $1 where id = $2 ";
