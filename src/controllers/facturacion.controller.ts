@@ -3,6 +3,8 @@ import moment from 'moment';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import pdf from 'html-pdf';
+import path from 'path';
+import QRCode  from 'qrcode';
 
 import { pool } from '../database'
 
@@ -14,6 +16,8 @@ const SERVERIMG = process.env.SERVERIMG
 const IMGPDF = process.env.IMGPDF
 const HOSTSMTP = process.env.HOSTSMTP
 const AMBIENTE = process.env.AMBIENTE
+const URLFRN = process.env.URLFRN
+
 let  EMAILBCC = ''
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
@@ -471,15 +475,25 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const textoemail = respsede.rows[0].textoemail || '0'
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
+        const ispublicidad = respsede.rows[0].publicidad || true
+        let URLPUBLICIDAD = ''
+        if (ispublicidad) {
+            URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
+        } else {
+            URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
+        }
 
         // const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
         const ubicacionPlantilla = require.resolve("../plantillas/" + _rif + ".html");
         let contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8')
-        // Estos productos podrían venir de cualquier lugar
         
+        const annioenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY")
+        const mesenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM")
+        const diaenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD")
+        const infoQR = URLFRN + '/#/viewqrinvoice/' + _rif + 'SM' + _pnumero
 
-        // Nota: el formateador solo es para, valga la redundancia, formatear el dinero. No es requerido, solo que quiero que se vea bonito
-        // https://parzibyte.me/blog/2021/05/03/formatear-dinero-javascript/
+        await crearCodeQR(infoQR, _rif, annioenvio, mesenvio, _pnumero) 
+
         const formateador = new Intl.NumberFormat("eu");
         // Generar el HTML de la tabla
         let tabla = "";
@@ -509,14 +523,14 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             // Y concatenar los productos
             
             tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${producto.codigo}</td>
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${productoitem}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.precio))}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
-            <td class="text-right" style="vertical-align: baseline;border-right: 1px solid; border-left: 1px solid;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
-            </tr>`;
+            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;">${producto.codigo}</td>
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${productoitem}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.precio))}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
+        </tr>`;
             
         }
         const coletillaigtf = "En caso de Factura emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. "
@@ -526,34 +540,39 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
         
         tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;"></td>
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px solid;padding: 3px;">${_observacion}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-right: 1px solid; border-left: 1px solid;padding: 3px;font-size: 8px;"></td>
+            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;"></td>
+            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${_observacion}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
             </tr>`;
         tabla += `<tr style="height: auto;">
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 1px solid;border-right: 1px solid; border-left: 1px solid;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
         </tr>`;
         
         let trbaseigtf = `<tr>
             <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
+        let publicidad = `<tr>
+            <td colspan="2" class="text-center" style="padding-top:5px;">
+                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="100" >
+            </td>
+        </tr>`
         
         let _impuestoigtfusd = 0
         let _baseigtfusd = 0
         let _baseivausd = 0
 
-        if (_tasacambio > 0) {
+        /* if (_tasacambio > 0) {
             _impuestoigtfusd = Number(_impuestoigtf)/Number(_tasacambio)
             _baseigtfusd = Number(_baseigtf)/Number(_tasacambio)
             _baseivausd = Number(baseiva)/Number(_tasacambio)
@@ -567,7 +586,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                    
             contenidoHtml = contenidoHtml.replace("{{tasatotales}}", _tasacambio.toString().padEnd(9, '0'));           
 
-        }
+        } */
         // const subtotalConDescuento = subtotal - descuento;        
         const subtotalConDescuento = subtotal;
         // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
@@ -594,20 +613,18 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         if(Number(_estatus) === 2) { // Si es anulado
             const ANULADO = FILEPDF + 'utils/anulado.gif'
             const fondoanulado= `<img src="${ANULADO}" style="position: absolute; left:0; top:0; z-index:-10; width: 100%; height: 100%; "/>`
-            // console.log("AQUI 1")
-            // console.log(ANULADO)
             contenidoHtml = contenidoHtml.replace("{{fondomarca}}", fondoanulado);
         } else {
             if(AMBIENTE === 'local' || AMBIENTE === 'test') { // Si NO es Produccion
                 const BORRADOR = FILEPDF + 'utils/borrador.png'
                 const fondoborrador = `<img src="${BORRADOR}" style="position: absolute; left:0; top:0; z-index:-10; width: 100%; height: 100%; "/>`
-                // console.log("AQUI 2")
-                // console.log(BORRADOR)
                 contenidoHtml = contenidoHtml.replace("{{fondomarca}}", fondoborrador);
             } else {
                 contenidoHtml = contenidoHtml.replace("{{fondomarca}}", '');
             }
         }
+        const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
+        contenidoHtml = contenidoHtml.replace("{{codeqr}}", folderPathQr);
         contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF+_rif + ".png");
         contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
         contenidoHtml = contenidoHtml.replace("{{razonsocial}}", _razonsocial);
@@ -635,6 +652,12 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);      
         
         contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
+        if(ispublicidad) {
+            contenidoHtml = contenidoHtml.replace("{{publicidad}}", publicidad);
+        } else {
+            contenidoHtml = contenidoHtml.replace("{{publicidad}}", '');
+
+        }
         let subtotalusd = 0
         let impuestosusd = 0
         let exentosusd = 0
@@ -662,9 +685,6 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         
         contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);        
         // console.log(contenidoHtml)
-        const annioenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY")
-        const mesenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM")
-        const diaenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD")
         pdf.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-"  + mesenvio + "/" + _rif + _pnumero + ".pdf", async (error) => {
             if (error) {
                 // console.log("Error creando PDF: " + error)
@@ -686,7 +706,13 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
     }
 
 }
-
+function crearCodeQR (informacion: any, rif: any, annio: any, mes: any, numerodocumento: any ) {
+    const folderPath = __dirname + '/temp/' + rif + '/codeqr/' + annio + '-' + mes; // Reemplaza con la ruta de tu carpeta
+    fs.mkdirSync(folderPath,{recursive:true});
+    QRCode.toFile(path.join(folderPath, 'qrcode_' + rif + numerodocumento + '.png'), informacion, (err)=>{
+        if (err) throw err;
+    });
+}
 function completarDecimales (cadena: any) {
     cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(2))
     const arreglo = cadena.split(',')

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setImagen = exports.getImagen = void 0;
+exports.setImagen = exports.getImagenCodeQr = exports.getImagen = void 0;
 const fs_1 = __importDefault(require("fs"));
 const formidable_1 = __importDefault(require("formidable"));
 const path_1 = __importDefault(require("path"));
@@ -36,6 +36,27 @@ function getImagen(req, res) {
     });
 }
 exports.getImagen = getImagen;
+function getImagenCodeQr(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { rif, anniomes, filecodeqr } = req.params;
+            const path = __dirname + '/temp/' + rif + '/codeqr/' + anniomes + '/' + filecodeqr;
+            console.log(path);
+            if (fs_1.default.existsSync(path)) {
+                // const imgbase64 = fs.readFileSync(path, { encoding: 'base64' })
+                return res.sendFile(path);
+                // return res.status(200).send({ imgbase64, message: 'Imagen encontrada!' })
+            }
+            else {
+                return res.status(202).send({ message: 'Imagen no encontrada!' });
+            }
+        }
+        catch (e) {
+            return res.status(400).send('Error buscando logo de cliente emisor ' + e);
+        }
+    });
+}
+exports.getImagenCodeQr = getImagenCodeQr;
 function setImagen(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
