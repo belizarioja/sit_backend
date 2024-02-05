@@ -564,7 +564,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`
         let publicidad = `<tr>
             <td colspan="2" class="text-center" style="padding-top:5px;">
-                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="100" >
+                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="90" >
             </td>
         </tr>`
         
@@ -800,6 +800,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                         <img src="${SERVERIMG}${_prif}.png" style="max-width: 130px;">                            
                     </td>
                 </tr>
+                
                 <tr>
                     <td style="padding: 30px;" colspan="3">
                         <p style="text-align:left; display: grid;">
@@ -807,15 +808,22 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
                             <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
-                        <p style="text-align:right; color: #632508; font-size: 16px;">
-                            <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
-                            <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
-                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
-                                <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
-                            </span><br>
-                        </p>
                     </td>
-                </tr>                
+                </tr>
+                <tr>
+                <td style="padding: 30px;" colspan="2">   
+                    <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
+                </td>
+                <td style="padding: 30px;">               
+                        <p style="text-align:right; color: #632508; font-size: 16px;">
+                        <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                        <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                        <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
+                            <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
+                        </span><br>
+                    </p>
+                </td>
+            </tr>        
                 ${texto_1}
                 <tr height="40px" style="background: #f25004;">
                     <td colspan="3" style="text-align: center;">
