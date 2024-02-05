@@ -19,6 +19,7 @@ const AMBIENTE = process.env.AMBIENTE
 const URLFRN = process.env.URLFRN
 
 let  EMAILBCC = ''
+let URLPUBLICIDADEMAIL = ''
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
@@ -479,8 +480,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let URLPUBLICIDAD = ''
         if (ispublicidad) {
             URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
+            URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png'
         } else {
             URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
+            URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png'
         }
 
         // const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
@@ -564,7 +567,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`
         let publicidad = `<tr>
             <td colspan="2" class="text-center" style="padding-top:5px;">
-                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="90" >
+                <img class="img-fluid" src="${URLPUBLICIDADEMAIL}" alt="Publicidad" width="100%" height="90" >
             </td>
         </tr>`
         
@@ -811,19 +814,24 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                     </td>
                 </tr>
                 <tr>
-                <td style="padding: 30px;" colspan="2">   
-                    <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
+                    <td style="padding: 30px;" colspan="2">   
+                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
+                    </td>
+                    <td style="padding: 30px;">               
+                            <p style="text-align:right; color: #632508; font-size: 16px;">
+                            <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                            <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
+                                <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
+                            </span><br>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                <td style="padding: 30px;" colspan="3">               
+                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 550px;">
                 </td>
-                <td style="padding: 30px;">               
-                        <p style="text-align:right; color: #632508; font-size: 16px;">
-                        <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
-                        <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
-                        <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
-                            <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
-                        </span><br>
-                    </p>
-                </td>
-            </tr>        
+            </tr> 
                 ${texto_1}
                 <tr height="40px" style="background: #f25004;">
                     <td colspan="3" style="text-align: center;">
