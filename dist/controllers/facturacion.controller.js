@@ -747,7 +747,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 </tr>
                 
                 <tr>
-                    <td style="padding: 30px;" colspan="3">
+                    <td style="padding: 0 30px;" colspan="3">
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
@@ -756,22 +756,22 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 30px;" colspan="2">   
+                    <td style="padding: 20px 30px;" colspan="2">   
                         <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
                     </td>
-                    <td style="padding: 30px;">               
+                    <td style="padding: 0 30px;">               
                             <p style="text-align:right; color: #632508; font-size: 16px;">
                             <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
                             <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
                             <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
                                 <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
-                            </span><br>
+                            </span>
                         </p>
                     </td>
                 </tr>
                 <tr>
-                <td style="padding: 30px;" colspan="3">               
-                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 550px;">
+                <td style="padding:  0px 30px 20px;" colspan="3">               
+                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
                 </td>
             </tr> 
                 ${texto_1}
