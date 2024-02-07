@@ -148,7 +148,7 @@ export async function getImpProcesados (req: Request, res: Response): Promise<Re
         } else {
             const whereold = where
 
-            where += " and (a.idtipodocumento = 1 or a.idtipodocumento = 2 ) ";
+            where += " and (a.idtipodocumento = 1 or a.idtipodocumento = 2  or a.idtipodocumento = 4  or a.idtipodocumento = 5) ";
             
             const wherecredito = whereold + " and a.idtipodocumento = 3 ";
             const respcredito = await pool.query(sql + from + wherecredito);
@@ -375,7 +375,26 @@ export async function getDocProcesados (req: Request, res: Response): Promise<Re
         if(desde.length > 0 && hasta.length > 0) {
             sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
         }
-        sql += " and b.estatus = 1 ) AS sumadocigtf ";
+        sql += " and b.estatus = 1 ) AS sumadocigtf, ";
+        
+        sql += " (select SUM (b.impuestor) from t_registros b where b.idtipodocumento = a.id ";
+        if(idserviciosmasivo) {
+            sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+        }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
+        sql += " and b.estatus = 1 ) AS sumadocr, ";
+
+        sql += " (select SUM (b.exento) from t_registros b where b.idtipodocumento = a.id ";
+        if(idserviciosmasivo) {
+            sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+        }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
+        sql += " and b.estatus = 1 ) AS exentos ";
+
         const from = " from t_tipodocumentos a ";
         
         // console.log(sql + from )
@@ -396,7 +415,7 @@ export async function getUltimaSemana (req: Request, res: Response): Promise<Res
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
         const hoy = moment().format('YYYY-MM-DD')
-        const hace1dia = moment().subtract(1, 'days').format('DD-MMM-DD')
+        const hace1dia = moment().subtract(1, 'days').format('YYYY-MM-DD')
         const hace2dia = moment().subtract(2, 'days').format('YYYY-MM-DD')
         const hace3dia = moment().subtract(3, 'days').format('YYYY-MM-DD')
         const hace4dia = moment().subtract(4, 'days').format('YYYY-MM-DD')
