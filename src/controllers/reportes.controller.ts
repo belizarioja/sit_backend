@@ -84,8 +84,6 @@ export async function getFacturas (req: Request, res: Response): Promise<Respons
         // console.log(sql + from + leftjoin+ where + orderBy + limit)
         const resp = await pool.query(sql + from + leftjoin + where + orderBy + limit, [page, size]);
         const totalpages = parseInt(respTotal.rows[0].count)/size
-        // console.log(Math.trunc(totalpages))
-        // console.log(totalpages % 1)
         const total_pages = totalpages % 1 > 0 ? Math.trunc(totalpages) + 1 : Math.trunc(totalpages)
         const data = {
             succes: true,
@@ -279,17 +277,18 @@ export async function getTopClientes (req: Request, res: Response): Promise<Resp
 
 export async function getGrafica (req: Request, res: Response): Promise<Response | void> {
     try {
-        const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+        const { idserviciosmasivo, idcodigocomercial } = req.body;
         const annio = moment().format('YYYY')
         // const annio = '2023'
-
-        const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, count(a.id) as total";
+        let sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, ";        
+        sql += "sum((a.idtipodocumento  = 1)::int) as totalfacturas, ";
+        sql += "sum((a.idtipodocumento  = 2)::int) as totaldebitos, ";
+        sql += "sum((a.idtipodocumento  = 3)::int) as totalcreditos, ";
+        sql += "sum((a.idtipodocumento  = 4)::int) as totalentregas, ";
+        sql += "sum((a.idtipodocumento  = 5)::int) as totaldespachos ";
         const from = " FROM t_registros a, t_serviciosmasivos c  ";
         let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";     
         const groupBy = " group by 1 ORDER BY 1 ASC ";
-        if(idtipodocumento) {
-            where += " and a.idtipodocumento = " + idtipodocumento;
-        }
         if(idserviciosmasivo > 0) {
             where += " and a.idserviciosmasivo = " + idserviciosmasivo;
         } 
@@ -342,6 +341,15 @@ export async function getDocProcesados (req: Request, res: Response): Promise<Re
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
 
         let sql = "SELECT a.id, a.tipodocumento, ";
+        sql += " (select COUNT (*) from t_registros b where b.estatus = 1 ";
+        if(idserviciosmasivo) {
+            sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+        }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
+        sql += " ) AS total,  ";
+
         sql += " (select COUNT (*) from t_registros b where b.idtipodocumento = a.id ";
         if(idserviciosmasivo) {
             sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
@@ -388,7 +396,7 @@ export async function getUltimaSemana (req: Request, res: Response): Promise<Res
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
         const hoy = moment().format('YYYY-MM-DD')
-        const hace1dia = moment().subtract(1, 'days').format('YYYY-MM-DD')
+        const hace1dia = moment().subtract(1, 'days').format('DD-MMM-DD')
         const hace2dia = moment().subtract(2, 'days').format('YYYY-MM-DD')
         const hace3dia = moment().subtract(3, 'days').format('YYYY-MM-DD')
         const hace4dia = moment().subtract(4, 'days').format('YYYY-MM-DD')

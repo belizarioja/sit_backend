@@ -20,6 +20,7 @@ function verifyTokenFactura(req, res, next) {
             // console.log(req.body.rif, payload.user.rif)
             if (req.body.rif === payload.user.rif) {
                 req.id = payload.user.id || 0;
+                req.enviocorreo = payload.user.enviocorreo || 0;
                 req.validarinterno = payload.user.validarinterno || 0;
                 req.rif = payload.user.rif || '';
                 req.razonsocial = payload.user.razonsocial || '';

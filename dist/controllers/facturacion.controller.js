@@ -427,7 +427,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
             const wheresede = " WHERE a.id = $1";
             const respsede = yield database_1.pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]);
-            // console.log(respsede.rows[0])
             const enviocorreo = respsede.rows[0].enviocorreo || 0;
             const emailbcc = respsede.rows[0].emailbcc || '';
             const sitioweb = respsede.rows[0].sitioweb;
