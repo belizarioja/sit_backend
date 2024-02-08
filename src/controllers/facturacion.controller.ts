@@ -777,7 +777,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
         const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
-                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 140px;">
+                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 130px;">
                             </td>
                             <td style="text-align:center;"  colspan="2">
                                 <span style="font-size: 10px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
@@ -803,12 +803,15 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                 </tr>
                 
                 <tr>
-                    <td style="padding: 0 30px;" colspan="3">
+                    <td style="padding: 0 30px;" colspan="2">
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
                             <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
+                    </td>
+                    <td style="text-align: center; padding-top: 30px;">
+                        <img src="${SERVERFILE}utils/correoenviado.png" style="max-width: 200px;">            
                     </td>
                 </tr>
                 <tr>
