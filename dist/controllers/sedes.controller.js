@@ -176,10 +176,10 @@ exports.getTodosCorelativo = getTodosCorelativo;
 function updateSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial } = req.body;
+            const { rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad } = req.body;
             const { id } = req.params;
-            const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9 where id = $10 ";
-            yield database_1.pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, id]);
+            const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9, publicidad = $10 where id = $11 ";
+            yield database_1.pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad, id]);
             const datatoken = {
                 id,
                 rif,

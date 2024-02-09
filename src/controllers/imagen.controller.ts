@@ -50,6 +50,7 @@ export async function setImagen (req: Request, res: Response): Promise<Response 
         form.parse(req, (_: any, fields: any, files: {}) => {          
           res.send('Imagen cambiada con éxito')
         })
+
         form.on("fileBegin", function(name: any, file: { newFilename: string; filepath: string; }) {
           let regex = /[^.]*/;   
           let fileName = file.newFilename.replace(regex, req.params.rif);

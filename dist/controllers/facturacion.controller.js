@@ -31,6 +31,7 @@ const AMBIENTE = process.env.AMBIENTE;
 const URLFRN = process.env.URLFRN;
 let EMAILBCC = '';
 let URLPUBLICIDADEMAIL = '';
+let ISPUBLICIDAD = '0';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 function setFacturacion(req, res) {
@@ -422,7 +423,7 @@ exports.getNumerointerno = getNumerointerno;
 function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo  ";
+            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad  ";
             const fromsede = " FROM t_serviciosmasivos a ";
             let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
             const wheresede = " WHERE a.id = $1";
@@ -437,19 +438,26 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const textoemail = respsede.rows[0].textoemail || '0';
             const banner = respsede.rows[0].banner || '1';
             const _telefono = respsede.rows[0].telefono;
-            const ispublicidad = respsede.rows[0].publicidad || true;
+            ISPUBLICIDAD = respsede.rows[0].publicidad || '0';
             let URLPUBLICIDAD = '';
-            if (ispublicidad) {
-                URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png';
-                URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png';
-            }
-            else {
-                URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png';
-                URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png';
+            let publicidad = '';
+            let csstabla = 'sinpublicidad';
+            console.log('ISPUBLICIDAD');
+            console.log(ISPUBLICIDAD);
+            if (ISPUBLICIDAD === '1') {
+                csstabla = 'conpublicidad';
+                URLPUBLICIDAD = IMGPDF + _rif + "_publi01.png";
+                URLPUBLICIDADEMAIL = IMGPDF + _rif + "_publi01.png";
+                publicidad = `<tr>
+                    <td colspan="2" class="text-center" style="padding-top:5px;">
+                        <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
+                    </td>
+                </tr>`;
             }
             // const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
             const ubicacionPlantilla = require.resolve("../plantillas/" + _rif + ".html");
             let contenidoHtml = fs_1.default.readFileSync(ubicacionPlantilla, 'utf8');
+            contenidoHtml = contenidoHtml.replace("{{csstabla}}", csstabla);
             const annioenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY");
             const mesenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM");
             const diaenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD");
@@ -516,11 +524,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let trbaseigtf = `<tr>
             <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
-        </tr>`;
-            let publicidad = `<tr>
-            <td colspan="2" class="text-center" style="padding-top:5px;">
-                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
-            </td>
         </tr>`;
             let _impuestoigtfusd = 0;
             let _baseigtfusd = 0;
@@ -599,7 +602,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
             contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
-            if (ispublicidad) {
+            if (ISPUBLICIDAD) {
                 contenidoHtml = contenidoHtml.replace("{{publicidad}}", publicidad);
             }
             else {
@@ -718,9 +721,17 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 secure: false */
             });
             const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
+            let htmlpublicidad = ``;
+            if (ISPUBLICIDAD === '1') {
+                htmlpublicidad = `<tr>
+                <td style="padding:  0px 30px 20px;" colspan="3">               
+                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
+                </td>
+            </tr>`;
+            }
             const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
-                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 140px;">
+                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 130px;">
                             </td>
                             <td style="text-align:center;"  colspan="2">
                                 <span style="font-size: 10px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
@@ -737,7 +748,8 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                         </tr>` : '';
             // console.log(_estatus)
             const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.';
-            const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
+            const html_1 = `
+        <div style="width: 100%;display: flex;justify-content: center;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
                     <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 50px; padding-top: 30px;">
@@ -746,33 +758,32 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 </tr>
                 
                 <tr>
-                    <td style="padding: 0 30px;" colspan="3">
+                    <td style="padding: 0 5px 0px 30px; width: 525px;" colspan="2">
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
                             <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
                     </td>
+                    <td style="text-align: center; padding-top: 30px;">
+                        <img src="${SERVERFILE}utils/correoenviado.png" style="max-width: 200px;">            
+                    </td>
                 </tr>
                 <tr>
-                    <td style="padding: 20px 30px;" colspan="2">   
-                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
+                    <td style="padding: 20px 30px; text-align: center;" colspan="2">   
+                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 150px;">            
                     </td>
-                    <td style="padding: 0 30px;">               
+                    <td style="padding: 20px 30px 0 0;">
                             <p style="text-align:right; color: #632508; font-size: 16px;">
-                            <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
-                            <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
-                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
+                            <span>Número documento: <br><span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                            <span>Fecha emisión: <br><span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;font-size: 11px;">
                                 <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
                             </span>
                         </p>
                     </td>
                 </tr>
-                <tr>
-                <td style="padding:  0px 30px 20px;" colspan="3">               
-                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
-                </td>
-            </tr> 
+                ${htmlpublicidad}
                 ${texto_1}
                 <tr height="40px" style="background: #f25004;">
                     <td colspan="3" style="text-align: center;">

@@ -20,6 +20,7 @@ const URLFRN = process.env.URLFRN
 
 let  EMAILBCC = ''
 let URLPUBLICIDADEMAIL = ''
+let ISPUBLICIDAD = '0'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
@@ -459,7 +460,7 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
 
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         const wheresede = " WHERE a.id = $1";
@@ -474,20 +475,27 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const textoemail = respsede.rows[0].textoemail || '0'
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
-        const ispublicidad = respsede.rows[0].publicidad || true
+        ISPUBLICIDAD = respsede.rows[0].publicidad || '0'
         let URLPUBLICIDAD = ''
-        if (ispublicidad) {
-            URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
-            URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png'
-        } else {
-            URLPUBLICIDAD = FILEPDF + 'utils/publicidad.png'
-            URLPUBLICIDADEMAIL = SERVERFILE + 'utils/publicidad.png'
+        let publicidad = ''
+        let csstabla = 'sinpublicidad'
+        console.log('ISPUBLICIDAD')
+        console.log(ISPUBLICIDAD)
+        if (ISPUBLICIDAD === '1') {
+            csstabla = 'conpublicidad'
+            URLPUBLICIDAD = IMGPDF+_rif + "_publi01.png"
+            URLPUBLICIDADEMAIL = IMGPDF+_rif + "_publi01.png"
+            publicidad = `<tr>
+                    <td colspan="2" class="text-center" style="padding-top:5px;">
+                        <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
+                    </td>
+                </tr>`
         }
 
         // const ubicacionPlantilla = require.resolve("../plantillas/factura.html");
         const ubicacionPlantilla = require.resolve("../plantillas/" + _rif + ".html");
         let contenidoHtml = fs.readFileSync(ubicacionPlantilla, 'utf8')
-        
+        contenidoHtml = contenidoHtml.replace("{{csstabla}}", csstabla)        
         const annioenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("YYYY")
         const mesenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("MM")
         const diaenvio = moment(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD")
@@ -563,11 +571,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
-        let publicidad = `<tr>
-            <td colspan="2" class="text-center" style="padding-top:5px;">
-                <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
-            </td>
-        </tr>`
+       
         
         let _impuestoigtfusd = 0
         let _baseigtfusd = 0
@@ -653,7 +657,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);      
         
         contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
-        if(ispublicidad) {
+        if(ISPUBLICIDAD) {
             contenidoHtml = contenidoHtml.replace("{{publicidad}}", publicidad);
         } else {
             contenidoHtml = contenidoHtml.replace("{{publicidad}}", '');
@@ -775,6 +779,14 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         });
         
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
+        let htmlpublicidad = ``
+        if(ISPUBLICIDAD === '1') {
+            htmlpublicidad = `<tr>
+                <td style="padding:  0px 30px 20px;" colspan="3">               
+                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
+                </td>
+            </tr>`
+        }
         const footer = `<tr height="50px">
                             <td style="text-align:center; width: 20%;">
                                 <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 130px;">
@@ -794,7 +806,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                         </tr>` : ''
         // console.log(_estatus)
         const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.' 
-        const html_1 = `<div style="width: 100%;display: flex;justify-content: center;">
+        const html_1 = `
+        <div style="width: 100%;display: flex;justify-content: center;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
                     <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 50px; padding-top: 30px;">
@@ -803,7 +816,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                 </tr>
                 
                 <tr>
-                    <td style="padding: 0 30px;" colspan="2">
+                    <td style="padding: 0 5px 0px 30px; width: 525px;" colspan="2">
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
@@ -815,24 +828,20 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 20px 30px;" colspan="2">   
-                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 130px;">            
+                    <td style="padding: 20px 30px; text-align: center;" colspan="2">   
+                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 150px;">            
                     </td>
-                    <td style="padding: 0 30px;">               
+                    <td style="padding: 20px 30px 0 0;">
                             <p style="text-align:right; color: #632508; font-size: 16px;">
-                            <span>Número documento: <span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
-                            <span>Fecha emisión: <span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
-                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;">
+                            <span>Número documento: <br><span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                            <span>Fecha emisión: <br><span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;font-size: 11px;">
                                 <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
                             </span>
                         </p>
                     </td>
                 </tr>
-                <tr>
-                <td style="padding:  0px 30px 20px;" colspan="3">               
-                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
-                </td>
-            </tr> 
+                ${htmlpublicidad}
                 ${texto_1}
                 <tr height="40px" style="background: #f25004;">
                     <td colspan="3" style="text-align: center;">

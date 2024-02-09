@@ -72,6 +72,8 @@ function setImagen(req, res) {
             form.on("fileBegin", function (name, file) {
                 let regex = /[^.]*/;
                 let fileName = file.newFilename.replace(regex, req.params.rif);
+                console.log('path.join( __dirname + fileName)');
+                console.log(path_1.default.join(__dirname + '/images', fileName));
                 file.filepath = path_1.default.join(__dirname + '/images', fileName);
             });
         }
