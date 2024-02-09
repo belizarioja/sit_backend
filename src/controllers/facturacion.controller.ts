@@ -484,7 +484,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         if (ISPUBLICIDAD === '1') {
             csstabla = 'conpublicidad'
             URLPUBLICIDAD = IMGPDF+_rif + "_publi01.png"
-            URLPUBLICIDADEMAIL = IMGPDF+_rif + "_publi01.png"
+            URLPUBLICIDADEMAIL = SERVERIMG+_rif + "_publi01.png"
             publicidad = `<tr>
                     <td colspan="2" class="text-center" style="padding-top:5px;">
                         <img class="img-fluid" src="${URLPUBLICIDAD}" alt="Publicidad" width="100%" height="80" >
