@@ -767,14 +767,14 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 </tr>
                 
                 <tr>
-                    <td style="padding: 0 5px 0px 30px; width: 525px;" colspan="2">
+                    <td style="padding: 0 5px 0px 25px;" colspan="2">
                         <p style="text-align:left; display: grid;">
                             <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
                             <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
                             <span style="color: #632508; font-size: 16px;">${mensaje} </span>
                         </p>
                     </td>
-                    <td style="text-align: center; padding-top: 30px;">
+                    <td style="text-align: center; padding-top: 30px; width: 217px;">
                         <img src="${SERVERFILE}utils/correoenviado.png" style="max-width: 200px;">            
                     </td>
                 </tr>
