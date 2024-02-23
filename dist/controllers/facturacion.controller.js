@@ -755,7 +755,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             // console.log(_estatus)
             const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.';
             const html_1 = `
-        <div style="width: 800px;display: flex; justify-content: center !important; background: #d6d6d6;">
+        <div style="width: 800px;display: inline-flex; justify-content: center !important; background: #d6d6d6;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
                     <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_${_banner}.png); text-align: left; padding-left: 50px; padding-top: 30px;">
