@@ -37,14 +37,15 @@
                                 <td style="padding-right: 10px;">
                                     <img class="img-fluid" src="{{logo}}" alt="Logotipo" width="100" >
                                 </td>
-                                <td class="tarjetaEmisores">
-                                    <div style="font-size: 9px;">{{direccion}}</div>
-                                    <div style="font-size: 9px;">{{rif}}</div>
-                                    <div style="font-size: 9px;">{{telefono}}</div>
-                                    <!-- <span style="font-size: 9px;">{{direccion}}</span> -->
+                                <td>
+                                    <div class="tarjetaEmisores">
+                                        <div style="font-size: 9px;">{{direccion}}</div>
+                                        <div style="font-size: 9px;">{{rif}}</div>
+                                        <div style="font-size: 9px;">{{telefono}}</div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <table style="width: 100%;">
+                                    <table style="width: 100%; margin-left: 10px;">
                                         <tr>
                                             <td class="text-right" style="font-size: 11px;font-weight: bolder;">Fecha de emisión</td>
                                             <td class="text-right" style="font-size: 11px;font-weight: bolder;">N° de Control</td>
@@ -58,9 +59,10 @@
                                             <td class="text-right" style="font-size: 11px;font-weight: bolder;">Fecha de asignación</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-right" style="font-size: 9px;">{{hora}}</td>
-                                            <td class="text-right" style="font-size: 9px;">{{fechaasignacion}}</td>
+                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{hora}}</td>
+                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{fechaasignacion}}</td>
                                         </tr>
+                                        {{afectado}}
                                     </table>  
                                 </td>
                             </tr>
@@ -184,6 +186,7 @@
     }
     .tarjetaEmisores {
         background: #ddd !important;
+        border-radius: 8px !important;
         display: grid !important;
         padding: 10px !important;
         width: 200px;
@@ -200,4 +203,9 @@
         width: 100% !important;
         height: 240px !important;
     }
+    .afectado {
+        padding: 3px 7px !important;
+        background: #ECF6FF !important;
+        color: #65778D !important;
+    }    
 </style>

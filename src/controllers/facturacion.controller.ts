@@ -609,9 +609,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const emailpdf =_emailcliente.split('|').join(', ')
 
         const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF'
-        const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a:' : ''
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
-        const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? '<br>' + tipoafectado + '<br>' + _numeroafectado + '<br>' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
+        const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado : ''
+        const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ?  _numeroafectado + ' de fecha ' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
         console.log("AMBIENTE")
         console.log(AMBIENTE)
         
@@ -628,6 +628,13 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 contenidoHtml = contenidoHtml.replace("{{fondomarca}}", '');
             }
         }
+        let afectado = ''
+        if (docafectado.length > 0){
+            afectado = `<tr>
+                        <td class="text-right afectado" style="font-weight: 700;font-size: 8px;">${docafectado}</td>
+                        <td class="text-left afectado" style="font-size: 8px;">&nbsp;&nbsp;N° ${numeroafectado}</td>
+                    </tr>`
+        }
         const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
         contenidoHtml = contenidoHtml.replace("{{codeqr}}", folderPathQr);
         contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF+_rif + ".png");
@@ -638,8 +645,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{numerodocumento}}", _pnumero);
         contenidoHtml = contenidoHtml.replace("{{numerointerno}}", _numerointerno);
         contenidoHtml = contenidoHtml.replace("{{tipodocumento}}", tipodoc);
-        contenidoHtml = contenidoHtml.replace("{{numeroafectado}}", numeroafectado);
-        contenidoHtml = contenidoHtml.replace("{{documentoafectado}}", docafectado);
+        contenidoHtml = contenidoHtml.replace("{{afectado}}", afectado);
         contenidoHtml = contenidoHtml.replace("{{tipocedula}}", tipocedula);
         contenidoHtml = contenidoHtml.replace("{{direccioncliente}}", _direccioncliente);
         contenidoHtml = contenidoHtml.replace("{{telefonocliente}}", _telefonocliente);
