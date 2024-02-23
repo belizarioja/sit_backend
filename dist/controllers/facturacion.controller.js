@@ -757,7 +757,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
             const html_1 = `
         <table style="width: 100%;">
         <tr>
-        <td style="display: flex; justify-content: center !important; background: #d6d6d6;">
+        <td style="text-align: -webkit-center !important; background: #d6d6d6;">
           <div style="width: 600px;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
