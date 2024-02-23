@@ -580,8 +580,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let afectado = '';
             if (docafectado.length > 0) {
                 afectado = `<tr>
-                        <td class="text-right afectado" style="font-weight: 700;font-size: 8px;">${docafectado}</td>
-                        <td class="text-left afectado" style="font-size: 8px;">&nbsp;&nbsp;N° ${numeroafectado}</td>
+                        <td class="text-right afectado" style="font-weight: 700;font-size: 7px;">${docafectado}</td>
+                        <td class="text-left afectado" style="font-size: 7px;">&nbsp;&nbsp;N° ${numeroafectado}</td>
                     </tr>`;
             }
             const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
