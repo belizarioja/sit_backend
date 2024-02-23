@@ -610,8 +610,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
         const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF'
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
-        const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado : ''
-        const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ?  _numeroafectado + ' de fecha ' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
+        const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' N°' +  _numeroafectado : ''
+        const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ?  'de fecha ' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
         console.log("AMBIENTE")
         console.log(AMBIENTE)
         
@@ -632,7 +632,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         if (docafectado.length > 0){
             afectado = `<tr>
                         <td class="text-right afectado" style="font-weight: 700;font-size: 7px;">${docafectado}</td>
-                        <td class="text-left afectado" style="font-size: 7px;">&nbsp;&nbsp;N° ${numeroafectado}</td>
+                        <td class="text-left afectado" style="font-size: 7px;">&nbsp;${numeroafectado}</td>
                     </tr>`
         }
         const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
