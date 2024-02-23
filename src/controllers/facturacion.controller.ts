@@ -813,7 +813,9 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         // console.log(_estatus)
         const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.' 
         const html_1 = `
-        <div style="width: 100%;display: inline-flex; justify-content: center !important; background: #d6d6d6;">
+        <table style="width: 100%;">
+        <tr>
+        <td style="display: flex; justify-content: center !important; background: #d6d6d6;">
           <div style="width: 600px;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
@@ -858,7 +860,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                     </td>
                 </tr>
                 ${footer}
-            </table></div></div>
+            </table></div></td></tr></table>
             `;            
         // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
         const htmlfinal = html_1
