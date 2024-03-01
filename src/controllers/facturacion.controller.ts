@@ -864,9 +864,14 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             `;            
         // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
         const htmlfinal = html_1
-        // console.log(htmlfinal)
         const arregloemail = _email.split('|')
-        const correobcc = (_prif === 'J-00075363-6' && _tipodoc === 'Guía de despacho') ? _emailbcc : ''
+        const arreglocorreobcc = _emailbcc.split('|')
+        // console.log('arreglocorreobcc')
+        // console.log(arreglocorreobcc)
+        const correobcc = arreglocorreobcc ? arreglocorreobcc.join(';') : ''
+        // console.log('correobcc')
+        // console.log(correobcc)
+
         let p = 0;
          for(let i = 0; i< arregloemail.length; i++) {
             let mail_options = {
@@ -884,15 +889,12 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             };
             transporter.sendMail(mail_options, async (error: any, info: { response: string; }) => {
                 if (error) {
-                    console.log(error);
+                    // console.log(error);
                     return res.status(400).send('Error Interno Enviando correo :  ' + error);
                 } else {                          
                     if(p === 0) {
                         const updcorreo = 'UPDATE t_registros SET estatuscorreo = 1 WHERE numerodocumento = $1 '
-                        // console.log(_pnumero);
                         await pool.query(updcorreo, [_pnumero])  
-                        // console.log("p");
-                        // console.log(p);
                         p = 1;   
                     }                   
                     console.log('El correo a ' + arregloemail[i] + ' se envío correctamente ' + info.response);

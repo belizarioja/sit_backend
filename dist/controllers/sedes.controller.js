@@ -79,10 +79,10 @@ exports.getSede = getSede;
 function setSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno } = req.body;
-            const insert = "insert into t_serviciosmasivos (rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno, banner, estatus) ";
-            const values = " values ($1, $2, $3, $4, $5, $6, $7, $8, $9, 1, 1) RETURNING id";
-            let resp = yield database_1.pool.query(insert + values, [rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno]);
+            const { rif, razonsocial, direccion, email, emailbcc, telefono, enviocorreo, asignados, sitioweb, validarinterno } = req.body;
+            const insert = "insert into t_serviciosmasivos (rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno, emailbcc, banner, estatus) ";
+            const values = " values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 1, 1) RETURNING id";
+            let resp = yield database_1.pool.query(insert + values, [rif, razonsocial, direccion, email, telefono, enviocorreo, asignados, sitioweb, validarinterno, emailbcc]);
             // console.log(resp.rows[0].id)
             const id = resp.rows[0].id;
             const datatoken = {
@@ -176,10 +176,10 @@ exports.getTodosCorelativo = getTodosCorelativo;
 function updateSede(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad } = req.body;
+            const { rif, razonsocial, direccion, email, emailbcc, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad } = req.body;
             const { id } = req.params;
-            const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9, publicidad = $10 where id = $11 ";
-            yield database_1.pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad, id]);
+            const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9, publicidad = $10, emailbcc = $11 where id = $12 ";
+            yield database_1.pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad, emailbcc, id]);
             const datatoken = {
                 id,
                 rif,
