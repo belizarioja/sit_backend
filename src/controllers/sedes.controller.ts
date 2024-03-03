@@ -207,3 +207,33 @@ export async function updateEstatus (req: Request, res: Response): Promise<Respo
         return res.status(400).send('Error Actualizando Estatus de Servicios masivos ' + e);
     }
 }
+export async function updatePlantilla (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { plantilla, rif } = req.body;
+        const { id } = req.params;       
+
+        const sqlupd = "update t_serviciosmasivos set plantillapdf = $1 where id = $2 ";
+        await pool.query(sqlupd, [plantilla, id])
+
+        const archivoplantilla = path.join(__dirname, '../plantillas/factura'+ plantilla + '.html')
+        const datafile = fs.readFileSync(archivoplantilla)
+        const nuevaplantilla = path.join(__dirname, '../plantillas/' + rif + '.html')
+
+        if (fs.existsSync(archivoplantilla)) {
+            // console.log('Existe!!!')
+            fs.renameSync(archivoplantilla, nuevaplantilla)
+            fs.writeFileSync(archivoplantilla, datafile)
+        }
+        const data = {
+            success: true,
+            resp: {
+                message: "Plantilla PDF de Servicios actualizado con éxito"
+            }
+        };
+        return res.status(200).json(data);
+        
+    }
+    catch (e) {
+        return res.status(400).send('Error Actualizando Plantilla PDF de Servicios masivos ' + e);
+    }
+}

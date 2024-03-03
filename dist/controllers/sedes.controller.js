@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateEstatus = exports.updateSede = exports.getTodosCorelativo = exports.getSedeCorelativo = exports.setSede = exports.getSede = exports.getSedes = exports.getCodes = void 0;
+exports.updatePlantilla = exports.updateEstatus = exports.updateSede = exports.getTodosCorelativo = exports.getSedeCorelativo = exports.setSede = exports.getSede = exports.getSedes = exports.getCodes = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -227,3 +227,32 @@ function updateEstatus(req, res) {
     });
 }
 exports.updateEstatus = updateEstatus;
+function updatePlantilla(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { plantilla, rif } = req.body;
+            const { id } = req.params;
+            const sqlupd = "update t_serviciosmasivos set plantillapdf = $1 where id = $2 ";
+            yield database_1.pool.query(sqlupd, [plantilla, id]);
+            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura' + plantilla + '.html');
+            const datafile = fs_1.default.readFileSync(archivoplantilla);
+            const nuevaplantilla = path_1.default.join(__dirname, '../plantillas/' + rif + '.html');
+            if (fs_1.default.existsSync(archivoplantilla)) {
+                // console.log('Existe!!!')
+                fs_1.default.renameSync(archivoplantilla, nuevaplantilla);
+                fs_1.default.writeFileSync(archivoplantilla, datafile);
+            }
+            const data = {
+                success: true,
+                resp: {
+                    message: "Plantilla PDF de Servicios actualizado con éxito"
+                }
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Actualizando Plantilla PDF de Servicios masivos ' + e);
+        }
+    });
+}
+exports.updatePlantilla = updatePlantilla;

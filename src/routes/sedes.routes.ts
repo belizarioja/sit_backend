@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getSedes, setSede, updateSede, updateEstatus, getSedeCorelativo, getCodes, getTodosCorelativo, getSede } from '../controllers/sedes.controller';
+import { getSedes, setSede, updateSede, updateEstatus, getSedeCorelativo, getCodes, getTodosCorelativo, getSede, updatePlantilla } from '../controllers/sedes.controller';
 
 const router = Router();
 
@@ -15,6 +15,7 @@ router.route('/:id')
     .get(getSedeCorelativo)
     .put(updateSede)
 
-router.route('/estatus/:id').put(updateEstatus)
+    router.route('/estatus/:id').put(updateEstatus)
+    router.route('/plantilla/:id').put(updatePlantilla)
         
 export default router;

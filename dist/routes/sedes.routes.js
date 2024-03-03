@@ -13,4 +13,5 @@ router.route('/:id')
     .get(sedes_controller_1.getSedeCorelativo)
     .put(sedes_controller_1.updateSede);
 router.route('/estatus/:id').put(sedes_controller_1.updateEstatus);
+router.route('/plantilla/:id').put(sedes_controller_1.updatePlantilla);
 exports.default = router;
