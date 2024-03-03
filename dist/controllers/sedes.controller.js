@@ -105,7 +105,7 @@ function setSede(req, res) {
             // const values2 = "('2', '#0d3b81', '#e3e4e5', '#FFFFFF', '#575756', $1), ";
             // const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
             yield database_1.pool.query(insertplantilla + values1, [id]);
-            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura.html');
+            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura1.html');
             const datafile = fs_1.default.readFileSync(archivoplantilla);
             const nuevaplantilla = path_1.default.join(__dirname, '../plantillas/' + rif + '.html');
             if (fs_1.default.existsSync(archivoplantilla)) {

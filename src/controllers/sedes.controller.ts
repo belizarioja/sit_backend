@@ -86,7 +86,7 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
         // const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
         await pool.query(insertplantilla + values1, [id])
 
-        const archivoplantilla = path.join(__dirname, '../plantillas/factura.html')
+        const archivoplantilla = path.join(__dirname, '../plantillas/factura1.html')
         const datafile = fs.readFileSync(archivoplantilla)
         const nuevaplantilla = path.join(__dirname, '../plantillas/' + rif + '.html')
 
