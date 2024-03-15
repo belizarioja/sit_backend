@@ -16,7 +16,7 @@ function getBitacora(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idusuario, idevento, desde, hasta } = req.body;
-            const sql = "select a.idusuario, a.idevento, c.evento, b.usuario, b.nombre, a.ip, a.fecha, a.observacion ";
+            const sql = "select a.idusuario, a.idevento, c.evento, b.usuario, b.nombre, b.idrol, a.ip, a.fecha, a.observacion ";
             const from = " from t_bitacoras a, t_usuarios b, t_eventos c ";
             let where = " where a.idusuario = b.id AND a.idevento = c.id ";
             if (idusuario) {

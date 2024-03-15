@@ -9,7 +9,7 @@ import { pool } from '../database'
 export async function getLogin (req: Request, res: Response): Promise<Response | void> {
     try {
         const { usuario, clave } = req.body;
-        const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus ";
+        const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc ";
         const from = " from t_usuarios a ";
         let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
         leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -50,7 +50,7 @@ export async function getLogin (req: Request, res: Response): Promise<Response |
 }
 export async function getUsuarios (req: Request, res: Response): Promise<Response | void> {
     try {
-        const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus ";
+        const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc ";
         const from = " from t_usuarios a ";
         let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
         leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -133,6 +133,26 @@ export async function updateClave (req: Request, res: Response): Promise<Respons
             success: true,
             resp: {
                 message: "Clave de Usuario actualizado con éxito"
+            }
+        };
+        return res.status(200).json(data);
+        
+    }
+    catch (e) {
+        return res.status(400).send('Error Actualizando Clave de Usuarios ' + e);
+    }
+}
+export async function updateEmail (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { nuevoemail } = req.body;
+        const { id } = req.params;       
+
+        const sqlupd = "update t_usuarios set emailbcc = $1 where id = $2 ";
+        await pool.query(sqlupd, [nuevoemail, id])
+        const data = {
+            success: true,
+            resp: {
+                message: "Email de Usuario actualizado con éxito"
             }
         };
         return res.status(200).json(data);

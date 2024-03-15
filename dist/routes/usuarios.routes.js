@@ -9,4 +9,5 @@ router.route('/login').post(usuarios_controller_1.getLogin);
 router.route('/roles').get(usuarios_controller_1.getRoles);
 router.route('/estatus/:id').put(usuarios_controller_1.updateEstatus);
 router.route('/cambioclave/:id').put(usuarios_controller_1.updateClave);
+router.route('/cambioemail/:id').put(usuarios_controller_1.updateEmail);
 exports.default = router;

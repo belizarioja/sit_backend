@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateClave = exports.updateEstatus = exports.setUsuarios = exports.getRoles = exports.getUsuarios = exports.getLogin = void 0;
+exports.updateEmail = exports.updateClave = exports.updateEstatus = exports.setUsuarios = exports.getRoles = exports.getUsuarios = exports.getLogin = void 0;
 // import crypto from 'crypto';
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const SECRET = process.env.SECRET || '123456';
@@ -22,7 +22,7 @@ function getLogin(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { usuario, clave } = req.body;
-            const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus ";
+            const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc ";
             const from = " from t_usuarios a ";
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -64,7 +64,7 @@ exports.getLogin = getLogin;
 function getUsuarios(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus ";
+            const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc ";
             const from = " from t_usuarios a ";
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -165,3 +165,24 @@ function updateClave(req, res) {
     });
 }
 exports.updateClave = updateClave;
+function updateEmail(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { nuevoemail } = req.body;
+            const { id } = req.params;
+            const sqlupd = "update t_usuarios set emailbcc = $1 where id = $2 ";
+            yield database_1.pool.query(sqlupd, [nuevoemail, id]);
+            const data = {
+                success: true,
+                resp: {
+                    message: "Email de Usuario actualizado con éxito"
+                }
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Actualizando Clave de Usuarios ' + e);
+        }
+    });
+}
+exports.updateEmail = updateEmail;

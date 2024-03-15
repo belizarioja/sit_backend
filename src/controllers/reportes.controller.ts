@@ -414,22 +414,35 @@ export async function getDocProcesados (req: Request, res: Response): Promise<Re
 export async function getUltimaSemana (req: Request, res: Response): Promise<Response | void> {
     try {
         const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+        const week = []
+        // const current = moment().format('YYYY-MM-DD')
+        const numdayhoy = moment().isoWeekday()
+        const startdate = moment().subtract(numdayhoy - 1, 'days')
+        const numdaystart = moment(startdate).isoWeekday()
+        // console.log(numdayhoy, startdate, numdaystart)
+        for (let i = 0; i < 7; i++) {
+            const newdate = moment(startdate).add(i, 'days').format('YYYY-MM-DD')
+            console.log(newdate)
+            week.push(newdate)         
+        }
+        
         const hoy = moment().format('YYYY-MM-DD')
-        const hace1dia = moment().subtract(1, 'days').format('YYYY-MM-DD')
+        
+        /* const hace1dia = moment().subtract(1, 'days').format('YYYY-MM-DD')
         const hace2dia = moment().subtract(2, 'days').format('YYYY-MM-DD')
         const hace3dia = moment().subtract(3, 'days').format('YYYY-MM-DD')
         const hace4dia = moment().subtract(4, 'days').format('YYYY-MM-DD')
         const hace5dia = moment().subtract(5, 'days').format('YYYY-MM-DD')
-        const hace6dia = moment().subtract(6, 'days').format('YYYY-MM-DD')
+        const hace6dia = moment().subtract(6, 'days').format('YYYY-MM-DD') */
         
         let sql = "SELECT a.id, a.razonsocial, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $1 ) AS hoy, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $2 ) AS hace1dia, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $3 ) AS hace2dia, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $4 ) AS hace3dia, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $5 ) AS hace4dia, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $6 ) AS hace5dia, ";
-        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $7 ) AS hace6dia ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $1 ) AS lunes, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $2 ) AS martes, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $3 ) AS miercoles, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $4 ) AS jueves, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $5 ) AS viernes, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $6 ) AS sabado, ";
+        sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $7 ) AS domingo ";
         const from = " from t_serviciosmasivos a ";
 
         let where = " where a.estatus = 1 ";
@@ -445,7 +458,7 @@ export async function getUltimaSemana (req: Request, res: Response): Promise<Res
         } */
         const orderby = " order by a.id ";
         // console.log(sql + from + where + orderby)
-        const resp = await pool.query(sql + from + where + orderby,[hoy, hace1dia, hace2dia, hace3dia, hace4dia, hace5dia, hace6dia]);        
+        const resp = await pool.query(sql + from + where + orderby,[week[0], week[1], week[2], week[3], week[4], week[5], week[6]]);        
         // console.log('resp.rows despues')
         // console.log(resp.rows)
         const data = {
