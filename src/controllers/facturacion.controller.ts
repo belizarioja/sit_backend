@@ -700,8 +700,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let creditofiscal = '';
             if (Number(_idtipodoc) === 4 || Number(_idtipodoc) === 5) {
                 creditofiscal =`<tr>
-                        <td colspan="2" class="text-left" style="padding-left:20px;padding-right:20px;padding-top:5px;">
-                            <p style="font-size: 8px;font-family:'Calibri'">Sin derecho a crédito fiscal.</p>
+                        <td colspan="2" class="text-left" style="padding-top:5px;">
+                            <p style="font-size: 7px;font-family:'Calibri'">Sin derecho a crédito fiscal.</p>
                         </td>
                     </tr>`;
             } 
