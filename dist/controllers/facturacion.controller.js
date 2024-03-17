@@ -498,11 +498,11 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
         </tr>`;
             }
-            const coletillaigtf = "En caso de Factura emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. ";
+            const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
+            const coletillaigtf = "En caso de " + tipodoc + " emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. ";
             const coletillabcv = "Artículo 25: ";
             const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."';
             let coletilla = coletillaigtf + coletillabcv + coletillabcv2;
-            const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 8px;padding: 3px;"></td>
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${_observacion}</td>
@@ -635,6 +635,16 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));
             contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
             contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
+            // NOTA DE ENTREGA GUIA DE DESPACHOS
+            let creditofiscal = '';
+            if (Number(_idtipodoc) === 4 || Number(_idtipodoc) === 5) {
+                creditofiscal = `<tr>
+                        <td colspan="2" class="text-left" style="padding-left:20px;padding-right:20px;padding-top:5px;">
+                            <p style="font-size: 8px;font-family:'Calibri'">Sin derecho a crédito fiscal.</p>
+                        </td>
+                    </tr>`;
+            }
+            contenidoHtml = contenidoHtml.replace("{{creditofiscal}}", creditofiscal);
             // console.log(contenidoHtml)
             html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
