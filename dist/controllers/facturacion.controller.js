@@ -69,7 +69,7 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.' + lotepiedepagina;
+            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina;
             if (rifcedulacliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
@@ -469,8 +469,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let subtotal = 0;
             let exentos = 0;
             // let descuento = 0;
-            let impuestos = 0;
-            let baseiva = 0;
+            // let impuestos = 0;
+            let _impuestog = 0;
+            let _impuestor = 0;
+            let _impuestoa = 0;
             for (const producto of productos) {
                 // Aumentar el total
                 const totalProducto = (producto.cantidad * producto.precio) - producto.descuento;
@@ -480,8 +482,16 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     exentos += totalProducto;
                 }
                 else {
-                    impuestos += totalProducto * producto.tasa / 100;
-                    baseiva += totalProducto;
+                    if (Number(producto.tasa) === 16) {
+                        _impuestog += totalProducto * producto.tasa / 100;
+                    }
+                    if (Number(producto.tasa) === 8) {
+                        _impuestor += totalProducto * producto.tasa / 100;
+                    }
+                    if (Number(producto.tasa) === 31) {
+                        _impuestoa += totalProducto * producto.tasa / 100;
+                    }
+                    // baseiva += totalProducto;
                 }
                 let productoitem = `<span>${producto.descripcion}</span>`;
                 if (producto.comentario.length > 0) {
@@ -525,6 +535,18 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`;
+            let trbaseg = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
+        </tr>`;
+            let trbaser = `<tr>
+            <td class=" text-right" style="font-size: 8px;">Reducido 8% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
+        </tr>`;
+            let trbasea = `<tr>
+            <td class=" text-right" style="font-size: 8px;">Al lujo 31% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
+        </tr>`;
             let _impuestoigtfusd = 0;
             let _baseigtfusd = 0;
             let _baseivausd = 0;
@@ -546,7 +568,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // const subtotalConDescuento = subtotal - descuento;        
             const subtotalConDescuento = subtotal;
             // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
-            const total = subtotalConDescuento + impuestos + Number(_impuestoigtf);
+            const total = subtotalConDescuento + _impuestog + _impuestor + _impuestoa + Number(_impuestoigtf);
             // console.log(total)
             // const fecha = moment().format('DD/MM/YYYY hh:mm:ss a');
             // Remplazar el valor {{tablaProductos}} por el verdadero valor
@@ -607,6 +629,22 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
+            console.log(_impuestog, _impuestor, _impuestoa, _impuestoigtf);
+            if (_impuestog === 0) {
+                trbaseg = '';
+            }
+            if (_impuestor === 0) {
+                trbaser = '';
+            }
+            if (_impuestoa === 0) {
+                trbasea = '';
+            }
+            if (_impuestoigtf === 0) {
+                trbaseigtf = '';
+            }
+            contenidoHtml = contenidoHtml.replace("{{trbaseg}}", trbaseg);
+            contenidoHtml = contenidoHtml.replace("{{trbaser}}", trbaser);
+            contenidoHtml = contenidoHtml.replace("{{trbasea}}", trbasea);
             contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
             if (ISPUBLICIDAD) {
                 contenidoHtml = contenidoHtml.replace("{{publicidad}}", publicidad);
@@ -620,18 +658,18 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let totalusd = 0;
             if (_tasacambio > 0) {
                 subtotalusd = Number(subtotal) / Number(_tasacambio);
-                impuestosusd = Number(impuestos) / Number(_tasacambio);
+                // impuestosusd = Number(impuestos)/Number(_tasacambio)
                 exentosusd = Number(exentos) / Number(_tasacambio);
                 totalusd = Number(total) / Number(_tasacambio);
-                contenidoHtml = contenidoHtml.replace("{{baseivausd}}", completarDecimales(Number(_baseivausd)));
+                //  contenidoHtml = contenidoHtml.replace("{{baseivausd}}", completarDecimales(Number(_baseivausd)));
                 contenidoHtml = contenidoHtml.replace("{{subtotalusd}}", completarDecimales(Number(subtotalusd)));
                 contenidoHtml = contenidoHtml.replace("{{impuestosusd}}", completarDecimales(Number(impuestosusd)));
                 contenidoHtml = contenidoHtml.replace("{{exentosusd}}", completarDecimales(Number(exentosusd)));
                 contenidoHtml = contenidoHtml.replace("{{totalusd}}", completarDecimales(Number(totalusd)));
             }
             contenidoHtml = contenidoHtml.replace("{{subtotal}}", completarDecimales(Number(subtotal)));
-            contenidoHtml = contenidoHtml.replace("{{baseiva}}", completarDecimales(Number(baseiva)));
-            contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
+            // contenidoHtml = contenidoHtml.replace("{{baseiva}}", completarDecimales(Number(baseiva)));
+            // contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
             contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));
             contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
             contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
@@ -645,14 +683,21 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     </tr>`;
             }
             contenidoHtml = contenidoHtml.replace("{{creditofiscal}}", creditofiscal);
-            // console.log(contenidoHtml)
-            html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile("dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf", (error) => __awaiter(this, void 0, void 0, function* () {
+            const pathPdf1 = "dist/controllers/temp/" + _rif + "/" + annioenvio + "-" + mesenvio + "/" + _rif + _pnumero + ".pdf";
+            // const icFirmaDocumentosInput = "/opt/icFirmaDocumentos/var/lib/icFirmaDocumentos/input"
+            // const icFirmaDocumentosInput = __dirname
+            const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit";
+            // console.log(icFirmaDocumentosInput)
+            html_pdf_1.default.create(contenidoHtml, { format: "Letter" }).toFile(pathPdf1, (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
                     // console.log("Error creando PDF: " + error)
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
-                    // console.log("PDF creado correctamente");               
+                    console.log("PDF creado correctamente");
+                    //////////////
+                    // FIRMAR PDF
+                    //////////////
                     if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus);

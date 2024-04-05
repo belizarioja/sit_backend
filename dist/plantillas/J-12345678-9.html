@@ -47,19 +47,19 @@
                                 <td>
                                     <table style="width: 95%; margin-left: 10px;">
                                         <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 50%;">Fecha de emisión</td>
                                             <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 48%;">N° de Control</td>
+                                            <td class="text-right" style="font-size: 12px;">{{numerodocumento}}</td>
                                         </tr>
                                         <tr>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 50%;">Fecha de emisión</td>
                                             <td class="text-right" style="font-size: 9px;">{{fecha}}</td>
-                                            <td class="text-right" style="font-size: 9px;">{{numerodocumento}}</td>
                                         </tr>
                                         <tr>
                                             <td class="text-right" style="font-size: 10px;font-weight: bolder;">Hora de emisión</td>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de asignación</td>
+                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{hora}}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{hora}}</td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de asignación</td>
                                             <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{fechaasignacion}}</td>
                                         </tr>
                                         {{afectado}}
@@ -130,10 +130,13 @@
                                 <td class="text-right" style="font-size: 8px;">Subtotal Bs.:</td>
                                 <td class="text-right" style="font-size: 8px;">{{subtotal}}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class=" text-right" style="font-size: 8px;">Impuestos Bs.:</td>
                                 <td class="text-right" style="font-size: 8px;">{{impuestos}}</td>
-                            </tr>
+                            </tr>-->
+                            {{trbaseg}}
+                            {{trbaser}}
+                            {{trbasea}}
                             {{trbaseigtf}}
                             <!-- <tr>
                                 <td class=" text-right" style="font-size: 8px;">IGTF 3%(425,45) Bs.:</td>
