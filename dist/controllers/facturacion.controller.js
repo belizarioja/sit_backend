@@ -509,10 +509,14 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
         </tr>`;
             }
             const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
-            const coletillaigtf = "En caso de " + tipodoc + " emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. ";
-            const coletillabcv = "Artículo 25: ";
-            const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."';
-            let coletilla = coletillaigtf + coletillabcv + coletillabcv2;
+            // const coletillaigtf = "En caso de " + tipodoc + " emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. "
+            // const coletillabcv = "Artículo 25: "
+            // const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."'
+            // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
+            // COLETILLA
+            const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
+            const coletilla2 = " El equivalente en Bs., a tasa de cambio Oficial BCV a Bs/USD de " + _tasacambio + " del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 64º5 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
+            let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 8px;padding: 3px;"></td>
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${_observacion}</td>
@@ -531,10 +535,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
         </tr>`;
-            let trbaseigtf = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
-        </tr>`;
             let trbaseg = `<tr>
             <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
@@ -550,6 +550,11 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let _impuestoigtfusd = 0;
             let _baseigtfusd = 0;
             let _baseivausd = 0;
+            _baseigtfusd = Number(_baseigtf) / Number(_tasacambio);
+            let trbaseigtf = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfusd))}) Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+        </tr>`;
             /* if (_tasacambio > 0) {
                 _impuestoigtfusd = Number(_impuestoigtf)/Number(_tasacambio)
                 _baseigtfusd = Number(_baseigtf)/Number(_tasacambio)

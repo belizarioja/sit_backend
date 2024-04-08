@@ -105,7 +105,7 @@ function setSede(req, res) {
             // const values2 = "('2', '#0d3b81', '#e3e4e5', '#FFFFFF', '#575756', $1), ";
             // const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
             yield database_1.pool.query(insertplantilla + values1, [id]);
-            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura1.html');
+            const archivoplantilla = path_1.default.join(__dirname, '../bases/factura1.html');
             const datafile = fs_1.default.readFileSync(archivoplantilla);
             const nuevaplantilla = path_1.default.join(__dirname, '../plantillas/' + rif + '.html');
             if (fs_1.default.existsSync(archivoplantilla)) {
@@ -234,7 +234,7 @@ function updatePlantilla(req, res) {
             const { id } = req.params;
             const sqlupd = "update t_serviciosmasivos set plantillapdf = $1 where id = $2 ";
             yield database_1.pool.query(sqlupd, [plantilla, id]);
-            const archivoplantilla = path_1.default.join(__dirname, '../plantillas/factura' + plantilla + '.html');
+            const archivoplantilla = path_1.default.join(__dirname, '../bases/factura' + plantilla + '.html');
             const datafile = fs_1.default.readFileSync(archivoplantilla);
             const nuevaplantilla = path_1.default.join(__dirname, '../plantillas/' + rif + '.html');
             if (fs_1.default.existsSync(archivoplantilla)) {

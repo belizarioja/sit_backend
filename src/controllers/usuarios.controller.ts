@@ -267,8 +267,8 @@ export async function envioCorreo (res: Response, _emailbcc: any, _emailrecupera
           <div style="width: 600px;">
             <table border="0" cellpadding="0" cellspacing="0" width="600px" bgcolor="#fff" style="border: 1px solid #d6d6d6;">
                 <tr height="240px">  
-                    <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_1.png); text-align: left; padding-left: 50px; padding-top: 30px;">
-                        <img src="${SERVERFILE}utils/logosmartcorreo.png" style="max-width: 130px;">                            
+                    <td colspan="3" style="background: url(${SERVERFILE}utils/bannercorreo_1.png); text-align: left; padding-left: 40px; padding-top: 85px;">
+                        <img src="${SERVERFILE}utils/logosmartcorreo.png" style="max-width: 160px;">                            
                     </td>
                 </tr>
                 

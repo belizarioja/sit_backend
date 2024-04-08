@@ -86,7 +86,7 @@ export async function setSede (req: Request, res: Response): Promise<Response | 
         // const values3 = "('3', '#FFFFFF', '#e3e4e5', '#575756', '#575756', $1);";
         await pool.query(insertplantilla + values1, [id])
 
-        const archivoplantilla = path.join(__dirname, '../plantillas/factura1.html')
+        const archivoplantilla = path.join(__dirname, '../bases/factura1.html')
         const datafile = fs.readFileSync(archivoplantilla)
         const nuevaplantilla = path.join(__dirname, '../plantillas/' + rif + '.html')
 
@@ -215,7 +215,7 @@ export async function updatePlantilla (req: Request, res: Response): Promise<Res
         const sqlupd = "update t_serviciosmasivos set plantillapdf = $1 where id = $2 ";
         await pool.query(sqlupd, [plantilla, id])
 
-        const archivoplantilla = path.join(__dirname, '../plantillas/factura'+ plantilla + '.html')
+        const archivoplantilla = path.join(__dirname, '../bases/factura'+ plantilla + '.html')
         const datafile = fs.readFileSync(archivoplantilla)
         const nuevaplantilla = path.join(__dirname, '../plantillas/' + rif + '.html')
 
