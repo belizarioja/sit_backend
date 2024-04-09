@@ -17,7 +17,7 @@ import moment from 'moment';
 export async function getLogin (req: Request, res: Response): Promise<Response | void> {
     try {
         const { usuario, clave } = req.body;
-        const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc, a.horaentrada, a.horasalida ";
+        const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc, a.horaentrada, a.horasalida, a.fecharecuperacion ";
         const from = " from t_usuarios a ";
         let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
         leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -58,7 +58,7 @@ export async function getLogin (req: Request, res: Response): Promise<Response |
 }
 export async function getUsuarios (req: Request, res: Response): Promise<Response | void> {
     try {
-        const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida ";
+        const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida, a.fecharecuperacion ";
         const from = " from t_usuarios a ";
         let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
         leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -135,7 +135,7 @@ export async function updateClave (req: Request, res: Response): Promise<Respons
         const { nuevaclave } = req.body;
         const { id } = req.params;       
 
-        const sqlupd = "update t_usuarios set clave = $1 where id = $2 ";
+        const sqlupd = "update t_usuarios set clave = $1, fecharecuperacion = null where id = $2 ";
         await pool.query(sqlupd, [nuevaclave, id])
         const data = {
             success: true,

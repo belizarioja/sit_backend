@@ -29,7 +29,7 @@ function getLogin(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { usuario, clave } = req.body;
-            const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc, a.horaentrada, a.horasalida ";
+            const sql = "select a.id, a.idrol, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, c.rif, a.estatus, a.emailbcc, a.horaentrada, a.horasalida, a.fecharecuperacion ";
             const from = " from t_usuarios a ";
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -71,7 +71,7 @@ exports.getLogin = getLogin;
 function getUsuarios(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida ";
+            const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida, a.fecharecuperacion ";
             const from = " from t_usuarios a ";
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
@@ -156,7 +156,7 @@ function updateClave(req, res) {
         try {
             const { nuevaclave } = req.body;
             const { id } = req.params;
-            const sqlupd = "update t_usuarios set clave = $1 where id = $2 ";
+            const sqlupd = "update t_usuarios set clave = $1, fecharecuperacion = null where id = $2 ";
             yield database_1.pool.query(sqlupd, [nuevaclave, id]);
             const data = {
                 success: true,
