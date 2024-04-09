@@ -471,3 +471,139 @@ export async function getUltimaSemana (req: Request, res: Response): Promise<Res
         return res.status(400).send('Error Reporte' + e);
     }
 }
+
+export async function getAnual (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+        const annio = moment().format('YYYY')
+        const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf, count (*) as cantidad";
+        const from = " FROM t_registros a, t_serviciosmasivos c  ";
+        let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";   
+        const groupBy = " group by 1 ORDER BY 1 ASC ";
+        if(idtipodocumento) {
+            where += " and a.idtipodocumento = " + idtipodocumento;
+        }
+        if(idserviciosmasivo) {
+            where += " and a.idserviciosmasivo = " + idserviciosmasivo;
+        } 
+        if(idcodigocomercial) {
+            where += " and c.idcodigocomercial = " + idcodigocomercial;
+        }
+        // console.log(sql + from + where + groupBy)
+        const resp = await pool.query(sql + from + where + groupBy);
+        const data = {
+            succes: true,
+            data: resp.rows
+        };
+        return res.status(200).json(data);        
+    }
+    catch (e) {
+        return res.status(400).send('Error Reporte GRAFICA' + e);
+    }
+}
+
+interface PayLoad1 {
+    idcliente: number,
+    cliente: string,
+    mes: Array<PayLoad2>
+}
+interface PayLoad2 {
+    semana: string,
+    inicia: string,
+    termina: string,
+    total: number
+}
+export async function getTotalSemanasTodos (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { idtipodocumento, idserviciosmasivo, idcodigocomercial, mes, annio } = req.body;
+        const messannio = annio + '-' + mes
+        const startOfMonth = moment(messannio, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+        const start = moment(messannio, 'YYYY-MM').startOf('month').format('DD');
+        const endOfMonth = moment(messannio, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+        const end = moment(messannio, 'YYYY-MM').endOf('month').format('DD');
+        // const iniciomes = moment(messannio, 'YYYY-MM').startOf('month').isoWeekday();
+        const finmes = moment(messannio, 'YYYY-MM').endOf('month').isoWeekday();
+        let arraysemana = []
+        let arraytemp = []
+        arraytemp.push(startOfMonth)
+        let ultimafecha = startOfMonth 
+        for(let i:any = Number(start) - 1; i < end; i ++){
+            const diames = moment(startOfMonth, 'YYYY-MM-DD').add(i, 'days').format('YYYY-MM-DD')
+            const diasemana = moment(startOfMonth, 'YYYY-MM-DD').add(i, 'days').isoWeekday()
+            if (diasemana === 1)
+            {
+                arraytemp = []
+                arraytemp.push(diames)
+            }
+            if (diasemana === 7)
+            {
+                arraytemp.push(diames)
+                arraysemana.push(arraytemp)
+                ultimafecha = diames 
+            }
+    
+        }
+        do {
+            ultimafecha = moment(ultimafecha, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD')
+            const diasemana = moment(ultimafecha, 'YYYY-MM-DD').isoWeekday()
+            if (diasemana === 1)
+            {
+                arraytemp = []
+                arraytemp.push(ultimafecha)
+            }
+            if (diasemana === finmes)
+            {
+                arraytemp.push(ultimafecha)
+                arraysemana.push(arraytemp)
+            }
+            
+        } while (ultimafecha < endOfMonth)
+        let sql = "SELECT a.id, a.razonsocial, ";
+        const semanas = []
+        const inicios = []
+        const finales = []
+        for(let i = 0; i < arraysemana.length; i ++){
+            const desde = arraysemana[i][0]
+            const hasta = arraysemana[i][1]
+            sql += " (select count (*) from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ) " 
+            sql += ' AS "' + moment(desde, 'YYYY-MM-DD').format('DD') + '-' + moment(hasta, 'YYYY-MM-DD').format('DD') + '", ' ;
+            semanas.push(moment(desde, 'YYYY-MM-DD').format('DD') + '-' + moment(hasta, 'YYYY-MM-DD').format('DD'))
+            sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento asc limit 1) AS inicia" + i +","
+            sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento desc limit 1) AS termina" + i 
+            inicios.push('inicia' + i)
+            finales.push('termina' + i)
+            if(i < arraysemana.length-1){
+                sql += ", "
+            }
+        }
+        const from = " from t_serviciosmasivos a order by a.id";
+        const resp = await pool.query(sql + from);        
+        const resultado = []
+        for(let i = 0; i < resp.rows.length; i++) {
+            const item = resp.rows[i]
+            const obj = {} as PayLoad1
+            obj.idcliente = item.id
+            obj.cliente = item.razonsocial
+            obj.mes = []
+           for(let k = 0 ; k < semanas.length ; k++) {
+                const obj2 = {} as PayLoad2
+                obj2.semana = semanas[k]
+                obj2.total = item[semanas[k]]
+                obj2.inicia = item[inicios[k]] || ''
+                obj2.termina = item[finales[k]] || ''
+                obj.mes.push(obj2)
+            } 
+            resultado.push(obj) 
+           
+        }
+        // console.log(resultado)
+        const data = {
+            succes: true,
+            data: resultado
+        };
+        return res.status(200).json(data);        
+    }
+    catch (e) {
+        return res.status(400).send('Error Reporte' + e);
+    }
+}

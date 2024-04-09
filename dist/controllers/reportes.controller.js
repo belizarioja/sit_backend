@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica_BK = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
+exports.getTotalSemanasTodos = exports.getAnual = exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica_BK = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
 const moment_1 = __importDefault(require("moment"));
 // DB
 const database_1 = require("../database");
@@ -490,3 +490,125 @@ function getUltimaSemana(req, res) {
     });
 }
 exports.getUltimaSemana = getUltimaSemana;
+function getAnual(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
+            const annio = (0, moment_1.default)().format('YYYY');
+            const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf, count (*) as cantidad";
+            const from = " FROM t_registros a, t_serviciosmasivos c  ";
+            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
+            const groupBy = " group by 1 ORDER BY 1 ASC ";
+            if (idtipodocumento) {
+                where += " and a.idtipodocumento = " + idtipodocumento;
+            }
+            if (idserviciosmasivo) {
+                where += " and a.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            if (idcodigocomercial) {
+                where += " and c.idcodigocomercial = " + idcodigocomercial;
+            }
+            // console.log(sql + from + where + groupBy)
+            const resp = yield database_1.pool.query(sql + from + where + groupBy);
+            const data = {
+                succes: true,
+                data: resp.rows
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Reporte GRAFICA' + e);
+        }
+    });
+}
+exports.getAnual = getAnual;
+function getTotalSemanasTodos(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { idtipodocumento, idserviciosmasivo, idcodigocomercial, mes, annio } = req.body;
+            const messannio = annio + '-' + mes;
+            const startOfMonth = (0, moment_1.default)(messannio, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+            const start = (0, moment_1.default)(messannio, 'YYYY-MM').startOf('month').format('DD');
+            const endOfMonth = (0, moment_1.default)(messannio, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+            const end = (0, moment_1.default)(messannio, 'YYYY-MM').endOf('month').format('DD');
+            // const iniciomes = moment(messannio, 'YYYY-MM').startOf('month').isoWeekday();
+            const finmes = (0, moment_1.default)(messannio, 'YYYY-MM').endOf('month').isoWeekday();
+            let arraysemana = [];
+            let arraytemp = [];
+            arraytemp.push(startOfMonth);
+            let ultimafecha = startOfMonth;
+            for (let i = Number(start) - 1; i < end; i++) {
+                const diames = (0, moment_1.default)(startOfMonth, 'YYYY-MM-DD').add(i, 'days').format('YYYY-MM-DD');
+                const diasemana = (0, moment_1.default)(startOfMonth, 'YYYY-MM-DD').add(i, 'days').isoWeekday();
+                if (diasemana === 1) {
+                    arraytemp = [];
+                    arraytemp.push(diames);
+                }
+                if (diasemana === 7) {
+                    arraytemp.push(diames);
+                    arraysemana.push(arraytemp);
+                    ultimafecha = diames;
+                }
+            }
+            do {
+                ultimafecha = (0, moment_1.default)(ultimafecha, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
+                const diasemana = (0, moment_1.default)(ultimafecha, 'YYYY-MM-DD').isoWeekday();
+                if (diasemana === 1) {
+                    arraytemp = [];
+                    arraytemp.push(ultimafecha);
+                }
+                if (diasemana === finmes) {
+                    arraytemp.push(ultimafecha);
+                    arraysemana.push(arraytemp);
+                }
+            } while (ultimafecha < endOfMonth);
+            let sql = "SELECT a.id, a.razonsocial, ";
+            const semanas = [];
+            const inicios = [];
+            const finales = [];
+            for (let i = 0; i < arraysemana.length; i++) {
+                const desde = arraysemana[i][0];
+                const hasta = arraysemana[i][1];
+                sql += " (select count (*) from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ) ";
+                sql += ' AS "' + (0, moment_1.default)(desde, 'YYYY-MM-DD').format('DD') + '-' + (0, moment_1.default)(hasta, 'YYYY-MM-DD').format('DD') + '", ';
+                semanas.push((0, moment_1.default)(desde, 'YYYY-MM-DD').format('DD') + '-' + (0, moment_1.default)(hasta, 'YYYY-MM-DD').format('DD'));
+                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento asc limit 1) AS inicia" + i + ",";
+                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento desc limit 1) AS termina" + i;
+                inicios.push('inicia' + i);
+                finales.push('termina' + i);
+                if (i < arraysemana.length - 1) {
+                    sql += ", ";
+                }
+            }
+            const from = " from t_serviciosmasivos a order by a.id";
+            const resp = yield database_1.pool.query(sql + from);
+            const resultado = [];
+            for (let i = 0; i < resp.rows.length; i++) {
+                const item = resp.rows[i];
+                const obj = {};
+                obj.idcliente = item.id;
+                obj.cliente = item.razonsocial;
+                obj.mes = [];
+                for (let k = 0; k < semanas.length; k++) {
+                    const obj2 = {};
+                    obj2.semana = semanas[k];
+                    obj2.total = item[semanas[k]];
+                    obj2.inicia = item[inicios[k]] || '';
+                    obj2.termina = item[finales[k]] || '';
+                    obj.mes.push(obj2);
+                }
+                resultado.push(obj);
+            }
+            // console.log(resultado)
+            const data = {
+                succes: true,
+                data: resultado
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Reporte' + e);
+        }
+    });
+}
+exports.getTotalSemanasTodos = getTotalSemanasTodos;
