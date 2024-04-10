@@ -561,7 +561,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
         // COLETILLA
         const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022."
-        const coletilla2 = " El equivalente en Bs., a tasa de cambio Oficial BCV a Bs/USD de " +_tasacambio + " del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 64º5 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
+        const coletilla2 = " El equivalente en Bs., a tasa de cambio Oficial BCV a Bs/USD de " +_tasacambio + " del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
         let coletilla = coletilla1 + coletilla2
         
         tabla += `<tr style="height: 25px;">
