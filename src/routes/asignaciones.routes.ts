@@ -6,11 +6,7 @@ import { verifyTokenFactura } from '../lib/verifyTokenFactura'
 const router = Router();
 
 router.route('/').post(verifyTokenFactura, setAsignacion)
-
-router.route('/listar')
-.post(getAsignacion)
-
-router.route('/:id')
-.put(updFechaProd)
+router.route('/listar').post(getAsignacion)
+router.route('/:id').put(updFechaProd)
 
 export default router;

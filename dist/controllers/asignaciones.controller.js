@@ -75,9 +75,10 @@ function getAsignacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { idusuario, idserviciosmasivo, desde, hasta } = req.body;
-            const sql = "select a.id, a.idusuario, a.idserviciosmasivo, c.razonsocial, b.usuario, b.nombre, a.soportefactura, a.fecha, a.cantidad, a.fechaproduccion, a.estatus, a.inicia, a.termina";
-            const from = " from t_tranzascorrelativo a, t_usuarios b, t_serviciosmasivos c ";
-            let where = " where a.idusuario = b.id AND a.idserviciosmasivo = c.id ";
+            let sql = "select a.id, a.idusuario, a.idserviciosmasivo, c.rif, c.razonsocial, b.usuario, b.nombre, a.soportefactura, a.fecha, a.cantidad, ";
+            sql += " a.fechaproduccion, a.estatus, a.inicia, a.termina, d.identificador, d.corelativo, a.utilizado";
+            const from = " from t_tranzascorrelativo a, t_usuarios b, t_serviciosmasivos c, t_serviciosdoc d ";
+            let where = " where a.idusuario = b.id AND a.idserviciosmasivo = c.id AND a.idserviciosmasivo = d.idserviciosmasivo ";
             if (idusuario) {
                 where += " AND a.idusuario = " + idusuario;
             }
