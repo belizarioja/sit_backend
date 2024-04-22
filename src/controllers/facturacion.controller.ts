@@ -26,7 +26,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 
 export async function setFacturacion (req: Request, res: Response): Promise<Response | void> {
-    try {
+    // try {
         
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
@@ -64,6 +64,8 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
             });
         } 
         const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina
+        // console.log('rifcedulacliente')
+        // console.log(rifcedulacliente)
         if(rifcedulacliente.length === 0) {
 
             await pool.query('ROLLBACK')
@@ -358,7 +360,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         for(const ind in cuerpofactura) {
             const item = cuerpofactura[ind]
            
-            // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
+            console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
             if(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
 
                 await pool.query('ROLLBACK')
@@ -426,10 +428,10 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         };
         return res.status(200).json(data); 
 
-    }
+    /* }
     catch (e) {
         return res.status(400).send('Error Creando correlativo o cuerpo de factura ' + e);
-    }
+    } */
 }
 async function obtenerNumInterno(idtipodocumento: any, idserviciosmasivo: any) {
     const sql = "SELECT MAX(secuencial) FROM t_registros";
@@ -768,6 +770,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 //////////////
                 // FIRMAR PDF
                 //////////////
+                console.log(enviocorreo, _sendmail, productos.length, _emailcliente)
+
                 if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
                     console.log('va a Enviar correo')
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus)
@@ -834,7 +838,7 @@ async function obtenerLote (res: Response, id: any) {
 }
 
 export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any, _estatus: any) {
-    try {
+    // try {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
@@ -968,9 +972,9 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         }
         
 
-    }
+    /* }
     catch (e) {
         return res.status(400).send('Error Externo Enviando correo :  ' + e);
-    }
+    } */
 
 }
