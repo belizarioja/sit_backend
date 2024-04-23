@@ -101,13 +101,16 @@ export async function getFacturas (req: Request, res: Response): Promise<Respons
 }
 export async function getFacturaNum (req: Request, res: Response): Promise<Response | void> {
     try {
-        const { numerodocumento, idserviciosmasivo } = req.body;
-
-        let sql = "select a.id, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, ";
+        const { numerodocumento, numerodocumentofin, idserviciosmasivo } = req.body;
+        // console.log(numerodocumento, numerodocumentofin, idserviciosmasivo)
+        const inicia = numerodocumento
+        const termina = numerodocumentofin || numerodocumento
+        let sql = "select a.id, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, d.abrev, ";
         sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado , a.numerointerno ";
-        const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c ";
-        let where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id ";
-         where += " and a.idserviciosmasivo = " + idserviciosmasivo + " and a.numerodocumento = '" + numerodocumento + "' "
+        const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c, t_tipocedulacliente d ";
+        let where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id ";
+        where += " and a.idserviciosmasivo = " + idserviciosmasivo + " and a.numerodocumento >= '" + inicia + "'  and a.numerodocumento <= '" + termina + "' "
+        // console.log(sql + from + where)
         const resp = await pool.query(sql + from + where);
         const data = {
             succes: true,
