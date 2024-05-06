@@ -501,7 +501,7 @@ function getAnual(req, res) {
             const annio = (0, moment_1.default)().format('YYYY');
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf, count (*) as cantidad";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
-            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
+            let where = " where a.idserviciosmasivo = c.id AND a.estatus = 1 AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
             const groupBy = " group by 1 ORDER BY 1 ASC ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
@@ -584,7 +584,7 @@ function getTotalSemanasTodos(req, res) {
                     sql += ", ";
                 }
             }
-            const from = " from t_serviciosmasivos a order by a.id";
+            const from = " from t_serviciosmasivos a where a.estatus = 1 order by a.id";
             const resp = yield database_1.pool.query(sql + from);
             const resultado = [];
             for (let i = 0; i < resp.rows.length; i++) {
