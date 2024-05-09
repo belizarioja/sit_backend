@@ -59,7 +59,7 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
     // try {
         
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, a.emailcliente, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus  ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda  ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.id = $2";
         const respdoc = await pool.query(sql + from + where, [numerodocumento, idserviciosmasivo]); 
@@ -80,6 +80,7 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
         const numerointerno = respdoc.rows[0].numerointerno     
         const piedepagina = respdoc.rows[0].piedepagina     
         const tasacambio = respdoc.rows[0].tasacambio     
+        const tipomoneda = respdoc.rows[0].tipomoneda     
         const observacion = respdoc.rows[0].observacion || ''
         const estatus = respdoc.rows[0].estatus
         const sendmail = 1 
@@ -120,7 +121,7 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
         // console.log(respdet.rows)
         const formasdepago = respformas.rows
         console.log('va a Crear PDF Anulado')
-        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus)
+        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda)
         .then(()=> {
             const data = {
                 success: true,
