@@ -47,19 +47,19 @@
                                 <td>
                                     <table style="width: 95%; margin-left: 10px;">
                                         <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 50%;">Fecha de emisión</td>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 48%;">N° de Control</td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;width: 50%;">N° de Control</td>
+                                            <td class="text-right" style="font-size: 12px;width: 48%;">{{numerodocumento}}</td>
                                         </tr>
                                         <tr>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de emisión</td>
                                             <td class="text-right" style="font-size: 9px;">{{fecha}}</td>
-                                            <td class="text-right" style="font-size: 9px;">{{numerodocumento}}</td>
                                         </tr>
                                         <tr>
                                             <td class="text-right" style="font-size: 10px;font-weight: bolder;">Hora de emisión</td>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de asignación</td>
+                                            <td class="text-right" style="font-size: 9px;">{{hora}}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{hora}}</td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder; padding-bottom: 5px;">Fecha de asignación</td>
                                             <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{fechaasignacion}}</td>
                                         </tr>
                                         {{afectado}}
@@ -119,7 +119,7 @@
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 50%;vertical-align: baseline;">
-                        <p style="font-size: 8px; font-weight: 700;">Formas de pago:<p>
+                        <p style="font-size: 8px; font-weight: 700;">{{tituloformasdepago}}<p>
                         <p style="font-size: 8px; font-weight: 700; padding-left: 20px;">
                             {{formasdepago}}
                         <p>
@@ -127,29 +127,25 @@
                     <td style="width: 50%;">
                         <table style="width: 100%;margin-top: 5px;">
                             <tr>
-                                <td class="text-right" style="font-size: 8px;">Subtotal Bs.:</td>
+                                <td class="text-right" style="font-size: 8px;">Subtotal {{prefsubtotal}}:</td>
                                 <td class="text-right" style="font-size: 8px;">{{subtotal}}</td>
                             </tr>
-                            <tr>
-                                <td class=" text-right" style="font-size: 8px;">Impuestos Bs.:</td>
-                                <td class="text-right" style="font-size: 8px;">{{impuestos}}</td>
-                            </tr>
+                            {{trbaseg}}
+                            {{trbaser}}
+                            {{trbasea}}
                             {{trbaseigtf}}
-                            <!-- <tr>
-                                <td class=" text-right" style="font-size: 8px;">IGTF 3%(425,45) Bs.:</td>
-                                <td class="text-right" style="font-size: 8px;">125,45</td>
-                            </tr> -->
                             <tr>
-                                <td class="text-right" style="font-size: 8px;">Exento Bs.:</td>
+                                <td class="text-right" style="font-size: 8px;">Exento {{prefexento}}:</td>
                                 <td class="text-right" style="font-size: 8px;">{{exentos}}</td>
                             </tr>
                             <tr style="height: 30px;">
-                                <td class="text-right" style="font-size: 8px;">Total Bs.:</td>
+                                <td class="text-right" style="font-size: 8px;">Total {{preftotal}}:</td>
                                 <td class="text-right" style="font-size: 8px;">{{total}}</td>
                             </tr>
                         </table>
                     </td>
                 </tr>
+                {{creditofiscal}}
                 <tr>
                     <td colspan="2" style="padding-top:5px;">
                         <p style="font-size: 6px;font-family:'Calibri'; text-align: center;">{{coletilla}}</p>
@@ -197,11 +193,11 @@
     }
     .sinpublicidad {
         width: 100% !important;
-        height: 350px !important;
+        height: 330px !important;
     }
     .conpublicidad {
         width: 100% !important;
-        height: 240px !important;
+        height: 220px !important;
     }
     .afectado {
         padding: 3px 0px !important;

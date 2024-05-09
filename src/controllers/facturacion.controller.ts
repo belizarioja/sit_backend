@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, response } from 'express';
 import moment from 'moment';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
@@ -29,7 +29,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
     // try {
         
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
-        const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio } = req.body;
+        const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
         const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
         const { tasaa, basea, impuestoa } = req.body;
         // console.log(req)
@@ -51,7 +51,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 }
             });
         } 
-        if(formasdepago.length === 0) {
+        /* if(formasdepago.length === 0) {
             await pool.query('ROLLBACK')
             
             return res.status(202).json({
@@ -62,7 +62,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                     message: 'Debe incluir al menos una forma de PAGO!'
                 }
             });
-        } 
+        } */
         const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina
         // console.log('rifcedulacliente')
         // console.log(rifcedulacliente)
@@ -347,20 +347,33 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
             }
             // console.log('Aqui función para validar numero interno :', numerointerno)
         }
-     
+        // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
+        // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
+        const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(2) : subtotal
+        const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(2) : total
+        const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(2) : exento
+        const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(2) : baser
+        const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(2) : impuestor
+        const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(2) : baseg
+        const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(2) : impuestog
+        const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(2) : baseigtf
+        const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(2) : impuestoigtf
+        // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
+        // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
+
         const numerocompleto =  identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0')
         const relacionadoBD = relacionado || ''
         const observacionBD = observacion || ''
         const fechaenvio = moment().format('YYYY-MM-DD HH:mm:ss')
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion ) '
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30) RETURNING id '
-        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fechaenvio, exento, tasar, baser, impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD])
+        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda ) '
+        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31) RETURNING id '
+        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda])
         // console.log(respReg.rows[0].id)
         const idRegistro = respReg.rows[0].id
         for(const ind in cuerpofactura) {
             const item = cuerpofactura[ind]
            
-            console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
+            // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
             if(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
 
                 await pool.query('ROLLBACK')
@@ -374,13 +387,17 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                     }
                 });
             } 
-
+            const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(2) : item.monto
+            const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(2) : item.descuento
+            const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(2) : item.precio
+            // console.log(_monto, _descuento, _precio)
             const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento ) '
             const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) '
-            await pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, item.precio, item.cantidad, item.tasa, item.monto, item.exento, item.comentario, item.descuento])
+            await pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento])
             // console.log(insertDet + valuesDet)
         }
-        
+        console.log('formasdepago')
+        console.log(formasdepago)
         for(const ind in formasdepago) {
             const item2 = formasdepago[ind]
            
@@ -409,7 +426,8 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
        
         if (cuerpofactura.length > 0) {
             console.log('va a Crear pdf correo')
-            await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1)
+            await enviarCrearFactura (res, rif, numerocompleto, sendmail)
+            // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, tipomoneda)
             
         } else {
             console.log('Sin Factura pdf correo')
@@ -460,7 +478,76 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
     }
 }
 
-export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any) {
+async function enviarCrearFactura (res: Response , rif: any, numerodocumento: any, sendmail: any) {
+    console.log('va a Consultar registros')
+    let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda  ";
+        const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
+        const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
+        await pool.query(sql + from + where, [numerodocumento, rif]).then(async response => {
+            // console.log(response)
+            // console.log(response.rows[0])
+            const idregistro = response.rows[0].id
+            const idserviciosmasivo = response.rows[0].idserviciosmasivo
+            const razonsocial = response.rows[0].razonsocial
+            const emailemisor = response.rows[0].email
+            const nombrecliente = response.rows[0].nombrecliente
+            const direccion = response.rows[0].direccion
+            const cedulacliente = response.rows[0].cedulacliente
+            const idtipocedulacliente = response.rows[0].idtipocedulacliente
+            const idtipodocumento = response.rows[0].idtipodocumento
+            const telefonocliente = response.rows[0].telefonocliente || ''
+            const direccioncliente = response.rows[0].direccioncliente || ''
+            const impuestoigtf = response.rows[0].impuestoigtf     
+            const baseigtf = response.rows[0].baseigtf     
+            const numerointerno = response.rows[0].numerointerno     
+            const piedepagina = response.rows[0].piedepagina     
+            const tasacambio = response.rows[0].tasacambio     
+            const observacion = response.rows[0].observacion || ''
+            const estatus = response.rows[0].estatus
+            const tipomoneda = response.rows[0].tipomoneda
+            // const sendmail = 1 
+            const fechaenvio =  moment(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss')
+            // console.log('respdoc.rows[0].fecha, fechaenvio')
+            // console.log(respdoc.rows[0].fecha, fechaenvio)
+            let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : ''
+            
+            let fechaafectado = ''    
+            let idtipoafectado = ''  
+            if(idtipodocumento === '2' || idtipodocumento === '3') {
+
+                const sqlrel = " SELECT * FROM t_registros ";
+                const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
+                // console.log(sqlupd + whereupd)
+
+                const resprel = await pool.query(sqlrel + whererel, [idserviciosmasivo, response.rows[0].relacionado])  
+                if(resprel.rows.length > 0 ) {
+                    numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : numeroafectado
+                    fechaafectado = resprel.rows[0].fecha
+                    idtipoafectado = resprel.rows[0].idtipodocumento
+                }
+            }
+
+            const sqldet= "select id, codigo, descripcion, precio, cantidad, tasa, monto, exento, descuento, comentario ";
+            const fromdet = " from t_registro_detalles ";
+            const wheredet = " where idregistro = " + idregistro;
+            // console.log(sql + from + where)
+            const respdet = await pool.query(sqldet + fromdet + wheredet);
+            // console.log(respdet.rows)
+            const cuerpofactura = respdet.rows
+
+            const sqlformas= "select forma, valor ";
+            const fromformas = " from t_formasdepago ";
+            const whereformas = " where idregistro = " + idregistro;
+            // console.log(sql + from + where)
+            const respformas = await pool.query(sqlformas + fromformas + whereformas);
+            // console.log(respdet.rows)
+            const formasdepago = respformas.rows
+            // console.log('va a Crear PDF')
+            await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailemisor, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda)
+        })
+}
+export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any) {
     try {
         const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad  ";
         const fromsede = " FROM t_serviciosmasivos a ";
@@ -477,12 +564,13 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const textoemail = respsede.rows[0].textoemail || '0'
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
+        const prefijo = Number(_tipomoneda) === 1 ? 'Bs.' : Number(_tipomoneda) === 2 ? '$' : '€'
         ISPUBLICIDAD = respsede.rows[0].publicidad || '0'
         let URLPUBLICIDAD = ''
         let publicidad = ''
         let csstabla = 'sinpublicidad'
-        console.log('ISPUBLICIDAD')
-        console.log(ISPUBLICIDAD)
+        // console.log('ISPUBLICIDAD')
+        // console.log(ISPUBLICIDAD)
         if (ISPUBLICIDAD === '1') {
             csstabla = 'conpublicidad'
             URLPUBLICIDAD = IMGPDF+_rif + "_publi01.png"
@@ -517,8 +605,12 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let _impuestoa = 0;
         
         for (const producto of productos) {
+            const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(2) : producto.monto
+            const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(2) : producto.descuento
+            const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(2) : producto.precio
+            // console.log(_monto, _descuento, _precio)
             // Aumentar el total
-            const totalProducto = (producto.cantidad * producto.precio) - producto.descuento;
+            const totalProducto = (producto.cantidad * _precio) - _descuento;
             subtotal += totalProducto;
             // descuento += producto.descuento
             if (producto.exento === true || producto.exento === 'true') { 
@@ -547,10 +639,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td style="vertical-align: baseline;font-size: 8px;padding: 3px;">${producto.codigo}</td>
             <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${productoitem}</td>
             <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.precio))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_precio))}</td>
             <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.descuento))}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(producto.monto))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_descuento))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_monto))}</td>
         </tr>`;
             
         }
@@ -586,15 +678,15 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`;
 
         let trbaseg = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">IVA 16% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
         let trbaser = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Reducido 8% Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">Reducido 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`
         let trbasea = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Al lujo 31% Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">Al lujo 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`
        
@@ -606,7 +698,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         _baseigtfusd = Number(_baseigtf)/Number(_tasacambio)
 
         let trbaseigtf = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfusd))}) Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfusd))}) ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
 
@@ -638,7 +730,13 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         for (const forma of _formasdepago) {
             formasdepago += `${forma.forma} Bs.: ${completarDecimales(Number(forma.valor))}<br>`            
         }
+        if(formasdepago.length > 0) {
+            contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", 'Formas de pago:');
+        } else {
+            contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", '');
+        }
 
+        
         const emailpdf =_emailcliente.split('|').join(', ')
 
         const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF'
@@ -735,10 +833,11 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             contenidoHtml = contenidoHtml.replace("{{totalusd}}", completarDecimales(Number(totalusd)));            
         
         }
+        contenidoHtml = contenidoHtml.replace("{{prefsubtotal}}", prefijo);
         contenidoHtml = contenidoHtml.replace("{{subtotal}}", completarDecimales(Number(subtotal)));
-        // contenidoHtml = contenidoHtml.replace("{{baseiva}}", completarDecimales(Number(baseiva)));
-        // contenidoHtml = contenidoHtml.replace("{{impuestos}}", completarDecimales(Number(impuestos)));
+        contenidoHtml = contenidoHtml.replace("{{prefexento}}", prefijo);
         contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));        
+        contenidoHtml = contenidoHtml.replace("{{preftotal}}", prefijo);
         contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
             
         
@@ -755,10 +854,11 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             contenidoHtml = contenidoHtml.replace("{{creditofiscal}}", creditofiscal);
 
         const pathPdf1 = "dist/controllers/temp/" + _rif + "/" + annioenvio + "-"  + mesenvio + "/" + _rif + _pnumero + ".pdf"
+        
+        // firma digital
         // const icFirmaDocumentosInput = "/opt/icFirmaDocumentos/var/lib/icFirmaDocumentos/input"
         // const icFirmaDocumentosInput = __dirname
-        const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit"
-        
+        // const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit"        
         // console.log(icFirmaDocumentosInput)
 
         pdf.create(contenidoHtml, { format: "Letter" }).toFile(pathPdf1, async (error) => {
