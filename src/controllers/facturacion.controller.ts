@@ -632,7 +632,23 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             let productoitem = `<span>${producto.descripcion}</span>`
            
             if(producto.comentario.length > 0) {
-                productoitem += `<br><span>${producto.comentario}</span>`
+                const arreglocom1 = producto.comentario.split('//')
+                // console.log('arreglocom1.length:', arreglocom1.length)
+                if(arreglocom1.length > 1) {
+                    productoitem += `<table style="width:100%;">`
+                    for(let j = 0 ; j < arreglocom1.length - 1; j++) {
+                        const ladoizq = arreglocom1[j].split('|')[0]
+                        const ladoder = arreglocom1[j].split('|')[1]
+                        // console.log(ladoizq + ' >>>>>> ' + ladoder)
+                        productoitem += `<tr><td class="ladoizq">${ladoizq}</td>`
+                        productoitem += `<td class="ladoder">${ladoder}</td></tr>`
+                    }
+                    productoitem += `</table>`
+                } else {
+                    productoitem += `<br><span>${producto.comentario}</span>`
+                }
+                // console.log(ladoizq + ' >>>>>> ' + ladoder)
+
             }
             // Y concatenar los productos
             
