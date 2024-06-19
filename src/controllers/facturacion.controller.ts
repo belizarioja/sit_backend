@@ -550,9 +550,10 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
 }
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
+        leftjoin += " left join t_codigoscomercial c ON a.idcodigocomercial = c.id ";
         const wheresede = " WHERE a.id = $1";
         const respsede = await pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]); 
         const enviocorreo = respsede.rows[0].enviocorreo || 0
@@ -565,6 +566,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const textoemail = respsede.rows[0].textoemail || '0'
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
+        const codigoactividad = respsede.rows[0].codigocomercial
         const prefijo = Number(_tipomoneda) === 1 ? 'Bs.' : Number(_tipomoneda) === 2 ? '$' : '€'
         ISPUBLICIDAD = respsede.rows[0].publicidad || '0'
         let URLPUBLICIDAD = ''
@@ -672,7 +674,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
         // COLETILLA
         const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022."
-        const coletilla2 = " El equivalente en Bs., a tasa de cambio Oficial BCV a Bs/USD de " +_tasacambio + " del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
+        const coletilla2 = " El equivalente en Bs., a <b>TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " +_tasacambio + " </b>del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
         let coletilla = coletilla1 + coletilla2
         
         tabla += `<tr style="height: 25px;">
@@ -784,6 +786,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                     </tr>`
         }
         const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
+        contenidoHtml = contenidoHtml.replace("{{codigoactividad}}", codigoactividad);
         contenidoHtml = contenidoHtml.replace("{{codeqr}}", folderPathQr);
         contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF+_rif + ".png");
         contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);

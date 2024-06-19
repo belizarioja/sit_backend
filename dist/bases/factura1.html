@@ -25,6 +25,7 @@
                                 </td>
                                 <td class="celdaCurvaGris" style="width: 30%;">
                                     <div class="fondoCurvaGris">{{tipodocumento}}: <span class="textorojo text-center">{{numerointerno}}</span></div>
+                                    <div class="fechaEmision">Fecha de emisión {{fecha}} {{hora}}</div>
                                 </td>
                             </tr>
                         </table>
@@ -42,6 +43,7 @@
                                         <div style="font-size: 9px;">{{direccion}}</div>
                                         <div style="font-size: 9px;">{{rif}}</div>
                                         <div style="font-size: 9px;">{{telefono}}</div>
+                                        <div style="font-size: 9px;">Código de actividad económica: {{codigoactividad}}</div>
                                     </div>
                                 </td>
                                 <td>
@@ -51,16 +53,8 @@
                                             <td class="text-right" style="font-size: 12px;width: 48%;">{{numerodocumento}}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de emisión</td>
-                                            <td class="text-right" style="font-size: 9px;">{{fecha}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Hora de emisión</td>
-                                            <td class="text-right" style="font-size: 9px;">{{hora}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder; padding-bottom: 5px;">Fecha de asignación</td>
-                                            <td class="text-right" style="font-size: 9px; padding-bottom: 5px;">{{fechaasignacion}}</td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de asignación</td>
+                                            <td class="text-right" style="font-size: 9px;">{{fechaasignacion}}</td>
                                         </tr>
                                         {{afectado}}
                                     </table>  
@@ -106,7 +100,7 @@
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 32%;border-bottom: 2px solid #65778D;">Descripción</th>
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border-bottom: 2px solid #65778D;">Cantidad</th>
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border-bottom: 2px solid #65778D;">P. Unit.</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 8%;border-bottom: 2px solid #65778D;">% Imp.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 8%;border-bottom: 2px solid #65778D;">% IVA</th>
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border-bottom: 2px solid #65778D;">Monto Desc.</th>
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border-bottom: 2px solid #65778D;">Total</th>
                     </tr>
@@ -134,10 +128,6 @@
                             {{trbaser}}
                             {{trbasea}}
                             {{trbaseigtf}}
-                            <tr>
-                                <td class="text-right" style="font-size: 8px;">Exento {{prefexento}}:</td>
-                                <td class="text-right" style="font-size: 8px;">{{exentos}}</td>
-                            </tr>
                             <tr style="height: 30px;">
                                 <td class="text-right" style="font-size: 8px;">Total {{preftotal}}:</td>
                                 <td class="text-right" style="font-size: 8px;">{{total}}</td>
@@ -153,7 +143,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="text-center" style="padding-left:20px;padding-right:20px;padding-top:5px;">
-                        <p style="font-size: 6px;font-family:'Calibri'">{{piedepagina}}<br><span class="textorojo">ORIGINAL</span></p>
+                        <p style="font-size: 6px;font-family:'Calibri'">{{piedepagina}}</p>
                     </td>
                 </tr>
                 {{publicidad}}
@@ -180,15 +170,20 @@
         padding: 5px 10px !important; 
         font-size: 10px !important;
     }
+    .fechaEmision {
+        font-size: 10px !important;
+        width: 100% !important;
+        text-align: right !important;
+    }
     .tarjetaEmisores {
         background: #ddd !important;
         border-radius: 8px !important;
         display: grid !important;
         padding: 10px !important;
-        width: 200px;
+        width: 230px;
     }
     .celdaCurvaGris {
-        display: flex !important; 
+        display: grid !important; 
         justify-content: right !important;
     }
     .sinpublicidad {

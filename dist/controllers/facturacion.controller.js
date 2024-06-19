@@ -513,9 +513,10 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
 function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad  ";
+            const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
             const fromsede = " FROM t_serviciosmasivos a ";
             let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
+            leftjoin += " left join t_codigoscomercial c ON a.idcodigocomercial = c.id ";
             const wheresede = " WHERE a.id = $1";
             const respsede = yield database_1.pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]);
             const enviocorreo = respsede.rows[0].enviocorreo || 0;
@@ -528,6 +529,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const textoemail = respsede.rows[0].textoemail || '0';
             const banner = respsede.rows[0].banner || '1';
             const _telefono = respsede.rows[0].telefono;
+            const codigoactividad = respsede.rows[0].codigocomercial;
             const prefijo = Number(_tipomoneda) === 1 ? 'Bs.' : Number(_tipomoneda) === 2 ? '$' : '€';
             ISPUBLICIDAD = respsede.rows[0].publicidad || '0';
             let URLPUBLICIDAD = '';
@@ -626,7 +628,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
             // COLETILLA
             const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
-            const coletilla2 = " El equivalente en Bs., a tasa de cambio Oficial BCV a Bs/USD de " + _tasacambio + " del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
+            const coletilla2 = " El equivalente en Bs., a <b>TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 8px;padding: 3px;"></td>
@@ -729,6 +731,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     </tr>`;
             }
             const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
+            contenidoHtml = contenidoHtml.replace("{{codigoactividad}}", codigoactividad);
             contenidoHtml = contenidoHtml.replace("{{codeqr}}", folderPathQr);
             contenidoHtml = contenidoHtml.replace("{{logo}}", IMGPDF + _rif + ".png");
             contenidoHtml = contenidoHtml.replace("{{direccion}}", _direccion);
