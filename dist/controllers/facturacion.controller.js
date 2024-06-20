@@ -397,6 +397,7 @@ function setFacturacion(req, res) {
             error: null,
             data: {
                 numerodocumento: numerocompleto,
+                piedepagina: piedepagina,
                 identificador: identificador.toString().padStart(2, '0'),
                 corelativo: corelativo.toString().padStart(8, '0'),
                 datatime: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
@@ -633,7 +634,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
             // COLETILLA
             const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
-            const coletilla2 = " El equivalente en Bs., a <b>TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
+            const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: auto;">
             <td style="border-bottom: 2px solid #65778D;font-size: 8px;line-height: 1;">&nbsp;</td>
