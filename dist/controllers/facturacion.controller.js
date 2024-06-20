@@ -560,12 +560,17 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // Generar el HTML de la tabla
             let tabla = "";
             let subtotal = 0;
+            let subtotalbs = 0;
+            let totalbs = 0;
             let exentos = 0;
             // let descuento = 0;
             // let impuestos = 0;
             let _impuestog = 0;
             let _impuestor = 0;
             let _impuestoa = 0;
+            let _impuestogbs = 0;
+            let _impuestorbs = 0;
+            let _impuestoabs = 0;
             for (const producto of productos) {
                 const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(2) : producto.monto;
                 const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(2) : producto.descuento;
@@ -630,15 +635,6 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
             const coletilla2 = " El equivalente en Bs., a <b>TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
-            tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;"></td>
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${_observacion}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;"></td>
-            </tr>`;
             tabla += `<tr style="height: auto;">
             <td style="border-bottom: 2px solid #65778D;font-size: 8px;line-height: 1;">&nbsp;</td>
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
@@ -648,41 +644,52 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
         </tr>`;
-            let trbaseg = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 16% ${prefijo}:</td>
+            if (_tipomoneda > 1) {
+                _impuestogbs = _impuestog * Number(_tasacambio);
+                _impuestorbs = _impuestor * Number(_tasacambio);
+                _impuestoabs = _impuestoa * Number(_tasacambio);
+            }
+            let trImpuestogdivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestogbs))}</td>
+            <td class="text-right" style="font-size: 8px;">IVA 16% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
-            let trbaser = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Reducido 8% ${prefijo}:</td>
+            let trImpuestogbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
+        </tr>`;
+            let trImpuestordivisa = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
-            let trbasea = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Al lujo 31% ${prefijo}:</td>
+            let trImpuestorbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 8%  Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
+        </tr>`;
+            let trImpuestoadivisa = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
-            let _impuestoigtfusd = 0;
-            let _baseigtfusd = 0;
-            let _baseivausd = 0;
-            _baseigtfusd = Number(_baseigtf) / Number(_tasacambio);
-            let trbaseigtf = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfusd))}) ${prefijo}:</td>
+            let trImpuestoabs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 31%  Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
+        </tr>`;
+            let _impuestoigtfbs = 0;
+            let _baseigtfbs = 0;
+            // let _baseivausd = 0
+            _baseigtfbs = Number(_baseigtf) * Number(_tasacambio);
+            _impuestoigtfbs = Number(_impuestoigtf) * Number(_tasacambio);
+            let trImpuestoigtfdivisa = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtfbs))}) Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfbs))}</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtf))}) ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`;
-            /* if (_tasacambio > 0) {
-                _impuestoigtfusd = Number(_impuestoigtf)/Number(_tasacambio)
-                _baseigtfusd = Number(_baseigtf)/Number(_tasacambio)
-                _baseivausd = Number(baseiva)/Number(_tasacambio)
-               
-                trbaseigtf = `<tr>
-                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtfusd))}) $:</td>
-                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfusd))}</td>
-                <td class="text-right" style="font-size: 8px;">IGTF 3%(Sobre ${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-                <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
-                </tr>`
-                       
-                contenidoHtml = contenidoHtml.replace("{{tasatotales}}", _tasacambio.toString().padEnd(9, '0'));
-    
-            } */
+            let trImpuestoigtfbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+        </tr>`;
             // const subtotalConDescuento = subtotal - descuento;        
             const subtotalConDescuento = subtotal;
             // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
@@ -691,6 +698,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // const fecha = moment().format('DD/MM/YYYY hh:mm:ss a');
             // Remplazar el valor {{tablaProductos}} por el verdadero valor
             contenidoHtml = contenidoHtml.replace("{{tablaProductos}}", tabla);
+            if (_tipomoneda > 1) {
+                subtotalbs = subtotal * Number(_tasacambio);
+                totalbs = total * Number(_tasacambio);
+            }
             let formasdepago = "";
             for (const forma of _formasdepago) {
                 formasdepago += `${forma.forma} Bs.: ${completarDecimales(Number(forma.valor))}<br>`;
@@ -700,6 +711,14 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             }
             else {
                 contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", '');
+            }
+            if (_observacion.length > 0) {
+                contenidoHtml = contenidoHtml.replace("{{tituloobservacion}}", 'Observación:');
+                contenidoHtml = contenidoHtml.replace("{{observacion}}", _observacion);
+            }
+            else {
+                contenidoHtml = contenidoHtml.replace("{{tituloobservacion}}", '');
+                contenidoHtml = contenidoHtml.replace("{{observacion}}", '');
             }
             const emailpdf = _emailcliente.split('|').join(', ');
             const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF';
@@ -755,49 +774,66 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
             console.log(_impuestog, _impuestor, _impuestoa, _impuestoigtf);
+            let trimpuestog = trImpuestogbs;
+            let trimpuestor = trImpuestorbs;
+            let trimpuestoa = trImpuestoabs;
+            let trimpuestoigtf = trImpuestoigtfbs;
+            if (_tipomoneda > 1) {
+                trimpuestog = trImpuestogdivisa;
+                trimpuestor = trImpuestordivisa;
+                trimpuestoa = trImpuestoadivisa;
+                trimpuestoigtf = trImpuestoigtfdivisa;
+            }
             if (_impuestog === 0) {
-                trbaseg = '';
+                trimpuestog = '';
             }
             if (_impuestor === 0) {
-                trbaser = '';
+                trimpuestor = '';
             }
             if (_impuestoa === 0) {
-                trbasea = '';
+                trimpuestoa = '';
             }
             if (_impuestoigtf === 0) {
-                trbaseigtf = '';
+                trimpuestoigtf = '';
             }
-            contenidoHtml = contenidoHtml.replace("{{trbaseg}}", trbaseg);
-            contenidoHtml = contenidoHtml.replace("{{trbaser}}", trbaser);
-            contenidoHtml = contenidoHtml.replace("{{trbasea}}", trbasea);
-            contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trbaseigtf);
+            contenidoHtml = contenidoHtml.replace("{{trbaseg}}", trimpuestog);
+            contenidoHtml = contenidoHtml.replace("{{trbaser}}", trimpuestor);
+            contenidoHtml = contenidoHtml.replace("{{trbasea}}", trimpuestoa);
+            contenidoHtml = contenidoHtml.replace("{{trbaseigtf}}", trimpuestoigtf);
             if (ISPUBLICIDAD) {
                 contenidoHtml = contenidoHtml.replace("{{publicidad}}", publicidad);
             }
             else {
                 contenidoHtml = contenidoHtml.replace("{{publicidad}}", '');
             }
-            let subtotalusd = 0;
-            let impuestosusd = 0;
-            let exentosusd = 0;
-            let totalusd = 0;
-            if (_tasacambio > 0) {
-                subtotalusd = Number(subtotal) / Number(_tasacambio);
-                // impuestosusd = Number(impuestos)/Number(_tasacambio)
-                exentosusd = Number(exentos) / Number(_tasacambio);
-                totalusd = Number(total) / Number(_tasacambio);
-                //  contenidoHtml = contenidoHtml.replace("{{baseivausd}}", completarDecimales(Number(_baseivausd)));
-                contenidoHtml = contenidoHtml.replace("{{subtotalusd}}", completarDecimales(Number(subtotalusd)));
-                contenidoHtml = contenidoHtml.replace("{{impuestosusd}}", completarDecimales(Number(impuestosusd)));
-                contenidoHtml = contenidoHtml.replace("{{exentosusd}}", completarDecimales(Number(exentosusd)));
-                contenidoHtml = contenidoHtml.replace("{{totalusd}}", completarDecimales(Number(totalusd)));
+            let trsubtotaldivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">Subtotal Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotalbs))}</td>
+            <td class="text-right" style="font-size: 8px;">Subtotal ${prefijo}:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotal))}</td>
+        </tr>`;
+            let trsubtotalbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">Subtotal Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotal))}</td>
+        </tr>`;
+            let trtotaldivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">Total Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(totalbs))}</td>
+            <td class="text-right" style="font-size: 8px;">Total ${prefijo}:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(total))}</td>
+        </tr>`;
+            let trtotalbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">Total Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(total))}</td>
+        </tr>`;
+            let _trsubtotal = trsubtotalbs;
+            let _trtotal = trtotalbs;
+            if (_tipomoneda > 1) {
+                _trsubtotal = trsubtotaldivisa;
+                _trtotal = trtotaldivisa;
             }
-            contenidoHtml = contenidoHtml.replace("{{prefsubtotal}}", prefijo);
-            contenidoHtml = contenidoHtml.replace("{{subtotal}}", completarDecimales(Number(subtotal)));
-            contenidoHtml = contenidoHtml.replace("{{prefexento}}", prefijo);
-            contenidoHtml = contenidoHtml.replace("{{exentos}}", completarDecimales(Number(exentos)));
-            contenidoHtml = contenidoHtml.replace("{{preftotal}}", prefijo);
-            contenidoHtml = contenidoHtml.replace("{{total}}", completarDecimales(Number(total)));
+            contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
+            contenidoHtml = contenidoHtml.replace("{{trtotal}}", _trtotal);
             contenidoHtml = contenidoHtml.replace("{{coletilla}}", coletilla);
             // NOTA DE ENTREGA GUIA DE DESPACHOS
             let creditofiscal = '';

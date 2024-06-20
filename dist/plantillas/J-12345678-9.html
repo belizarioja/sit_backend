@@ -20,10 +20,10 @@
                     <td>
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 70%;">
+                                <td style="width: 65%;">
                                     <div style="padding: 5px 0px; width: fit-content;font-weight: bolder;text-align: left;">{{razonsocial}}</div>
                                 </td>
-                                <td class="celdaCurvaGris" style="width: 30%;">
+                                <td class="celdaCurvaGris" style="width: 35%;">
                                     <div class="fondoCurvaGris">{{tipodocumento}}: <span class="textorojo text-center">{{numerointerno}}</span></div>
                                     <div class="fechaEmision">Fecha de emisión {{fecha}} {{hora}}</div>
                                 </td>
@@ -43,7 +43,7 @@
                                         <div style="font-size: 9px;">{{direccion}}</div>
                                         <div style="font-size: 9px;">{{rif}}</div>
                                         <div style="font-size: 9px;">{{telefono}}</div>
-                                        <div style="font-size: 9px;">Código de actividad económica: {{codigoactividad}}</div>
+                                        <div style="font-size: 9px;">Código de Actividad Económica: {{codigoactividad}}</div>
                                     </div>
                                 </td>
                                 <td>
@@ -117,21 +117,19 @@
                         <p style="font-size: 8px; font-weight: 700; padding-left: 20px;">
                             {{formasdepago}}
                         <p>
+                        <p style="font-size: 8px; font-weight: 700;">{{tituloobservacion}}<p>
+                        <p style="font-size: 8px; font-weight: 700; padding-left: 20px;">
+                            {{observacion}}
+                        <p>
                     </td>
                     <td style="width: 50%;">
                         <table style="width: 100%;margin-top: 5px;">
-                            <tr>
-                                <td class="text-right" style="font-size: 8px;">Subtotal {{prefsubtotal}}:</td>
-                                <td class="text-right" style="font-size: 8px;">{{subtotal}}</td>
-                            </tr>
+                            {{trsubtotal}}
                             {{trbaseg}}
                             {{trbaser}}
                             {{trbasea}}
                             {{trbaseigtf}}
-                            <tr style="height: 30px;">
-                                <td class="text-right" style="font-size: 8px;">Total {{preftotal}}:</td>
-                                <td class="text-right" style="font-size: 8px;">{{total}}</td>
-                            </tr>
+                            {{trtotal}}
                         </table>
                     </td>
                 </tr>
@@ -171,7 +169,7 @@
         font-size: 10px !important;
     }
     .fechaEmision {
-        font-size: 10px !important;
+        font-size: 9px !important;
         width: 100% !important;
         text-align: right !important;
     }
