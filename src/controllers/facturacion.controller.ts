@@ -808,8 +808,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let afectado = ''
         if (docafectado.length > 0){
             afectado = `<tr>
-                        <td class="text-right afectado" style="font-size: 6px;font-weight: bolder;">${docafectado}</td>
-                        <td class="text-left afectado" style="font-size: 6px;font-weight: bolder;">&nbsp;${numeroafectado}</td>
+                        <td class="text-right afectado" style="font-size: 5px;font-weight: bolder;">${docafectado}</td>
+                        <td class="text-left afectado" style="font-size: 5px;font-weight: bolder;">&nbsp;${numeroafectado}</td>
                     </tr>`
         }
         const folderPathQr = IMGPDF + 'codeqr/' + _rif + '/' + annioenvio + '-' + mesenvio + '/qrcode_' + _rif + _pnumero + '.png';
