@@ -396,8 +396,8 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
             await pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento])
             // console.log(insertDet + valuesDet)
         }
-        console.log('formasdepago')
-        console.log(formasdepago)
+        // console.log('formasdepago')
+        // console.log(formasdepago)
         for(const ind in formasdepago) {
             const item2 = formasdepago[ind]
            
@@ -698,6 +698,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             _impuestorbs = _impuestor * Number(_tasacambio)
             _impuestoabs = _impuestoa * Number(_tasacambio)
         }
+        // IMP GENERAL 16%
         let trImpuestogdivisa = `<tr>
             <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestogbs))}</td>
@@ -708,23 +709,29 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
+
+        // IMP REDUCIDO 8%
         let trImpuestordivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">IVA 8% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
             <td class=" text-right" style="font-size: 8px;">IVA 8% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
+        </tr>`        
+        let trImpuestorbs = `<tr>
+            <td class=" text-right" style="font-size: 8px;">IVA 8%  Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`
         
-        let trImpuestorbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 8%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
-        </tr>`
+        // IMP AL LUJO 31%
         let trImpuestoadivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">IVA 31% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
             <td class=" text-right" style="font-size: 8px;">IVA 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
-        </tr>`
-        
+        </tr>`        
         let trImpuestoabs = `<tr>
             <td class=" text-right" style="font-size: 8px;">IVA 31%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`
        
         
@@ -833,7 +840,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
         contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
         
-        console.log(_impuestog, _impuestor, _impuestoa,_impuestoigtf )
+        // console.log(_impuestog, _impuestor, _impuestoa,_impuestoigtf )
 
         let trimpuestog = trImpuestogbs
         let trimpuestor = trImpuestorbs
@@ -930,7 +937,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 //////////////
                 // FIRMAR PDF
                 //////////////
-                console.log(enviocorreo, _sendmail, productos.length, _emailcliente)
+                // console.log(enviocorreo, _sendmail, productos.length, _emailcliente)
 
                 if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
                     console.log('va a Enviar correo')

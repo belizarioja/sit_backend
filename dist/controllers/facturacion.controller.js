@@ -362,8 +362,8 @@ function setFacturacion(req, res) {
             yield database_1.pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento]);
             // console.log(insertDet + valuesDet)
         }
-        console.log('formasdepago');
-        console.log(formasdepago);
+        // console.log('formasdepago')
+        // console.log(formasdepago)
         for (const ind in formasdepago) {
             const item2 = formasdepago[ind];
             // console.log((Number(item.precio) * Number(item.cantidad) + Number(item.impuesto)).toFixed(2), Number(item.monto).toFixed(2))
@@ -650,6 +650,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 _impuestorbs = _impuestor * Number(_tasacambio);
                 _impuestoabs = _impuestoa * Number(_tasacambio);
             }
+            // IMP GENERAL 16%
             let trImpuestogdivisa = `<tr>
             <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestogbs))}</td>
@@ -660,21 +661,27 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
+            // IMP REDUCIDO 8%
             let trImpuestordivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">IVA 8% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
             <td class=" text-right" style="font-size: 8px;">IVA 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
             let trImpuestorbs = `<tr>
             <td class=" text-right" style="font-size: 8px;">IVA 8%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
+            // IMP AL LUJO 31%
             let trImpuestoadivisa = `<tr>
+            <td class="text-right" style="font-size: 8px;">IVA 31% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
             <td class=" text-right" style="font-size: 8px;">IVA 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
             let trImpuestoabs = `<tr>
             <td class=" text-right" style="font-size: 8px;">IVA 31%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
             let _impuestoigtfbs = 0;
             let _baseigtfbs = 0;
@@ -774,7 +781,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
-            console.log(_impuestog, _impuestor, _impuestoa, _impuestoigtf);
+            // console.log(_impuestog, _impuestor, _impuestoa,_impuestoigtf )
             let trimpuestog = trImpuestogbs;
             let trimpuestor = trImpuestorbs;
             let trimpuestoa = trImpuestoabs;
@@ -862,7 +869,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     //////////////
                     // FIRMAR PDF
                     //////////////
-                    console.log(enviocorreo, _sendmail, productos.length, _emailcliente);
+                    // console.log(enviocorreo, _sendmail, productos.length, _emailcliente)
                     if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
                         console.log('va a Enviar correo');
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus);
