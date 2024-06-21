@@ -551,7 +551,7 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
 }
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         leftjoin += " left join t_codigoscomercial c ON a.idcodigocomercial = c.id ";
@@ -568,6 +568,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
         const codigoactividad = respsede.rows[0].codigocomercial
+        const plantillapdf = respsede.rows[0].plantillapdf
         const prefijo = Number(_tipomoneda) === 1 ? 'Bs.' : Number(_tipomoneda) === 2 ? '$' : '€'
         ISPUBLICIDAD = respsede.rows[0].publicidad || '0'
         let URLPUBLICIDAD = ''
@@ -927,8 +928,11 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         // const icFirmaDocumentosInput = __dirname
         // const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit"        
         // console.log(icFirmaDocumentosInput)
+        // A3, A4, A5, Legal, Letter, Tabloid
+        const formatoPdf = Number(plantillapdf) === 4 ? 'Tabloid' : 'Letter'
+        console.log(Number(plantillapdf), formatoPdf)
 
-        pdf.create(contenidoHtml, { format: "Letter" }).toFile(pathPdf1, async (error) => {
+        pdf.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, async (error) => {
             if (error) {
                 // console.log("Error creando PDF: " + error)
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
