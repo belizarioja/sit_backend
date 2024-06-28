@@ -754,6 +754,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let afectado = '';
             if (docafectado.length > 0) {
                 afectado = `<tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr><tr>
                         <td class="text-right afectado" style="font-size: 5px;font-weight: bolder;">${docafectado}</td>
                         <td class="text-left afectado" style="font-size: 5px;font-weight: bolder;">&nbsp;${numeroafectado}</td>
                     </tr>`;
