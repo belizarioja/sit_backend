@@ -24,8 +24,30 @@
                                     <div style="padding: 5px 0px; width: fit-content;font-weight: bolder;text-align: left;">{{razonsocial}}</div>
                                 </td>
                                 <td class="celdaCurvaGris" style="width: 35%;">
-                                    <div class="fondoCurvaGris">{{tipodocumento}}: <span class="textorojo text-center">{{numerointerno}}</span></div>
-                                    <div class="fechaEmision">Fecha de emisión {{fecha}} {{hora}}</div>
+                                    <div class="fondoCurvaGris">
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td style="width: 50%;">
+                                                    {{tipodocumento}}                                                
+                                                </td>
+                                                <td style="width: 50%;">
+                                                    <span class="textorojo text-right">{{numerointerno}}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="fechaEmision">
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td class="fechaEmision text-left" style="width: 50%;">
+                                                    Fecha de emisión {{fecha}}                                              
+                                                </td>
+                                                <td class="fechaEmision text-right" style="width: 50%;">
+                                                    Hora de emisión {{hora}}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -165,13 +187,11 @@
         background: #ddd !important;
         border-top-left-radius: 15px !important; 
         border-bottom-left-radius: 15px !important; 
-        padding: 5px 10px !important; 
+        padding: 5px 10px !important;
         font-size: 10px !important;
     }
     .fechaEmision {
-        font-size: 9px !important;
-        width: 100% !important;
-        text-align: right !important;
+        font-size: 8px !important;
     }
     .tarjetaEmisores {
         background: #ddd !important;
