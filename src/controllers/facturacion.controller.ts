@@ -707,7 +707,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
         let trImpuestogbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
 

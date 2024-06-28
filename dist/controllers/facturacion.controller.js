@@ -659,7 +659,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             let trImpuestogbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             // IMP REDUCIDO 8%
