@@ -740,17 +740,17 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let _baseigtfbs = 0
         // let _baseivausd = 0
         
-        _baseigtfbs = Number(_baseigtf) * Number(_tasacambio)
+        _baseigtfbs = Number(_baseigtf) / Number(_tasacambio)
         _impuestoigtfbs = Number(_impuestoigtf) * Number(_tasacambio)
 
         let trImpuestoigtfdivisa = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtfbs))}) Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtf))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfbs))}</td>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtf))}) ${prefijo}:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtf))}) ${prefijo}:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
         let trImpuestoigtfbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${completarDecimales(Number(_baseigtf))}) Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfbs))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
 
