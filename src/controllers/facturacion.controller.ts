@@ -358,6 +358,8 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(2) : impuestog
         const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(2) : baseigtf
         const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(2) : impuestoigtf
+        // const _baseigtf = baseigtf.toFixed(2)
+        // const _impuestoigtf = impuestoigtf.toFixed(2)
         // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
 
@@ -736,21 +738,21 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`
        
         
-        let _impuestoigtfbs = 0
-        let _baseigtfbs = 0
+        let _impuestoigtfDiv = 0
+        let _baseigtfDiv = 0
         // let _baseivausd = 0
         
-        _baseigtfbs = Number(_baseigtf) / Number(_tasacambio)
-        _impuestoigtfbs = Number(_impuestoigtf) * Number(_tasacambio)
+        _baseigtfDiv = Number(_baseigtf) / Number(_tasacambio)
+        _impuestoigtfDiv = Number(_impuestoigtf) / Number(_tasacambio)
 
         let trImpuestoigtfdivisa = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtf))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfbs))}</td>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtf))}) ${prefijo}:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) ${prefijo}:</td>
+            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfDiv))}</td>
         </tr>`
         let trImpuestoigtfbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfbs))}) Bs.:</td>
+            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
             <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`
 
