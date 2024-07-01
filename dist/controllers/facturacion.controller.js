@@ -704,7 +704,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // const subtotalConDescuento = subtotal - descuento;        
             const subtotalConDescuento = subtotal;
             // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
-            const total = subtotalConDescuento + _impuestog + _impuestor + _impuestoa + Number(_impuestoigtf);
+            const igtfTotal = _tipomoneda > 1 ? _impuestoigtfDiv : _impuestoigtf;
+            const total = subtotalConDescuento + _impuestog + _impuestor + _impuestoa + Number(igtfTotal);
             // console.log(total)
             // const fecha = moment().format('DD/MM/YYYY hh:mm:ss a');
             // Remplazar el valor {{tablaProductos}} por el verdadero valor
