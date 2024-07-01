@@ -36,382 +36,382 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
 function setFacturacion(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        // try {
-        const { id, rif, razonsocial, email, direccion, validarinterno } = req;
-        const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
-        const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
-        const { tasaa, basea, impuestoa } = req.body;
-        // console.log(req)
-        // console.log('baseigtf, impuestog')
-        // console.log(baseigtf, impuestog)
-        yield database_1.pool.query('BEGIN');
-        const _tasacambio = tasacambio || 0;
-        const lotepiedepagina = yield obtenerLote(res, id);
-        if (lotepiedepagina === '0') {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 12,
-                    message: 'Mo tiene disponibilidad de ASIGNADOS!'
-                }
-            });
-        }
-        /* if(formasdepago.length === 0) {
-            await pool.query('ROLLBACK')
-            
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 13,
-                    message: 'Debe incluir al menos una forma de PAGO!'
-                }
-            });
-        } */
-        const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina;
-        // console.log('rifcedulacliente')
-        // console.log(rifcedulacliente)
-        if (rifcedulacliente.length === 0) {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 2,
-                    message: 'Valor de RIF CLIENTE no válido!'
-                }
-            });
-        }
-        if (nombrecliente.length === 0) {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 2,
-                    message: 'Valor de NOMBRE CLIENTE no válido!'
-                }
-            });
-        }
-        // console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog))
-        let totalimp = 0;
-        let totalbase = 0;
-        // console.log( (Number(baseg) * (Number(tasag) / 100)), Number(impuestog))
-        // console.log( (Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2))
-        if (Number(baseg) > 0 && Number(tasag) > 0) {
-            if ((Number(baseg) * (Number(tasag) / 100)).toFixed(2) !== Number(impuestog).toFixed(2)) {
+        try {
+            const { id, rif, razonsocial, email, direccion, validarinterno } = req;
+            const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
+            const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
+            const { tasaa, basea, impuestoa } = req.body;
+            // console.log(req)
+            // console.log('baseigtf, impuestog')
+            // console.log(baseigtf, impuestog)
+            yield database_1.pool.query('BEGIN');
+            const _tasacambio = tasacambio || 0;
+            const lotepiedepagina = yield obtenerLote(res, id);
+            if (lotepiedepagina === '0') {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
                     data: null,
                     error: {
-                        code: 4,
-                        message: 'Valor de IMPUESTO IVA ' + tasag + '% MAL CALCULADO!'
+                        code: 12,
+                        message: 'Mo tiene disponibilidad de ASIGNADOS!'
                     }
                 });
             }
-            else {
-                totalimp += Number(impuestog);
-                totalbase += Number(baseg);
-            }
-        }
-        if (Number(baser) > 0 && Number(tasar) > 0) {
-            if ((Number(baser) * (Number(tasar) / 100)).toFixed(2) !== Number(impuestor).toFixed(2)) {
+            /* if(formasdepago.length === 0) {
+                await pool.query('ROLLBACK')
+                
+                return res.status(202).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: 13,
+                        message: 'Debe incluir al menos una forma de PAGO!'
+                    }
+                });
+            } */
+            const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina;
+            // console.log('rifcedulacliente')
+            // console.log(rifcedulacliente)
+            if (rifcedulacliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
                     data: null,
                     error: {
-                        code: 4,
-                        message: 'Valor de IMPUESTO REDUCIDO ' + tasar + '% MAL CALCULADO!'
+                        code: 2,
+                        message: 'Valor de RIF CLIENTE no válido!'
                     }
                 });
             }
-            else {
-                totalimp += Number(impuestor);
-                totalbase += Number(baser);
-            }
-        }
-        if (Number(basea) > 0 && Number(tasaa) > 0) {
-            if ((Number(basea) * (Number(tasaa) / 100)).toFixed(2) !== Number(impuestoa).toFixed(2)) {
+            if (nombrecliente.length === 0) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
                     data: null,
                     error: {
-                        code: 4,
-                        message: 'Valor de IMPUESTO AL LUJO ' + tasar + '% MAL CALCULADO!'
+                        code: 2,
+                        message: 'Valor de NOMBRE CLIENTE no válido!'
                     }
                 });
             }
-            else {
-                totalimp += Number(impuestoa);
-                totalbase += Number(basea);
-            }
-        }
-        if (Number(baseigtf) > 0 && Number(tasaigtf) > 0) {
-            if ((Number(baseigtf) * (Number(tasaigtf) / 100)).toFixed(2) !== Number(impuestoigtf).toFixed(2)) {
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 4,
-                        message: 'Valor de IMPUESTO IGTF ' + tasaigtf + '% MAL CALCULADO!'
-                    }
-                });
-            }
-            else {
-                totalimp += Number(impuestoigtf);
-                // console.log(totalimp, Number(impuestoigtf))
-                // totalbase += Number(baseigtf)
-            }
-        }
-        if (Number(exento) > 0) {
-            totalbase += Number(exento);
-        }
-        if (Number(subtotal) > 0) {
-            // console.log(Number(totalbase), Number(subtotal))
-            if (Number(totalbase).toFixed(2) !== Number(subtotal).toFixed(2)) {
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 4,
-                        message: 'Valor de SUBTOTAL MAL CALCULADO!'
-                    }
-                });
-            }
-            // console.log(Number(subtotal), Number(totalimp), Number(total))
-            // console.log((Number(subtotal) + Number(totalimp)).toFixed(2), Number(total).toFixed(2))
-            if ((Number(subtotal) + Number(totalimp)).toFixed(2) !== Number(total).toFixed(2)) {
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 4,
-                        message: 'Valor de TOTAL MAL CALCULADO!'
-                    }
-                });
-            }
-        }
-        else {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 4,
-                    message: 'Debe agregar valor de SUBTOTAL!'
-                }
-            });
-        }
-        // console.log('idtipodocumento, relacionado')
-        // console.log(idtipodocumento, relacionado)
-        if ((idtipodocumento === 2 || idtipodocumento === 3) && !relacionado) {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 5,
-                    message: 'Campo RELACIONADO es requerido!'
-                }
-            });
-        }
-        let numeroafectado = '';
-        let fechaafectado = '';
-        let idtipoafectado = '';
-        if (idtipodocumento === 2 || idtipodocumento === 3) {
-            const sqlrel = " SELECT * FROM t_registros ";
-            const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
-            // console.log(sqlupd + whereupd)
-            const resprel = yield database_1.pool.query(sqlrel + whererel, [id, relacionado]);
-            if (resprel.rows.length === 0) {
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 11,
-                        message: 'NUMERO DOCUMENTO no corresponde al cliente emisor!'
-                    }
-                });
-            }
-            else {
-                // console.log('resprel.rows[0]')
-                // console.log(resprel.rows[0])
-                numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : relacionado;
-                fechaafectado = resprel.rows[0].fecha;
-                idtipoafectado = resprel.rows[0].idtipodocumento;
-            }
-        }
-        if (cuerpofactura.length === 0) {
-            yield database_1.pool.query('ROLLBACK');
-            return res.status(202).json({
-                success: false,
-                data: null,
-                error: {
-                    code: 10,
-                    message: 'Cuerpo de DETALLE FACTURA es requerido!'
-                }
-            });
-        }
-        const sql = " UPDATE t_serviciosdoc ";
-        let set = " SET identificador = CASE WHEN corelativo = 99999999 THEN identificador + 1 ELSE identificador END, ";
-        set += " corelativo = CASE WHEN corelativo = 99999999 THEN 1 ELSE corelativo + 1 END ";
-        const where = " where idserviciosmasivo = $1 RETURNING idserviciosmasivo, identificador, corelativo ";
-        // console.log(sql + set + where);
-        const resp = yield database_1.pool.query(sql + set + where, [id]);
-        let identificador = Number(resp.rows[0].identificador);
-        let corelativo = Number(resp.rows[0].corelativo);
-        // AQUI VALIDAR NU8MERO INTERNO
-        if (validarinterno > 0) {
-            // console.log('Aqui función para validar numero interno 1:', numerointerno)
-            if ((numerointerno === null || numerointerno === void 0 ? void 0 : numerointerno.length) === 0) {
-                // console.log('Aqui función para validar numero interno 2:', numerointerno)
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 7,
-                        message: 'Falta valor del NÚMERO INTERNO!'
-                    }
-                });
-            }
-            else {
-                const sqlinterno = "SELECT * FROM t_registros";
-                const whareinterno = " WHERE numerointerno = $1 AND idtipodocumento = $2 AND idserviciosmasivo = $3  ";
-                const respinterno = yield database_1.pool.query(sqlinterno + whareinterno, [numerointerno, idtipodocumento, id]);
-                if (respinterno.rows.length > 0) {
+            // console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog))
+            let totalimp = 0;
+            let totalbase = 0;
+            // console.log( (Number(baseg) * (Number(tasag) / 100)), Number(impuestog))
+            // console.log( (Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2))
+            if (Number(baseg) > 0 && Number(tasag) > 0) {
+                if ((Number(baseg) * (Number(tasag) / 100)).toFixed(2) !== Number(impuestog).toFixed(2)) {
                     yield database_1.pool.query('ROLLBACK');
                     return res.status(202).json({
                         success: false,
                         data: null,
                         error: {
-                            code: 8,
-                            message: 'NÚMERO INTERNO para este TIPO DE DOCUMENTO, ya existe!'
+                            code: 4,
+                            message: 'Valor de IMPUESTO IVA ' + tasag + '% MAL CALCULADO!'
                         }
                     });
                 }
                 else {
-                    // console.log('Aqui función para validar numero interno 3 :', numerointerno)                  
-                    const respinterno2 = yield obtenerNumInterno(idtipodocumento, id);
-                    if (Number(respinterno2) > 0 && (Number(respinterno2) + 1 !== Number(numerointerno))) {
-                        yield database_1.pool.query('ROLLBACK');
-                        return res.status(202).json({
-                            success: false,
-                            data: null,
-                            error: {
-                                code: 9,
-                                message: 'NÚMERO INTERNO no corresponde numeración esperada! Actual:' + respinterno2
-                            }
-                        });
-                    }
+                    totalimp += Number(impuestog);
+                    totalbase += Number(baseg);
                 }
             }
-            // console.log('Aqui función para validar numero interno :', numerointerno)
-        }
-        // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
-        // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
-        const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(2) : subtotal;
-        const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(2) : total;
-        const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(2) : exento;
-        const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(2) : baser;
-        const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(2) : impuestor;
-        const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(2) : baseg;
-        const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(2) : impuestog;
-        const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(2) : baseigtf;
-        const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(2) : impuestoigtf;
-        // const _baseigtf = baseigtf.toFixed(2)
-        // const _impuestoigtf = impuestoigtf.toFixed(2)
-        // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
-        // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
-        const numerocompleto = identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0');
-        const relacionadoBD = relacionado || '';
-        const observacionBD = observacion || '';
-        const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda ) ';
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31) RETURNING id ';
-        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda]);
-        // console.log(respReg.rows[0].id)
-        const idRegistro = respReg.rows[0].id;
-        for (const ind in cuerpofactura) {
-            const item = cuerpofactura[ind];
-            // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
-            if (Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
+            if (Number(baser) > 0 && Number(tasar) > 0) {
+                if ((Number(baser) * (Number(tasar) / 100)).toFixed(2) !== Number(impuestor).toFixed(2)) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor de IMPUESTO REDUCIDO ' + tasar + '% MAL CALCULADO!'
+                        }
+                    });
+                }
+                else {
+                    totalimp += Number(impuestor);
+                    totalbase += Number(baser);
+                }
+            }
+            if (Number(basea) > 0 && Number(tasaa) > 0) {
+                if ((Number(basea) * (Number(tasaa) / 100)).toFixed(2) !== Number(impuestoa).toFixed(2)) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor de IMPUESTO AL LUJO ' + tasar + '% MAL CALCULADO!'
+                        }
+                    });
+                }
+                else {
+                    totalimp += Number(impuestoa);
+                    totalbase += Number(basea);
+                }
+            }
+            if (Number(baseigtf) > 0 && Number(tasaigtf) > 0) {
+                if ((Number(baseigtf) * (Number(tasaigtf) / 100)).toFixed(2) !== Number(impuestoigtf).toFixed(2)) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor de IMPUESTO IGTF ' + tasaigtf + '% MAL CALCULADO!'
+                        }
+                    });
+                }
+                else {
+                    totalimp += Number(impuestoigtf);
+                    // console.log(totalimp, Number(impuestoigtf))
+                    // totalbase += Number(baseigtf)
+                }
+            }
+            if (Number(exento) > 0) {
+                totalbase += Number(exento);
+            }
+            if (Number(subtotal) > 0) {
+                // console.log(Number(totalbase), Number(subtotal))
+                if (Number(totalbase).toFixed(2) !== Number(subtotal).toFixed(2)) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor de SUBTOTAL MAL CALCULADO!'
+                        }
+                    });
+                }
+                // console.log(Number(subtotal), Number(totalimp), Number(total))
+                // console.log((Number(subtotal) + Number(totalimp)).toFixed(2), Number(total).toFixed(2))
+                if ((Number(subtotal) + Number(totalimp)).toFixed(2) !== Number(total).toFixed(2)) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor de TOTAL MAL CALCULADO!'
+                        }
+                    });
+                }
+            }
+            else {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
                     data: null,
                     error: {
                         code: 4,
-                        message: 'Valor del MONTO DE UN REGISTRO, MAL CALCULADO!'
+                        message: 'Debe agregar valor de SUBTOTAL!'
                     }
                 });
             }
-            const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(2) : item.monto;
-            const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(2) : item.descuento;
-            const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(2) : item.precio;
-            // console.log(_monto, _descuento, _precio)
-            const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento ) ';
-            const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ';
-            yield database_1.pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento]);
-            // console.log(insertDet + valuesDet)
-        }
-        // console.log('formasdepago')
-        // console.log(formasdepago)
-        for (const ind in formasdepago) {
-            const item2 = formasdepago[ind];
-            // console.log((Number(item.precio) * Number(item.cantidad) + Number(item.impuesto)).toFixed(2), Number(item.monto).toFixed(2))
-            if (item2.forma.length === 0) {
+            // console.log('idtipodocumento, relacionado')
+            // console.log(idtipodocumento, relacionado)
+            if ((idtipodocumento === 2 || idtipodocumento === 3) && !relacionado) {
                 yield database_1.pool.query('ROLLBACK');
                 return res.status(202).json({
                     success: false,
                     data: null,
                     error: {
-                        code: 14,
-                        message: 'Informacion de forma de pago NO VALIDA!'
+                        code: 5,
+                        message: 'Campo RELACIONADO es requerido!'
                     }
                 });
             }
-            const insertForma = 'INSERT INTO t_formasdepago (idregistro, forma, valor ) ';
-            const valuesForma = ' VALUES ($1, $2, $3) ';
-            yield database_1.pool.query(insertForma + valuesForma, [idRegistro, item2.forma, item2.valor]);
-            // console.log(insertDet + valuesDet)
-        }
-        yield database_1.pool.query('COMMIT');
-        if (cuerpofactura.length > 0) {
-            console.log('va a Crear pdf correo');
-            yield enviarCrearFactura(res, rif, numerocompleto, sendmail);
-            // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, tipomoneda)
-        }
-        else {
-            console.log('Sin Factura pdf correo');
-        }
-        const data = {
-            success: true,
-            error: null,
-            data: {
-                numerodocumento: numerocompleto,
-                piedepagina: piedepagina,
-                identificador: identificador.toString().padStart(2, '0'),
-                corelativo: corelativo.toString().padStart(8, '0'),
-                datatime: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
-                fecha: (0, moment_1.default)().format('YYYYMMDD'),
-                hora: (0, moment_1.default)().format('HH:mm:ss')
+            let numeroafectado = '';
+            let fechaafectado = '';
+            let idtipoafectado = '';
+            if (idtipodocumento === 2 || idtipodocumento === 3) {
+                const sqlrel = " SELECT * FROM t_registros ";
+                const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
+                // console.log(sqlupd + whereupd)
+                const resprel = yield database_1.pool.query(sqlrel + whererel, [id, relacionado]);
+                if (resprel.rows.length === 0) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 11,
+                            message: 'NUMERO DOCUMENTO no corresponde al cliente emisor!'
+                        }
+                    });
+                }
+                else {
+                    // console.log('resprel.rows[0]')
+                    // console.log(resprel.rows[0])
+                    numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : relacionado;
+                    fechaafectado = resprel.rows[0].fecha;
+                    idtipoafectado = resprel.rows[0].idtipodocumento;
+                }
             }
-        };
-        return res.status(200).json(data);
-        /* }
+            if (cuerpofactura.length === 0) {
+                yield database_1.pool.query('ROLLBACK');
+                return res.status(202).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: 10,
+                        message: 'Cuerpo de DETALLE FACTURA es requerido!'
+                    }
+                });
+            }
+            const sql = " UPDATE t_serviciosdoc ";
+            let set = " SET identificador = CASE WHEN corelativo = 99999999 THEN identificador + 1 ELSE identificador END, ";
+            set += " corelativo = CASE WHEN corelativo = 99999999 THEN 1 ELSE corelativo + 1 END ";
+            const where = " where idserviciosmasivo = $1 RETURNING idserviciosmasivo, identificador, corelativo ";
+            // console.log(sql + set + where);
+            const resp = yield database_1.pool.query(sql + set + where, [id]);
+            let identificador = Number(resp.rows[0].identificador);
+            let corelativo = Number(resp.rows[0].corelativo);
+            // AQUI VALIDAR NU8MERO INTERNO
+            if (validarinterno > 0) {
+                // console.log('Aqui función para validar numero interno 1:', numerointerno)
+                if ((numerointerno === null || numerointerno === void 0 ? void 0 : numerointerno.length) === 0) {
+                    // console.log('Aqui función para validar numero interno 2:', numerointerno)
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 7,
+                            message: 'Falta valor del NÚMERO INTERNO!'
+                        }
+                    });
+                }
+                else {
+                    const sqlinterno = "SELECT * FROM t_registros";
+                    const whareinterno = " WHERE numerointerno = $1 AND idtipodocumento = $2 AND idserviciosmasivo = $3  ";
+                    const respinterno = yield database_1.pool.query(sqlinterno + whareinterno, [numerointerno, idtipodocumento, id]);
+                    if (respinterno.rows.length > 0) {
+                        yield database_1.pool.query('ROLLBACK');
+                        return res.status(202).json({
+                            success: false,
+                            data: null,
+                            error: {
+                                code: 8,
+                                message: 'NÚMERO INTERNO para este TIPO DE DOCUMENTO, ya existe!'
+                            }
+                        });
+                    }
+                    else {
+                        // console.log('Aqui función para validar numero interno 3 :', numerointerno)                  
+                        const respinterno2 = yield obtenerNumInterno(idtipodocumento, id);
+                        if (Number(respinterno2) > 0 && (Number(respinterno2) + 1 !== Number(numerointerno))) {
+                            yield database_1.pool.query('ROLLBACK');
+                            return res.status(202).json({
+                                success: false,
+                                data: null,
+                                error: {
+                                    code: 9,
+                                    message: 'NÚMERO INTERNO no corresponde numeración esperada! Actual:' + respinterno2
+                                }
+                            });
+                        }
+                    }
+                }
+                // console.log('Aqui función para validar numero interno :', numerointerno)
+            }
+            // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
+            // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
+            const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(2) : subtotal;
+            const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(2) : total;
+            const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(2) : exento;
+            const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(2) : baser;
+            const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(2) : impuestor;
+            const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(2) : baseg;
+            const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(2) : impuestog;
+            const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(2) : baseigtf;
+            const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(2) : impuestoigtf;
+            // const _baseigtf = baseigtf.toFixed(2)
+            // const _impuestoigtf = impuestoigtf.toFixed(2)
+            // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
+            // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
+            const numerocompleto = identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0');
+            const relacionadoBD = relacionado || '';
+            const observacionBD = observacion || '';
+            const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
+            const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda ) ';
+            const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31) RETURNING id ';
+            const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda]);
+            // console.log(respReg.rows[0].id)
+            const idRegistro = respReg.rows[0].id;
+            for (const ind in cuerpofactura) {
+                const item = cuerpofactura[ind];
+                // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
+                if (Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 4,
+                            message: 'Valor del MONTO DE UN REGISTRO, MAL CALCULADO!'
+                        }
+                    });
+                }
+                const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(2) : item.monto;
+                const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(2) : item.descuento;
+                const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(2) : item.precio;
+                // console.log(_monto, _descuento, _precio)
+                const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento ) ';
+                const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ';
+                yield database_1.pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento]);
+                // console.log(insertDet + valuesDet)
+            }
+            // console.log('formasdepago')
+            // console.log(formasdepago)
+            for (const ind in formasdepago) {
+                const item2 = formasdepago[ind];
+                // console.log((Number(item.precio) * Number(item.cantidad) + Number(item.impuesto)).toFixed(2), Number(item.monto).toFixed(2))
+                if (item2.forma.length === 0) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 14,
+                            message: 'Informacion de forma de pago NO VALIDA!'
+                        }
+                    });
+                }
+                const insertForma = 'INSERT INTO t_formasdepago (idregistro, forma, valor ) ';
+                const valuesForma = ' VALUES ($1, $2, $3) ';
+                yield database_1.pool.query(insertForma + valuesForma, [idRegistro, item2.forma, item2.valor]);
+                // console.log(insertDet + valuesDet)
+            }
+            yield database_1.pool.query('COMMIT');
+            if (cuerpofactura.length > 0) {
+                console.log('va a Crear pdf correo');
+                yield enviarCrearFactura(res, rif, numerocompleto, sendmail);
+                // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, tipomoneda)
+            }
+            else {
+                console.log('Sin Factura pdf correo');
+            }
+            const data = {
+                success: true,
+                error: null,
+                data: {
+                    numerodocumento: numerocompleto,
+                    piedepagina: piedepagina,
+                    identificador: identificador.toString().padStart(2, '0'),
+                    corelativo: corelativo.toString().padStart(8, '0'),
+                    datatime: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
+                    fecha: (0, moment_1.default)().format('YYYYMMDD'),
+                    hora: (0, moment_1.default)().format('HH:mm:ss')
+                }
+            };
+            return res.status(200).json(data);
+        }
         catch (e) {
             return res.status(400).send('Error Creando correlativo o cuerpo de factura ' + e);
-        } */
+        }
     });
 }
 exports.setFacturacion = setFacturacion;
@@ -449,68 +449,74 @@ exports.getNumerointerno = getNumerointerno;
 function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('va a Consultar registros');
-        let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda  ";
-        const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
-        const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
-        yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
-            // console.log(response)
-            // console.log(response.rows[0])
-            const idregistro = response.rows[0].id;
-            const idserviciosmasivo = response.rows[0].idserviciosmasivo;
-            const razonsocial = response.rows[0].razonsocial;
-            const emailemisor = response.rows[0].email;
-            const emailcliente = response.rows[0].emailcliente;
-            const nombrecliente = response.rows[0].nombrecliente;
-            const direccion = response.rows[0].direccion;
-            const cedulacliente = response.rows[0].cedulacliente;
-            const idtipocedulacliente = response.rows[0].idtipocedulacliente;
-            const idtipodocumento = response.rows[0].idtipodocumento;
-            const telefonocliente = response.rows[0].telefonocliente || '';
-            const direccioncliente = response.rows[0].direccioncliente || '';
-            const impuestoigtf = response.rows[0].impuestoigtf;
-            const baseigtf = response.rows[0].baseigtf;
-            const numerointerno = response.rows[0].numerointerno;
-            const piedepagina = response.rows[0].piedepagina;
-            const tasacambio = response.rows[0].tasacambio;
-            const observacion = response.rows[0].observacion || '';
-            const estatus = response.rows[0].estatus;
-            const tipomoneda = response.rows[0].tipomoneda;
-            // const sendmail = 1 
-            const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss');
-            // console.log('respdoc.rows[0].fecha, fechaenvio')
-            // console.log(respdoc.rows[0].fecha, fechaenvio)
-            let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : '';
-            let fechaafectado = '';
-            let idtipoafectado = '';
-            if (idtipodocumento === '2' || idtipodocumento === '3') {
-                const sqlrel = " SELECT * FROM t_registros ";
-                const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
-                // console.log(sqlupd + whereupd)
-                const resprel = yield database_1.pool.query(sqlrel + whererel, [idserviciosmasivo, response.rows[0].relacionado]);
-                if (resprel.rows.length > 0) {
-                    numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : numeroafectado;
-                    fechaafectado = resprel.rows[0].fecha;
-                    idtipoafectado = resprel.rows[0].idtipodocumento;
+        try {
+            let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
+            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda  ";
+            const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
+            const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
+            yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
+                // console.log(response)
+                // console.log(response.rows[0])
+                const idregistro = response.rows[0].id;
+                const idserviciosmasivo = response.rows[0].idserviciosmasivo;
+                const razonsocial = response.rows[0].razonsocial;
+                const emailemisor = response.rows[0].email;
+                const emailcliente = response.rows[0].emailcliente;
+                const nombrecliente = response.rows[0].nombrecliente;
+                const direccion = response.rows[0].direccion;
+                const cedulacliente = response.rows[0].cedulacliente;
+                const idtipocedulacliente = response.rows[0].idtipocedulacliente;
+                const idtipodocumento = response.rows[0].idtipodocumento;
+                const telefonocliente = response.rows[0].telefonocliente || '';
+                const direccioncliente = response.rows[0].direccioncliente || '';
+                const impuestoigtf = response.rows[0].impuestoigtf;
+                const baseigtf = response.rows[0].baseigtf;
+                const numerointerno = response.rows[0].numerointerno;
+                const piedepagina = response.rows[0].piedepagina;
+                const tasacambio = response.rows[0].tasacambio;
+                const observacion = response.rows[0].observacion || '';
+                const estatus = response.rows[0].estatus;
+                const tipomoneda = response.rows[0].tipomoneda;
+                // const sendmail = 1 
+                const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss');
+                // console.log('respdoc.rows[0].fecha, fechaenvio')
+                // console.log(respdoc.rows[0].fecha, fechaenvio)
+                let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : '';
+                let fechaafectado = '';
+                let idtipoafectado = '';
+                if (idtipodocumento === '2' || idtipodocumento === '3') {
+                    const sqlrel = " SELECT * FROM t_registros ";
+                    const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
+                    // console.log(sqlupd + whereupd)
+                    const resprel = yield database_1.pool.query(sqlrel + whererel, [idserviciosmasivo, response.rows[0].relacionado]);
+                    if (resprel.rows.length > 0) {
+                        numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : numeroafectado;
+                        fechaafectado = resprel.rows[0].fecha;
+                        idtipoafectado = resprel.rows[0].idtipodocumento;
+                    }
                 }
-            }
-            const sqldet = "select id, codigo, descripcion, precio, cantidad, tasa, monto, exento, descuento, comentario ";
-            const fromdet = " from t_registro_detalles ";
-            const wheredet = " where idregistro = " + idregistro;
-            // console.log(sql + from + where)
-            const respdet = yield database_1.pool.query(sqldet + fromdet + wheredet);
-            // console.log(respdet.rows)
-            const cuerpofactura = respdet.rows;
-            const sqlformas = "select forma, valor ";
-            const fromformas = " from t_formasdepago ";
-            const whereformas = " where idregistro = " + idregistro;
-            // console.log(sql + from + where)
-            const respformas = yield database_1.pool.query(sqlformas + fromformas + whereformas);
-            // console.log(respdet.rows)
-            const formasdepago = respformas.rows;
-            // console.log('va a Crear PDF')
-            yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda);
-        }));
+                const sqldet = "select id, codigo, descripcion, precio, cantidad, tasa, monto, exento, descuento, comentario ";
+                const fromdet = " from t_registro_detalles ";
+                const wheredet = " where idregistro = " + idregistro;
+                // console.log(sql + from + where)
+                const respdet = yield database_1.pool.query(sqldet + fromdet + wheredet);
+                // console.log(respdet.rows)
+                const cuerpofactura = respdet.rows;
+                const sqlformas = "select forma, valor ";
+                const fromformas = " from t_formasdepago ";
+                const whereformas = " where idregistro = " + idregistro;
+                // console.log(sql + from + where)
+                const respformas = yield database_1.pool.query(sqlformas + fromformas + whereformas);
+                // console.log(respdet.rows)
+                const formasdepago = respformas.rows;
+                // console.log('va a Crear PDF')
+                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda);
+            }));
+        }
+        catch (e) {
+            console.log('Error enviarCrearFactura >>>> ' + e);
+            return res.status(400).send('Error enviarCrearFactura >>>> ' + e);
+        }
     });
 }
 function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda) {
