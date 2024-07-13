@@ -654,11 +654,14 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 if(arreglocom1.length > 1) {
                     productoitem += `<table style="width:100%;">`
                     for(let j = 0 ; j < arreglocom1.length - 1; j++) {
-                        const ladoizq = arreglocom1[j].split('|')[0]
-                        const ladoder = arreglocom1[j].split('|')[1]
+                        const ladoizq = arreglocom1[j].split('|')[0]                        
                         // console.log(ladoizq + ' >>>>>> ' + ladoder)
                         productoitem += `<tr><td class="ladoizq">${ladoizq}</td>`
-                        productoitem += `<td class="ladoder">${ladoder}</td></tr>`
+                        if (arreglocom1[j].split('|').length > 1) {
+                            const ladoder = arreglocom1[j].split('|')[1]
+                            productoitem += `<td class="ladoder">${ladoder}</td>`
+                        }
+                        productoitem += `</tr>`
                     }
                     productoitem += `</table>`
                 } else {
