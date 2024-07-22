@@ -674,7 +674,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             
             tabla += `<tr style="height: 25px;">
             <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
-            <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 3px;">${productoitem}</td>
+            <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 2px;">${productoitem}</td>
             <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.cantidad}</td>
             <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio))}</td>
             <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.tasa}%</td>
@@ -891,24 +891,24 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             contenidoHtml = contenidoHtml.replace("{{publicidad}}", '');
         }
         let trsubtotaldivisa = `<tr>
-            <td class="text-right" style="font-size: 8px;">Subtotal Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotalbs))}</td>
-            <td class="text-right" style="font-size: 8px;">Subtotal ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotal))}</td>
+            <td class="text-right" style="font-size: 7px;">Subtotal Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotalbs))}</td>
+            <td class="text-right" style="font-size: 7px;">Subtotal ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal))}</td>
         </tr>`
         let trsubtotalbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Subtotal Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(subtotal))}</td>
+            <td class=" text-right" style="font-size: 7px;">Subtotal Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal))}</td>
         </tr>`
         let trtotaldivisa = `<tr>
-            <td class="text-right" style="font-size: 8px;">Total Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(totalbs))}</td>
-            <td class="text-right" style="font-size: 8px;">Total ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(total))}</td>
+            <td class="text-right" style="font-size: 7px;">Total Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(totalbs))}</td>
+            <td class="text-right" style="font-size: 7px;">Total ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total))}</td>
         </tr>`
         let trtotalbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">Total Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(total))}</td>
+            <td class=" text-right" style="font-size: 7px;">Total Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total))}</td>
         </tr>`
 
         let _trsubtotal = trsubtotalbs
