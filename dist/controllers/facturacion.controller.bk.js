@@ -983,6 +983,14 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 </td>
             </tr>`;
         }
+        const footer = `<tr height="50px">
+                            <td style="text-align:center; width: 20%;">
+                                <img src="${SERVERFILE}utils/logosmartcorreo.png" style="width: 130px;">
+                            </td>
+                            <td style="text-align:center;"  colspan="2">
+                                <span style="font-size: 10px;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
+                            </td>
+                        </tr>`;
         const texto_1 = _texto !== '0' ? `<tr>  
                             <td colspan="3">      
                                 <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
@@ -1073,6 +1081,43 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                         <img src="${SERVERFILE}utils/logosmartsinfondo.gif" style="width: 130px;">
                     </td>
                 </tr>
+                
+                <tr>
+                    <td style="padding: 0 5px 0px 25px;" colspan="2">
+                        <p style="text-align:left; display: grid;">
+                            <span style="color: #f25004; font-weight: bolder; font-size: 24px;">${_pnombre}</span><br>
+                            <span style="color: #632508; font-size: 16px;">Con gusto le notificamos que su ${_tipodoc},</span>
+                            <span style="color: #632508; font-size: 16px;">${mensaje} </span>
+                        </p>
+                    </td>
+                    <td style="text-align: center; padding-top: 30px; width: 217px;">
+                        <img src="${SERVERFILE}utils/correoenviado.png" style="max-width: 200px;">            
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px 30px; text-align: center;" colspan="2">   
+                        <img src="${SERVERIMG}codeqr/${_prif}/${_annioenvio}-${_mesenvio}/qrcode_${_prif}${_pnumero}.png" style="max-width: 150px;">            
+                    </td>
+                    <td style="padding: 20px 30px 0 0;">
+                            <p style="text-align:right; color: #632508; font-size: 16px;">
+                            <span>Número documento: <br><span style="font-weight: bolder;">${numerocuerpo}</span></span> <br>
+                            <span>Fecha emisión: <br><span style="font-weight: bolder;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span></span> <br><br><br>
+                            <span style="font-weight: bolder;background: #f25004;border-radius: 10px;padding: 7px 12px;font-size: 11px;">
+                                <a style="text-decoration: none;color: #ffffff" href="${SERVERFILE}${_prif}/${_annioenvio}-${_mesenvio}/${_prif}${_pnumero}">Ver ${_tipodoc}</a>.
+                            </span>
+                        </p>
+                    </td>
+                </tr>
+                ${htmlpublicidad}
+                ${texto_1}
+                <tr height="40px" style="background: #f25004;">
+                    <td colspan="3" style="text-align: center;">
+                        <span style="color: #fff; font-weight: bolder;">${_telefono}</span>
+                        <span style="text-decoration: none; color: #ffffff; font-weight: bolder;margin: 30px;">${_emailemisor}</span>
+                        <span style="text-decoration: none; color: #ffffff; font-weight: bolder;">${_sitioweb}</span>
+                    </td>
+                </tr>
+                ${footer}
             </table></div></td></tr></table>
             `;
         // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
