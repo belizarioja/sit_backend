@@ -1091,7 +1091,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                             <table style="width: 100%;">
                                 <tr>
                                     <td colspan="2" align="center">
-                                        <div style="margin-top: 50px; text-align: center; width: 120px; padding: 7px; border: 1px solid #d6d6d6; border-radius: 15px; background: #ffffff; font-size: 12px;">FACTURA</div>
+                                        <div style="margin-top: 50px; text-align: center; width: 120px; padding: 7px; border: 1px solid #d6d6d6; border-radius: 15px; background: #ffffff; font-size: 12px;">${_tipodoc}</div>
                                     </td>
                                 </tr>
                                 <tr style="height: 70px;">
