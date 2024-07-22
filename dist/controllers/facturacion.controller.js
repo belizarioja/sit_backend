@@ -1019,7 +1019,7 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                     </td>
                 </tr>
                 <tr>
-                    <td style="height: 400px; display: flex; justify-content: center;  background: url(../controllers/utils/fondofacturacorreo.png);background-position: center center;background-repeat: no-repeat;text-align: center;" colspan="3">
+                    <td style="height: 400px; display: flex; justify-content: center;  background: url(${SERVERFILE}utils/fondofacturacorreo.png);background-position: center center;background-repeat: no-repeat;text-align: center;" colspan="3">
                         <div style="width: 400px; display: block; justify-content: center;">
                             <table style="width: 100%;">
                                 <tr>
