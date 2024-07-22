@@ -1086,8 +1086,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                     </td>
                 </tr>
                 <tr>
-                    <td style="height: 400px; display: flex; justify-content: center;  background: url(${SERVERFILE}utils/fondofacturacorreo.png);background-position: center center;background-repeat: no-repeat;text-align: center;" colspan="3">
-                        <div style="width: 400px; display: block; justify-content: center;">
+                    <td style="height: 400px; display: flex; background: url(${SERVERFILE}utils/fondofacturacorreo.png);background-position: center center;background-repeat: no-repeat;text-align: center;" colspan="3">
+                        <div style="width: 400px; display: block; margin-left: 98px;">
                             <table style="width: 100%;">
                                 <tr>
                                     <td colspan="2" align="center">
