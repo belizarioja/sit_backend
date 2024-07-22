@@ -630,13 +630,13 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 }
                 // Y concatenar los productos
                 tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 8px;padding: 3px;">${producto.codigo}</td>
-            <td style="vertical-align: baseline;font-size: 8px;border-left: 1px dashed;padding: 3px;">${productoitem}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.cantidad}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_precio))}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${producto.tasa}%</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_descuento))}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 8px;">${completarDecimales(Number(_monto))}</td>
+            <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
+            <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 3px;">${productoitem}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.cantidad}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio))}</td>
+            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.tasa}%</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_descuento))}</td>
+            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_monto))}</td>
         </tr>`;
             }
             const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
@@ -649,13 +649,13 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: auto;">
-            <td style="border-bottom: 2px solid #65778D;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 8px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
         </tr>`;
             if (_tipomoneda > 1) {
                 _impuestogbs = _impuestog * Number(_tasacambio);
@@ -664,36 +664,36 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             }
             // IMP GENERAL 16%
             let trImpuestogdivisa = `<tr>
-            <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestogbs))}</td>
-            <td class="text-right" style="font-size: 8px;">IVA 16% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
+            <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestogbs))}</td>
+            <td class="text-right" style="font-size: 7px;">IVA 16% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             let trImpuestogbs = `<tr>
-            <td class="text-right" style="font-size: 8px;">IVA 16% Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestog))}</td>
+            <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             // IMP REDUCIDO 8%
             let trImpuestordivisa = `<tr>
-            <td class="text-right" style="font-size: 8px;">IVA 8% Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestorbs))}</td>
-            <td class=" text-right" style="font-size: 8px;">IVA 8% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
+            <td class="text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestorbs))}</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 8% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
             let trImpuestorbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 8%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestor))}</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 8%  Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
             // IMP AL LUJO 31%
             let trImpuestoadivisa = `<tr>
-            <td class="text-right" style="font-size: 8px;">IVA 31% Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoabs))}</td>
-            <td class=" text-right" style="font-size: 8px;">IVA 31% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
+            <td class="text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoabs))}</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 31% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
             let trImpuestoabs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IVA 31%  Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoa))}</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 31%  Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
             let _impuestoigtfDiv = 0;
             let _baseigtfDiv = 0;
@@ -701,14 +701,14 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             _baseigtfDiv = Number(_baseigtf) / Number(_tasacambio);
             _impuestoigtfDiv = Number(_impuestoigtf) / Number(_tasacambio);
             let trImpuestoigtfdivisa = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) ${prefijo}:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtfDiv))}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtfDiv))}</td>
         </tr>`;
             let trImpuestoigtfbs = `<tr>
-            <td class=" text-right" style="font-size: 8px;">IGTF 3%($${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
-            <td class="text-right" style="font-size: 8px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%($${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf))}</td>
         </tr>`;
             // const subtotalConDescuento = subtotal - descuento;        
             const subtotalConDescuento = subtotal;
@@ -925,8 +925,10 @@ function obtenerLote(res, id) {
             const sql = "SELECT a.id, a.inicia, a.termina, a.fechaproduccion, a.utilizado ";
             const from = " FROM t_tranzascorrelativo a, t_serviciosdoc b  ";
             const where = " WHERE a.idserviciosmasivo = b.idserviciosmasivo and b.corelativo + 1 >= a.inicia::numeric and b.corelativo < a.termina::numeric and a.estatus = 1 and a.idserviciosmasivo = $1";
+            // console.log(id)
+            // console.log(sql + from + where)
             const respReg = yield database_1.pool.query(sql + from + where, [id]);
-            // console.log(respReg.rows)
+            console.log(respReg.rows);
             if (respReg.rows.length > 0) {
                 const id = respReg.rows[0].id;
                 const utilizado = Number(respReg.rows[0].utilizado) + 1;
