@@ -1053,24 +1053,19 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                     </td>
                 </tr>
                 ${htmlpublicidad}
-                <tr height="20px" style="background: #eeeeee;">
-                    <td colspan="3" style="text-align: center;">
-                        <div style="font-size: 13px;">${_telefono} | ${_emailemisor}</div>
-                    </td>
-                </tr>
-                <tr height="20px" style="background: #eeeeee;">
-                    <td colspan="3" style="text-align: center; ">
-                        <div style="font-size: 10px;">${_sitioweb}</div>
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 3px;">
+                        <div style="background: #eeeeee; font-size: 13px; padding: 3px;">${_telefono} | ${_emailemisor}<br><span style="font-size: 10px;">${_sitioweb}</span></div>
                     </td>
                 </tr>
                 <tr style="background: #d6d6d6;">
                     <td style="text-align:center;  padding: 10px 0;" colspan="3">
-                        <span style="font-size: 10px; text-align: center;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta <span style="color: orange; font-weight: bold;"> SMART INNOVACIONES TECNOLOGICAS, C.A. </span> RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
+                        <span style="font-size: 10px; text-align: center;">Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014. Imprenta <span style="font-weight: bold;"> SMART INNOVACIONES TECNOLOGICAS, C.A. </span> RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 02/10/2023.</span>
                     </td>
                 </tr>
                 <tr>
                     <td style="text-align:center; background: #d6d6d6; padding: 10px 0;"  colspan="3">
-                        <img src="${SERVERFILE}utils/logosmartsinfondo.gif" style="width: 130px;">
+                        <a href="https://smartfactura.net"><img src="${SERVERFILE}utils/logosmartsinfondo.gif" style="width: 130px;"></a>
                     </td>
                 </tr>
             </table></div></td></tr></table>
