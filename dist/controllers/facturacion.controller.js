@@ -1008,8 +1008,8 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 <tr>
                     <td colspan="3">
                         <p style="text-align:center; display: grid;">
-                            <span style="color: #6b584f; font-weight: bolder; font-size: 24px;">Estimado/a ${_pnombre}</span>
-                            <span style="color: #646362; font-size: 14px;">Nos complace informarle que su documento, ${mensaje}. </span>
+                            <span style="color: #65778D; font-weight: bolder; font-size: 24px;">Estimado/a ${_pnombre}</span>
+                            <span style="color: #98A7BA; font-size: 14px;">Nos complace informarle que su documento, ${mensaje}. </span>
                         </p>
                     </td>
                 </tr>
@@ -1024,27 +1024,27 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                             <table style="width: 100%;">
                                 <tr>
                                     <td colspan="2" align="center">
-                                        <div style="margin-top: 50px; text-align: center; width: 120px; padding: 7px; border: 1px solid #d6d6d6; border-radius: 15px; background: #ffffff; font-size: 12px;">${_tipodoc}</div>
+                                        <div style="color: #65778D; margin-top: 50px; text-align: center; width: 120px; padding: 7px; border: 1px solid #d6d6d6; border-radius: 15px; background: #ffffff; font-size: 12px;">${_tipodoc}</div>
                                     </td>
                                 </tr>
                                 <tr style="height: 70px;">
                                     <td style="text-align: left; padding-left: 30px; padding-top: 10px;">
-                                        <span style="font-size: 13px; font-weight: bold;">RAZÓN SOCIAL</span><br> 
-                                        <span style="font-size: 11px; color: #999;">${_pnombre}</span>
+                                        <span style="color: #65778D; font-size: 13px; font-weight: bold;">RAZÓN SOCIAL</span><br> 
+                                        <span style="font-size: 11px; color: #98A7BA;">${_pnombre}</span>
                                     </td>
                                     <td style="text-align: right; padding-right: 30px; padding-top: 10px;">
-                                        <span style="font-size: 13px; font-weight: bold;">DOCUMENTO</span><br> 
-                                        <span style="font-size: 11px; color: #999;">${_rifcliente}</span>
+                                        <span style="color: #65778D; font-size: 13px; font-weight: bold;">NÚMERO IDENTIDAD</span><br> 
+                                        <span style="font-size: 11px; color: #98A7BA;">${_rifcliente}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="text-align: left; padding-left: 30px; padding-top: 20px;">
-                                        <span style="font-size: 13px; font-weight: bold;">NÚMERO DOCUMENTO</span><br> 
-                                        <span style="font-size: 11px; color: #999;">${numerocuerpo}</span>
+                                        <span style="color: #65778D; font-size: 13px; font-weight: bold;">NÚMERO DOCUMENTO</span><br> 
+                                        <span style="font-size: 11px; color: #98A7BA;">${numerocuerpo}</span>
                                     </td>
                                     <td style="text-align: right; padding-right: 30px; padding-top: 20px;">
-                                        <span style="font-size: 13px; font-weight: bold;">FECHA EMISIÓN</span><br> 
-                                        <span style="font-size: 11px; color: #999;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span>
+                                        <span style="color: #65778D; font-size: 13px; font-weight: bold;">FECHA EMISIÓN</span><br> 
+                                        <span style="font-size: 11px; color: #98A7BA;">${_diaenvio}/${_mesenvio}/${_annioenvio}</span>
                                     </td>
                                 </tr>
                             </table>
