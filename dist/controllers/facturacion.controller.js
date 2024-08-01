@@ -394,6 +394,7 @@ function setFacturacion(req, res) {
             else {
                 console.log('Sin Factura pdf correo');
             }
+            // J-12345678-9/2024-08/J-12345678-900-00000265
             const data = {
                 success: true,
                 error: null,
@@ -404,7 +405,8 @@ function setFacturacion(req, res) {
                     corelativo: corelativo.toString().padStart(8, '0'),
                     datatime: (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss'),
                     fecha: (0, moment_1.default)().format('YYYYMMDD'),
-                    hora: (0, moment_1.default)().format('HH:mm:ss')
+                    hora: (0, moment_1.default)().format('HH:mm:ss'),
+                    urlpdf: SERVERFILE + rif + '/' + (0, moment_1.default)().format('YYYY-MM') + '/' + rif + numerocompleto
                 }
             };
             return res.status(200).json(data);

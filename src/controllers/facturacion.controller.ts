@@ -434,6 +434,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         } else {
             console.log('Sin Factura pdf correo')
         }
+        // J-12345678-9/2024-08/J-12345678-900-00000265
         const data = {
             success: true,
             error: null,
@@ -444,7 +445,8 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 corelativo: corelativo.toString().padStart(8, '0'),
                 datatime: moment().format('YYYY-MM-DD HH:mm:ss'),
                 fecha: moment().format('YYYYMMDD'),
-                hora: moment().format('HH:mm:ss')
+                hora: moment().format('HH:mm:ss'),
+                urlpdf: SERVERFILE + rif + '/' + moment().format('YYYY-MM') + '/' + rif + numerocompleto
             }           
         };
         return res.status(200).json(data); 

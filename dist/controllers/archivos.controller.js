@@ -25,7 +25,7 @@ function getFactura(req, res) {
             const anniomes = req.params.anniomes;
             // console.log(__dirname)
             const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf';
-            // console.log(path)
+            console.log(path);
             if (fs_1.default.existsSync(path)) {
                 fs_1.default.readFile(path, function (err, data) {
                     res.contentType("application/pdf");
