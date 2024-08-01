@@ -12,7 +12,7 @@ export async function getFactura (req: Request, res: Response): Promise<Response
         const anniomes = req.params.anniomes
         // console.log(__dirname)
         const path = __dirname + '/temp/' + rif + '/' + anniomes + '/' + rifid + '.pdf'
-        console.log(path)
+        // console.log(path)
         if (fs.existsSync(path)) {
             fs.readFile(path , function (err, data){
                 res.contentType("application/pdf");
