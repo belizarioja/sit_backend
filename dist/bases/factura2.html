@@ -21,7 +21,10 @@
                         <table style="width: 100%;">
                             <tr>
                                 <td style="width: 65%;">
-                                    <div style="padding: 5px 0px; width: fit-content;font-weight: bolder;text-align: left;">{{razonsocial}}</div>
+                                    <table>
+                                        <tr><td style="font-weight: bolder;text-align: left;">{{razonsocial}}</td></tr>
+                                        <tr><td style="font-weight: bolder;text-align: left; font-size: 9px;">{{rif}}</td></tr>
+                                    </table>
                                 </td>
                                 <td class="celdaCurvaGris" style="width: 35%;">
                                     <div class="fondoCurvaGris">
@@ -46,6 +49,7 @@
                                                     Hora emisión {{hora}}
                                                 </td>
                                             </tr>
+                                            {{afectado}}
                                         </table>
                                     </div>
                                 </td>
@@ -58,14 +62,13 @@
                         <table style="width: 100%;"> 
                             <tr>
                                 <td style="padding-right: 11px;">
-                                    <img class="img-fluid" src="{{logo}}" alt="Logotipo" width="100" >
+                                    <img class="img-fluid" src="{{logo}}" alt="Logotipo" width="85" >
                                 </td>
                                 <td>
                                     <div class="tarjetaEmisores">
-                                        <div style="font-size: 9px;">{{direccion}}</div>
-                                        <div style="font-size: 9px;">{{rif}}</div>
-                                        <div style="font-size: 9px;">{{telefono}}</div>
-                                        <div style="font-size: 9px;">Código de Actividad Económica: {{codigoactividad}}</div>
+                                        <div style="font-size: 7px;">{{direccion}}</div>
+                                        <div style="font-size: 7px;">{{telefono}}</div>
+                                        <div style="font-size: 7px;">Código de Actividad Económica: {{codigoactividad}}</div>
                                     </div>
                                 </td>
                                 <td style="vertical-align: top; padding-top: 10px;">
@@ -78,7 +81,7 @@
                                             <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de asignación</td>
                                             <td class="text-right" style="font-size: 9px;">{{fechaasignacion}}</td>
                                         </tr>
-                                        {{afectado}}
+                                        {{trfechavence}}
                                     </table>  
                                 </td>
                             </tr>
@@ -91,25 +94,25 @@
         <div style="margin-top: 10px;border-bottom: 2px solid #65778D;">
             <table style="width: 100%;margin-left: 20px;margin-bottom: 10px;">
                 <tr>
-                    <td class="text-left" style="font-size: 10px;font-weight: bolder;width: 110px;">Cliente</td>
-                    <td class="text-left" style="font-size: 10px;font-weight: bolder;width: 180px;">Correo</td>
-                    <td class="text-left" style="font-size: 10px;font-weight: bolder;width: 100px;">Teléfono</td>
-                    <td rowspan="4" class="text-center" style="font-size: 12px;font-weight: bolder;">
-                        <img class="img-fluid" src="{{codeqr}}" alt="Code QR" width="70" >
+                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Cliente</td>
+                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Correo</td>
+                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 120px;">Teléfono</td>
+                    <td rowspan="4" class="text-center">
+                        <img class="img-fluid" src="{{codeqr}}" alt="Code QR" width="50" >
                     </td>
                 </tr>
                 <tr>
-                    <td class="text-left" style="font-size: 9px;vertical-align: baseline;">{{nombrecliente}}</td>
-                    <td class="text-left" style="font-size: 9px;vertical-align: baseline;">{{emailcliente}}</td>
-                    <td class="text-left" style="font-size: 9px;vertical-align: baseline;">{{telefonocliente}}5-1</td>
+                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{nombrecliente}}</td>
+                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{emailcliente}}</td>
+                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{telefonocliente}}5-1</td>
                 </tr>
                 <tr>
-                    <td class="text-left" style="font-size: 10px;font-weight: bolder;">Documento</td>
-                    <td class="text-left" style="font-size: 10px;font-weight: bolder;">Dirección</td>
+                    <td class="text-left" style="font-size: 7px;font-weight: bolder;">Documento</td>
+                    <td class="text-left" style="font-size: 7px;font-weight: bolder;">Dirección</td>
                 </tr>
                 <tr>
-                    <td class="text-left" style="vertical-align: baseline;font-size: 9px;">{{tipocedula}}: {{cedulacliente}}</td>
-                    <td colspan="2" class="text-left" style="vertical-align: baseline;font-size: 9px;">{{direccioncliente}}</td>
+                    <td class="text-left" style="vertical-align: baseline;font-size: 7px;">{{tipocedula}}: {{cedulacliente}}</td>
+                    <td colspan="2" class="text-left" style="vertical-align: baseline;font-size: 7px;">{{direccioncliente}}</td>
                 </tr>
             </table>  
         </div>
@@ -118,13 +121,13 @@
             <table class="{{csstabla}}">
                 <thead>
                     <tr class="fondoGris">
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 14%;border-bottom: 2px solid #65778D;">Cod. Operación</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 32%;border-bottom: 2px solid #65778D;">Descripción</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border-bottom: 2px solid #65778D;">Cantidad</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border-bottom: 2px solid #65778D;">P. Unit.</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 8%;border-bottom: 2px solid #65778D;">% IVA</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 12%;border-bottom: 2px solid #65778D;">Monto Desc.</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 8px;width: 10%;border-bottom: 2px solid #65778D;">Total</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 14%;border-bottom: 2px solid #65778D;">Cod. Operación</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 32%;border-bottom: 2px solid #65778D;">Descripción</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 10%;border-bottom: 2px solid #65778D;">Cantidad</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">P. Unit.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 8%;border-bottom: 2px solid #65778D;">% IVA</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">Monto Desc.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 10%;border-bottom: 2px solid #65778D;">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,12 +138,12 @@
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 50%;vertical-align: baseline;">
-                        <p style="font-size: 8px; font-weight: 700;">{{tituloformasdepago}}<p>
-                        <p style="font-size: 8px; font-weight: 700; padding-left: 20px;">
+                        <p style="font-size: 7px; font-weight: 700;">{{tituloformasdepago}}<p>
+                        <p style="font-size: 7px; font-weight: 700; padding-left: 20px;">
                             {{formasdepago}}
                         <p>
-                        <p style="font-size: 8px; font-weight: 700;">{{tituloobservacion}}<p>
-                        <p style="font-size: 8px; font-weight: 700; padding-left: 20px;">
+                        <p style="font-size: 7px; font-weight: 700;">{{tituloobservacion}}<p>
+                        <p style="font-size: 7px; font-weight: 700; padding-left: 20px;">
                             {{observacion}}
                         <p>
                     </td>
@@ -156,11 +159,7 @@
                     </td>
                 </tr>
                 {{creditofiscal}}
-                <tr>
-                    <td colspan="2" style="padding-top:5px;">
-                        <p style="font-size: 6px;font-family:'Calibri'; text-align: center;">{{coletilla}}</p>
-                    </td>
-                </tr>
+                {{trcoletilla}}
                 <tr>
                     <td colspan="2" class="text-center" style="padding-left:20px;padding-right:20px;padding-top:5px;">
                         <p style="font-size: 6px;font-family:'Calibri'">{{piedepagina}}</p>
