@@ -30,7 +30,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
-        const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion } = req.body;
+        const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion, fechavence } = req.body;
         const { tasaa, basea, impuestoa } = req.body;
         // console.log(req)
         // console.log('baseigtf, impuestog')
@@ -38,6 +38,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         // console.log(baseigtf, impuestog)
         await pool.query('BEGIN')
         const _tasacambio = tasacambio || 0
+        const _fechavence = fechavence || null
       
         const lotepiedepagina = await obtenerLote(res, id)
         if(lotepiedepagina === '0') {
@@ -368,9 +369,9 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const relacionadoBD = relacionado || ''
         const observacionBD = observacion || ''
         const fechaenvio = moment().format('YYYY-MM-DD HH:mm:ss')
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda ) '
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31) RETURNING id '
-        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda])
+        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence ) '
+        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32) RETURNING id '
+        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence])
         // console.log(respReg.rows[0].id)
         const idRegistro = respReg.rows[0].id
         for(const ind in cuerpofactura) {
@@ -512,7 +513,7 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
             const piedepagina = response.rows[0].piedepagina     
             const tasacambio = response.rows[0].tasacambio     
             const observacion = response.rows[0].observacion || ''
-            const fechavence = response.rows[0].fechavence || ''
+            const fechavence = response.rows[0].fechavence ? moment(response.rows[0].fechavence).format('DD/MM/YYYY') : ''
             const estatus = response.rows[0].estatus
             const tipomoneda = response.rows[0].tipomoneda
             // const sendmail = 1 
@@ -699,7 +700,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
 
         // COLETILLA
-        const coletilla1 = "En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022."
+        const coletilla1 = "<b>En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras</b> de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022."
         const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " +_tasacambio + " </b>del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
         let coletilla = coletilla1 + coletilla2
         
@@ -833,6 +834,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             </tr>`
         }
         let trfechavence = ''
+        console.log('_fechavence: ', _fechavence)
         if (_fechavence.length > 0){
             trfechavence = ` <tr>
                 <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de vencimiento</td>
