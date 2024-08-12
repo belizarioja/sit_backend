@@ -118,15 +118,7 @@
         <div class="row" style="margin-left: 5px; margin-right: 5px;">
             <table class="{{csstabla}}">
                 <thead>
-                    <tr class="fondoGris">
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 14%;border-bottom: 2px solid #65778D;">Cod. Operación</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 32%;border-bottom: 2px solid #65778D;">Descripción</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 10%;border-bottom: 2px solid #65778D;">Cantidad</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">P. Unit.</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 8%;border-bottom: 2px solid #65778D;">% IVA</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">Monto Desc.</th>
-                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 10%;border-bottom: 2px solid #65778D;">Total</th>
-                    </tr>
+                    {{titulotabla}}
                 </thead>
                 <tbody>
                     {{tablaProductos}}
@@ -148,6 +140,7 @@
                     <td style="width: 50%;">
                         <table style="width: 100%;margin-top: 5px;">
                             {{trsubtotal}}
+                            {{trexento}}
                             {{trbaseg}}
                             {{trbaser}}
                             {{trbasea}}

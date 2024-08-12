@@ -486,9 +486,9 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
                 const estatus = response.rows[0].estatus;
                 const tipomoneda = response.rows[0].tipomoneda;
                 // const sendmail = 1 
-                const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss');
+                const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss a');
                 // console.log('respdoc.rows[0].fecha, fechaenvio')
-                // console.log(respdoc.rows[0].fecha, fechaenvio)
+                // console.log(response.rows[0].fecha, fechaenvio)
                 let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : '';
                 let fechaafectado = '';
                 let idtipoafectado = '';
@@ -577,18 +577,38 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const formateador = new Intl.NumberFormat("eu");
             // Generar el HTML de la tabla
             let tabla = "";
+            let titulotabla = "";
             let subtotal = 0;
             let subtotalbs = 0;
             let totalbs = 0;
-            let exentos = 0;
+            let _exento = 0;
+            let _exentobs = 0;
             // let descuento = 0;
             // let impuestos = 0;
             let _impuestog = 0;
+            let _baseg = 0;
             let _impuestor = 0;
+            let _baser = 0;
             let _impuestoa = 0;
             let _impuestogbs = 0;
+            let _basegbs = 0;
             let _impuestorbs = 0;
+            let _baserbs = 0;
             let _impuestoabs = 0;
+            const _sixe1 = Number(_idtipodoc) === 5 ? 4 : 6;
+            const _sixe2 = Number(_idtipodoc) === 5 ? 88 : 42;
+            const _sixe3 = Number(_idtipodoc) === 5 ? 7 : 8;
+            titulotabla += `<tr class="fondoGris">
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe1}%;border-bottom: 2px solid #65778D;">Cod.</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe2}%;border-bottom: 2px solid #65778D;">Descripción</th>
+                        <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe3}%;border-bottom: 2px solid #65778D;">Cantidad</th>`;
+            if (Number(_idtipodoc) !== 5) {
+                titulotabla += `<th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">P. Unit.</th>
+                    <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 8%;border-bottom: 2px solid #65778D;">% IVA</th>
+                    <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 12%;border-bottom: 2px solid #65778D;">Monto Desc.</th>
+                    <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 10%;border-bottom: 2px solid #65778D;">Total</th>`;
+            }
+            titulotabla += `</tr>`;
             for (const producto of productos) {
                 const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(2) : producto.monto;
                 const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(2) : producto.descuento;
@@ -599,14 +619,16 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 subtotal += totalProducto;
                 // descuento += producto.descuento
                 if (producto.exento === true || producto.exento === 'true') {
-                    exentos += totalProducto;
+                    _exento += totalProducto;
                 }
                 else {
                     if (Number(producto.tasa) === 16) {
                         _impuestog += totalProducto * producto.tasa / 100;
+                        _baseg += totalProducto;
                     }
                     if (Number(producto.tasa) === 8) {
                         _impuestor += totalProducto * producto.tasa / 100;
+                        _baser += totalProducto;
                     }
                     if (Number(producto.tasa) === 31) {
                         _impuestoa += totalProducto * producto.tasa / 100;
@@ -642,14 +664,17 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     tdunidaditem = producto.intipounidad === '1' ? 'Unidad(es)' : producto.intipounidad === '2' ? 'Kilo(s)' : producto.intipounidad === '3' ? 'Litro(s)' : producto.intipounidad === '4' ? 'Metro(s)' : 'Caja(s)';
                 }
                 tabla += `<tr style="height: 25px;">
-            <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
-            <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 2px;">${productoitem}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.cantidad} ${tdunidaditem}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio))}</td>
-            <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.tasa}%</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_descuento))}</td>
-            <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_monto))}</td>
-        </tr>`;
+                <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
+                <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 2px;">${productoitem}</td>
+                <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.cantidad} ${tdunidaditem}</td>`;
+                if (Number(_idtipodoc) !== 5) {
+                    tabla += `
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio))}</td>
+                    <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.tasa}%</td>
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_descuento))}</td>
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_monto))}</td>`;
+                }
+                tabla += `</tr>`;
             }
             const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
             // const coletillaigtf = "En caso de " + tipodoc + " emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. "
@@ -663,16 +688,20 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             tabla += `<tr style="height: auto;">
             <td style="border-bottom: 2px solid #65778D;font-size: 7px;line-height: 1;">&nbsp;</td>
             <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-        </tr>`;
+            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+            if (Number(_idtipodoc) !== 5) {
+                tabla += `
+                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+            }
+            tabla += `</tr>`;
             if (_tipomoneda > 1) {
                 _impuestogbs = _impuestog * Number(_tasacambio);
                 _impuestorbs = _impuestor * Number(_tasacambio);
                 _impuestoabs = _impuestoa * Number(_tasacambio);
+                _exentobs = _exento * Number(_tasacambio);
             }
             // IMP GENERAL 16%
             let trImpuestogdivisa = `<tr>
@@ -682,18 +711,18 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             let trImpuestogbs = `<tr>
-            <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">IVA 16% (${_baseg}) Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`;
             // IMP REDUCIDO 8%
             let trImpuestordivisa = `<tr>
-            <td class="text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">IVA 8% (${_baser}) Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestorbs))}</td>
             <td class=" text-right" style="font-size: 7px;">IVA 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
             let trImpuestorbs = `<tr>
-            <td class=" text-right" style="font-size: 7px;">IVA 8%  Bs.:</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 8% (${_baser}) Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`;
             // IMP AL LUJO 31%
@@ -704,8 +733,19 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`;
             let trImpuestoabs = `<tr>
-            <td class=" text-right" style="font-size: 7px;">IVA 31%  Bs.:</td>
+            <td class=" text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
+        </tr>`;
+            // EXENTO %
+            let trExentoadivisa = `<tr>
+            <td class="text-right" style="font-size: 7px;">Exento Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exentobs))}</td>
+            <td class=" text-right" style="font-size: 7px;">Exento ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento))}</td>
+        </tr>`;
+            let trExentobs = `<tr>
+            <td class=" text-right" style="font-size: 7px;">Exento Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento))}</td>
         </tr>`;
             let _impuestoigtfDiv = 0;
             let _baseigtfDiv = 0;
@@ -730,6 +770,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // console.log(total)
             // const fecha = moment().format('DD/MM/YYYY hh:mm:ss a');
             // Remplazar el valor {{tablaProductos}} por el verdadero valor
+            contenidoHtml = contenidoHtml.replace("{{titulotabla}}", titulotabla);
             contenidoHtml = contenidoHtml.replace("{{tablaProductos}}", tabla);
             if (_tipomoneda > 1) {
                 subtotalbs = subtotal * Number(_tasacambio);
@@ -783,7 +824,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             </tr>`;
             }
             let trfechavence = '';
-            console.log('_fechavence: ', _fechavence);
+            // console.log('_fechavence: ', _fechavence)
             if (_fechavence.length > 0) {
                 trfechavence = ` <tr>
                 <td class="text-right" style="font-size: 10px;font-weight: bolder;">Fecha de vencimiento</td>
@@ -811,8 +852,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // contenidoHtml = contenidoHtml.replace("{{monedabs}}", 'Moneda Bs.');
             contenidoHtml = contenidoHtml.replace("{{nombrecliente}}", _nombrecliente);
             contenidoHtml = contenidoHtml.replace("{{fechaasignacion}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
-            contenidoHtml = contenidoHtml.replace("{{fecha}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD/MM/YYYY"));
-            contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("hh:mm:ss a"));
+            contenidoHtml = contenidoHtml.replace("{{fecha}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD hh:mm:ss").format("DD/MM/YYYY"));
+            contenidoHtml = contenidoHtml.replace("{{hora}}", (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD hh:mm:ss a").format("hh:mm:ss a"));
+            // console.log(' _fechaenvio ', _fechaenvio)
+            // console.log('Hora envio: ', moment(_fechaenvio, "YYYY-MM-DD hh:mm:ss a").format("hh:mm:ss a"))
             contenidoHtml = contenidoHtml.replace("{{piedepagina}}", _piedepagina);
             contenidoHtml = contenidoHtml.replace("{{formasdepago}}", formasdepago);
             // console.log(_impuestog, _impuestor, _impuestoa,_impuestoigtf )
@@ -820,24 +863,30 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let trimpuestor = trImpuestorbs;
             let trimpuestoa = trImpuestoabs;
             let trimpuestoigtf = trImpuestoigtfbs;
+            let trExento = trExentobs;
             if (_tipomoneda > 1) {
                 trimpuestog = trImpuestogdivisa;
                 trimpuestor = trImpuestordivisa;
                 trimpuestoa = trImpuestoadivisa;
                 trimpuestoigtf = trImpuestoigtfdivisa;
+                trExento = trExentoadivisa;
             }
-            if (_impuestog === 0) {
+            if (_impuestog === 0 || Number(_idtipodoc) === 5) {
                 trimpuestog = '';
             }
-            if (_impuestor === 0) {
+            if (_impuestor === 0 || Number(_idtipodoc) === 5) {
                 trimpuestor = '';
             }
-            if (_impuestoa === 0) {
+            if (_impuestoa === 0 || Number(_idtipodoc) === 5) {
                 trimpuestoa = '';
             }
-            if (_impuestoigtf === 0) {
+            if (_impuestoigtf === 0 || Number(_idtipodoc) === 5) {
                 trimpuestoigtf = '';
             }
+            if (_exento === 0 || Number(_idtipodoc) === 5) {
+                trExento = '';
+            }
+            contenidoHtml = contenidoHtml.replace("{{trexento}}", trExento);
             contenidoHtml = contenidoHtml.replace("{{trbaseg}}", trimpuestog);
             contenidoHtml = contenidoHtml.replace("{{trbaser}}", trimpuestor);
             contenidoHtml = contenidoHtml.replace("{{trbasea}}", trimpuestoa);
@@ -874,6 +923,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 _trsubtotal = trsubtotaldivisa;
                 _trtotal = trtotaldivisa;
             }
+            if (Number(_idtipodoc) === 5) {
+                _trsubtotal = '';
+                _trtotal = '';
+            }
             contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
             contenidoHtml = contenidoHtml.replace("{{trtotal}}", _trtotal);
             let trcoletilla = '';
@@ -903,7 +956,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // console.log(icFirmaDocumentosInput)
             // A3, A4, A5, Legal, Letter, Tabloid
             const formatoPdf = Number(plantillapdf) === 4 ? 'A3' : 'Letter';
-            console.log(Number(plantillapdf), formatoPdf);
+            // console.log(Number(plantillapdf), formatoPdf)
             html_pdf_1.default.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
                     // console.log("Error creando PDF: " + error)
