@@ -597,9 +597,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             let _baserbs = 0;
             let _impuestoabs = 0;
             let _baseabs = 0;
-            const _sixe1 = Number(_idtipodoc) === 5 ? 4 : 6;
-            const _sixe2 = Number(_idtipodoc) === 5 ? 88 : 42;
-            const _sixe3 = Number(_idtipodoc) === 5 ? 7 : 8;
+            const _sixe1 = Number(_idtipodoc) === 5 ? 6 : 7;
+            const _sixe2 = Number(_idtipodoc) === 5 ? 84 : 41;
+            const _sixe3 = Number(_idtipodoc) === 5 ? 8 : 8;
             titulotabla += `<tr class="fondoGris">
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe1}%;border-bottom: 2px solid #65778D;">Cod.</th>
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe2}%;border-bottom: 2px solid #65778D;">Descripción</th>
@@ -966,7 +966,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
             contenidoHtml = contenidoHtml.replace("{{trtotal}}", _trtotal);
             let trcoletilla = '';
-            if (_tipomoneda > 1) {
+            if (_tipomoneda > 1 && Number(_idtipodoc) !== 5) {
                 trcoletilla = `<tr>
                 <td colspan="2" class="text-center">
                     <p style="font-size: 6px;font-family:'Calibri'; text-align: center;">${coletilla}</p>
