@@ -628,12 +628,14 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let _impuestor = 0;
         let _baser = 0;
         let _impuestoa = 0;
+        let _basea = 0;
         
         let _impuestogbs = 0;
         let _basegbs = 0;
         let _impuestorbs = 0;
         let _baserbs = 0;
         let _impuestoabs = 0;
+        let _baseabs = 0;
 
         const _sixe1 = Number(_idtipodoc) === 5 ? 4 : 6
         const _sixe2 = Number(_idtipodoc) === 5 ? 88 : 42;
@@ -674,6 +676,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 }
                 if (Number(producto.tasa) === 31) {
                     _impuestoa += totalProducto * producto.tasa / 100
+                    _basea += totalProducto
                 }
                 // baseiva += totalProducto;
 
@@ -748,42 +751,75 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         tabla += `</tr>`;
         if( _tipomoneda > 1) {
             _impuestogbs = _impuestog * Number(_tasacambio)
+            _basegbs = _baseg * Number(_tasacambio)
             _impuestorbs = _impuestor * Number(_tasacambio)
+            _baserbs = _baser * Number(_tasacambio)
             _impuestoabs = _impuestoa * Number(_tasacambio)
+            _baseabs = _basea * Number(_tasacambio)
             _exentobs = _exento * Number(_tasacambio)
         }
         // IMP GENERAL 16%
         let trImpuestogdivisa = `<tr>
+            <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basegbs))}</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 16% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg))}</td>
+        </tr>
+        <tr>
             <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestogbs))}</td>
             <td class="text-right" style="font-size: 7px;">IVA 16% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
         let trImpuestogbs = `<tr>
-            <td class="text-right" style="font-size: 7px;">IVA 16% (${_baseg}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg))}</td>
+        </tr>
+        <tr>
+            <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
         </tr>`
 
         // IMP REDUCIDO 8%
         let trImpuestordivisa = `<tr>
-            <td class="text-right" style="font-size: 7px;">IVA 8% (${_baser}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baserbs))}</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 8% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser))}</td>
+        </tr>
+        <tr>
+            <td class="text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestorbs))}</td>
             <td class=" text-right" style="font-size: 7px;">IVA 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`
         let trImpuestorbs = `<tr>
-            <td class=" text-right" style="font-size: 7px;">IVA 8% (${_baser}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser))}</td>
+        </tr>
+        <tr>
+            <td class=" text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
         </tr>`
         
         // IMP AL LUJO 31%
         let trImpuestoadivisa = `<tr>
+            <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseabs))}</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible 31% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea))}</td>
+        </tr>
+        <tr>
             <td class="text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoabs))}</td>
             <td class=" text-right" style="font-size: 7px;">IVA 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`        
         let trImpuestoabs = `<tr>
+            <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea))}</td>
+        </tr>
+        <tr>
             <td class=" text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
         </tr>`
@@ -799,7 +835,6 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             <td class=" text-right" style="font-size: 7px;">Exento Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento))}</td>
         </tr>`
-       
         
         let _impuestoigtfDiv = 0
         let _baseigtfDiv = 0
@@ -993,7 +1028,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             _trsubtotal = ''
             _trtotal = ''
         }
-        contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
+        // contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
         contenidoHtml = contenidoHtml.replace("{{trtotal}}", _trtotal);
         let trcoletilla = ''
 
