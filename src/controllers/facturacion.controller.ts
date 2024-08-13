@@ -637,9 +637,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let _impuestoabs = 0;
         let _baseabs = 0;
 
-        const _sixe1 = Number(_idtipodoc) === 5 ? 6 : 7
-        const _sixe2 = Number(_idtipodoc) === 5 ? 84 : 41;
-        const _sixe3 = Number(_idtipodoc) === 5 ? 8 : 8;
+        const _sixe1 = Number(_idtipodoc) === 5 ? 7 : 7
+        const _sixe2 = Number(_idtipodoc) === 5 ? 82 : 38;
+        const _sixe3 = Number(_idtipodoc) === 5 ? 10 : 10;
         
         titulotabla += `<tr class="fondoGris">
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe1}%;border-bottom: 2px solid #65778D;">Cod.</th>
