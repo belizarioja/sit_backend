@@ -1094,12 +1094,12 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 //////////////
                 // console.log(enviocorreo, _sendmail, productos.length, _emailcliente)
 
-                if (enviocorreo == 1 && _sendmail == 1 && productos.length > 0 && _emailcliente?.length > 0) {
+                if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && _emailcliente?.length > 0) {
                     console.log('va a Enviar correo')
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente)
 
                 } else {
-                    console.log('Sin correo')
+                    console.log('Sin correo')                    
                 }
             }
         });
