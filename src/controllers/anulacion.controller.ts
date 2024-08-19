@@ -59,7 +59,7 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
     // try {
         
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, a.emailcliente, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial  ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.id = $2";
         const respdoc = await pool.query(sql + from + where, [numerodocumento, idserviciosmasivo]); 
@@ -84,6 +84,13 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
         const observacion = respdoc.rows[0].observacion || ''
         const fechavence = respdoc.rows[0].fechavence || ''
         const serial = respdoc.rows[0].serial || ''
+        const total = respdoc.rows[0].total || 0
+        const baseg = respdoc.rows[0].baseg || 0
+        const impuestog = respdoc.rows[0].impuestog || 0
+        const baser = respdoc.rows[0].baser || 0
+        const impuestor = respdoc.rows[0].impuestor || 0
+        const exento = respdoc.rows[0].exento || 0
+
         const estatus = respdoc.rows[0].estatus
         const sendmail = 1 
         const fechaenvio =  moment(respdoc.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss')
@@ -123,7 +130,7 @@ async function sendFacturaEmail (res: Response, idserviciosmasivo: any, numerodo
         // console.log(respdet.rows)
         const formasdepago = respformas.rows
         console.log('va a Crear PDF Anulado')
-        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial)
+        await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento)
         .then(()=> {
             const data = {
                 success: true,
