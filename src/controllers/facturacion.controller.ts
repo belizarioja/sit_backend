@@ -679,7 +679,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             const totalProducto = (producto.cantidad * _precio) - _descuento;
             subtotal += totalProducto;
             // descuento += producto.descuento
-            if (producto.exento === true || producto.exento === 'true') { 
+            if (producto.exento === true || producto.exento === 'true') {                 
                 _exento += totalProducto
             } else {
                 if (Number(producto.tasa) === 16) {
@@ -1014,9 +1014,11 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         if (_impuestoigtf === 0 || Number(_idtipodoc) === 5) {
             trimpuestoigtf = ''
         }
+
         if (_exento === 0 || Number(_idtipodoc) === 5) {
             trExento = ''
         }
+
         contenidoHtml = contenidoHtml.replace("{{trexento}}", trExento);
         contenidoHtml = contenidoHtml.replace("{{trbaseg}}", trimpuestog);
         contenidoHtml = contenidoHtml.replace("{{trbaser}}", trimpuestor);
