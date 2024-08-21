@@ -43,6 +43,8 @@ function sendFacturaEmail(req, res) {
         const piedepagina = respdoc.rows[0].piedepagina;
         const tasacambio = respdoc.rows[0].tasacambio;
         const observacion = respdoc.rows[0].observacion || '';
+        const sucursal = respdoc.rows[0].sucursal || '';
+        const direccionsucursal = respdoc.rows[0].direccionsucursal || '';
         const fechavence = respdoc.rows[0].fechavence || '';
         const serial = respdoc.rows[0].serial || '';
         const total = respdoc.rows[0].total || 0;
@@ -86,7 +88,7 @@ function sendFacturaEmail(req, res) {
         // console.log(respdet.rows)
         const formasdepago = respformas.rows;
         // console.log('va a Crear PDF')
-        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento)
+        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, email, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal)
             .then(() => {
             const data = {
                 success: true,

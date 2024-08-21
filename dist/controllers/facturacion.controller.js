@@ -39,8 +39,8 @@ function setFacturacion(req, res) {
         // try {
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
-        const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, sucursal, numerointerno, formasdepago, observacion, fechavence, serial } = req.body;
-        const { tasaa, basea, impuestoa } = req.body;
+        const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, numerointerno, formasdepago, observacion, fechavence, serial } = req.body;
+        const { tasaa, basea, impuestoa, direccionsucursal, sucursal } = req.body;
         // console.log(req)
         // console.log('baseigtf, impuestog')
         // console.log('baseigtf, impuestog')
@@ -49,6 +49,7 @@ function setFacturacion(req, res) {
         const _tasacambio = tasacambio || 0;
         const _fechavence = fechavence || null;
         const _serial = serial || null;
+        const _direccionsucursal = direccionsucursal || null;
         const lotepiedepagina = yield obtenerLote(res, id);
         if (lotepiedepagina === '0') {
             yield database_1.pool.query('ROLLBACK');
@@ -339,9 +340,9 @@ function setFacturacion(req, res) {
         const relacionadoBD = relacionado || '';
         const observacionBD = observacion || '';
         const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial ) ';
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33) RETURNING id ';
-        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial]);
+        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal ) ';
+        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34) RETURNING id ';
+        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal]);
         // console.log(respReg.rows[0].id)
         const idRegistro = respReg.rows[0].id;
         for (const ind in cuerpofactura) {
@@ -457,7 +458,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
         console.log('va a Consultar registros');
         try {
             let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento  ";
+            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal ";
             const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
             const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
             yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
@@ -481,6 +482,8 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
                 const piedepagina = response.rows[0].piedepagina;
                 const tasacambio = response.rows[0].tasacambio;
                 const observacion = response.rows[0].observacion || '';
+                const sucursal = response.rows[0].sucursal || '';
+                const direccionsucursal = response.rows[0].direccionsucursal || '';
                 const serial = response.rows[0].serial || '';
                 const total = response.rows[0].total || 0;
                 const baseg = response.rows[0].baseg || 0;
@@ -524,7 +527,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
                 // console.log(respdet.rows)
                 const formasdepago = respformas.rows;
                 // console.log('va a Crear PDF')
-                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento);
+                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal);
             }));
         }
         catch (e) {
@@ -533,7 +536,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
         }
     });
 }
-function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda, _fechavence, _serial, __total, __baseg, __impuestog, __baser, __impuestor, __exento) {
+function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda, _fechavence, _serial, __total, __baseg, __impuestog, __baser, __impuestor, __exento, _sucursal, _direccionsucursal) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
@@ -580,6 +583,16 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const diaenvio = (0, moment_1.default)(_fechaenvio, "YYYY-MM-DD HH:mm:ss").format("DD");
             const infoQR = URLFRN + '/#/viewqrinvoice/' + _rif + 'SM' + _pnumero;
             yield crearCodeQR(infoQR, _rif, annioenvio, mesenvio, _pnumero);
+            let trsucursal = `<div class="tarjetaSucursal">
+            <div style="font-size: 8px;">Sucursal: ${_sucursal}</div>
+            <div style="font-size: 8px;">${_direccionsucursal}</div>
+        </div>`;
+            if (_sucursal.length > 0) {
+                contenidoHtml = contenidoHtml.replace("{{trsucursal}}", trsucursal);
+            }
+            else {
+                contenidoHtml = contenidoHtml.replace("{{trsucursal}}", '');
+            }
             const formateador = new Intl.NumberFormat("eu");
             // Generar el HTML de la tabla
             let tabla = "";
