@@ -29,6 +29,7 @@ const IMGPDF = process.env.IMGPDF;
 const HOSTSMTP = process.env.HOSTSMTP;
 const AMBIENTE = process.env.AMBIENTE;
 const URLFRN = process.env.URLFRN;
+let DECIMALES = 2;
 let EMAILBCC = '';
 let URLPUBLICIDADEMAIL = '';
 let ISPUBLICIDAD = '0';
@@ -322,16 +323,17 @@ function setFacturacion(req, res) {
             // console.log('Aqui función para validar numero interno :', numerointerno)
         }
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
+        DECIMALES = tipomoneda > 1 ? 4 : 2;
         // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
-        const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(2) : subtotal;
-        const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(2) : total;
-        const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(2) : exento;
-        const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(2) : baser;
-        const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(2) : impuestor;
-        const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(2) : baseg;
-        const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(2) : impuestog;
-        const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(2) : baseigtf;
-        const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(2) : impuestoigtf;
+        const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(DECIMALES) : subtotal;
+        const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(DECIMALES) : total;
+        const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(DECIMALES) : exento;
+        const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(DECIMALES) : baser;
+        const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(DECIMALES) : impuestor;
+        const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(DECIMALES) : baseg;
+        const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(DECIMALES) : impuestog;
+        const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(DECIMALES) : baseigtf;
+        const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(DECIMALES) : impuestoigtf;
         // const _baseigtf = baseigtf.toFixed(2)
         // const _impuestoigtf = impuestoigtf.toFixed(2)
         // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
@@ -360,10 +362,10 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(2) : item.monto;
-            const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(2) : item.descuento;
-            const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(2) : item.precio;
-            // console.log(_monto, _descuento, _precio)
+            const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(DECIMALES) : item.monto;
+            const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(DECIMALES) : item.descuento;
+            const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(DECIMALES) : item.precio;
+            console.log(_monto, _descuento, _precio);
             const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento, intipounidad ) ';
             const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ';
             yield database_1.pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento, item.intipounidad]);
@@ -558,6 +560,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const codigoactividad = respsede.rows[0].codigocomercial;
             const plantillapdf = respsede.rows[0].plantillapdf;
             const prefijo = Number(_tipomoneda) === 1 ? 'Bs.' : Number(_tipomoneda) === 2 ? '$' : '€';
+            // console.log('_tipomoneda, DECIMALES')
+            // console.log(_tipomoneda, DECIMALES)
             ISPUBLICIDAD = respsede.rows[0].publicidad || '0';
             let URLPUBLICIDAD = '';
             let publicidad = '';
@@ -629,10 +633,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             }
             titulotabla += `</tr>`;
             for (const producto of productos) {
-                const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(2) : producto.monto;
-                const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(2) : producto.descuento;
-                const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(2) : producto.precio;
-                // console.log(producto)
+                const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(DECIMALES) : producto.monto;
+                const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(DECIMALES) : producto.descuento;
+                const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(DECIMALES) : producto.precio;
+                // console.log(_monto, _precio)
                 // Aumentar el total
                 const totalProducto = (producto.cantidad * _precio) - _descuento;
                 subtotal += totalProducto;
@@ -1062,9 +1066,15 @@ function crearCodeQR(informacion, rif, annio, mes, numerodocumento) {
     });
 }
 function completarDecimales(cadena) {
-    cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(2));
+    cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(DECIMALES));
+    // const decimal = DECIMALES > 1 ? ',0000' : ',00'
     const arreglo = cadena.split(',');
-    cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena;
+    if (DECIMALES > 2) {
+        cadena = arreglo.length === 1 ? cadena + ',0000' : arreglo[1].length === 1 ? cadena + '000' : arreglo[1].length === 2 ? cadena + '00' : arreglo[1].length === 3 ? cadena + '0' : cadena;
+    }
+    else {
+        cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena;
+    }
     return cadena;
 }
 function obtenerLote(res, id) {
