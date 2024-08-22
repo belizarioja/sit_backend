@@ -737,10 +737,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.cantidad} ${tdunidaditem}</td>`;
             if(Number(_idtipodoc) !== 5) {
                 tabla += `
-                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio))}</td>
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_precio), DECIMALES)}</td>
                     <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${producto.tasa}%</td>
-                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_descuento))}</td>
-                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_monto))}</td>`;
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_descuento), DECIMALES)}</td>
+                    <td class="text-right" style="vertical-align: baseline;border-left: 1px dashed;padding: 3px;font-size: 7px;">${completarDecimales(Number(_monto), DECIMALES)}</td>`;
             }    
             tabla += `</tr>`;
             
@@ -788,79 +788,79 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         // IMP GENERAL 16%
         let trImpuestogdivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basegbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basegbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Base imponible 16% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg), DECIMALES)}</td>
         </tr>
         <tr>
             <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestogbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestogbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">IVA 16% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog), DECIMALES)}</td>
         </tr>`
         let trImpuestogbs = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg), DECIMALES)}</td>
         </tr>
         <tr>
             <td class="text-right" style="font-size: 7px;">IVA 16% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog), DECIMALES)}</td>
         </tr>`
 
         // IMP REDUCIDO 8%
         let trImpuestordivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baserbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baserbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Base imponible 8% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser), DECIMALES)}</td>
         </tr>
         <tr>
             <td class="text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestorbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestorbs), 2)}</td>
             <td class=" text-right" style="font-size: 7px;">IVA 8% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor), DECIMALES)}</td>
         </tr>`
         let trImpuestorbs = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser), DECIMALES)}</td>
         </tr>
         <tr>
             <td class=" text-right" style="font-size: 7px;">IVA 8% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor), DECIMALES)}</td>
         </tr>`
         
         // IMP AL LUJO 31%
         let trImpuestoadivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseabs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseabs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Base imponible 31% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea), DECIMALES)}</td>
         </tr>
         <tr>
             <td class="text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoabs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoabs), 2)}</td>
             <td class=" text-right" style="font-size: 7px;">IVA 31% ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa), DECIMALES)}</td>
         </tr>`        
         let trImpuestoabs = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea), 2)}</td>
         </tr>
         <tr>
             <td class=" text-right" style="font-size: 7px;">IVA 31% Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa), DECIMALES)}</td>
         </tr>`
        
         // EXENTO %
         let trExentoadivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Exento Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exentobs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exentobs), 2)}</td>
             <td class=" text-right" style="font-size: 7px;">Exento ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento), DECIMALES)}</td>
         </tr>`        
         let trExentobs = `<tr>
             <td class=" text-right" style="font-size: 7px;">Exento Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_exento), DECIMALES)}</td>
         </tr>`
         
         let _impuestoigtfDiv = 0
@@ -871,14 +871,14 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         _impuestoigtfDiv = Number(_impuestoigtf) / Number(_tasacambio)
 
         let trImpuestoigtfdivisa = `<tr>
-            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf))}</td>
-            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv))}) ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtfDiv))}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv), 4)}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf), 2)}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%(${prefijo}${completarDecimales(Number(_baseigtfDiv), 4)}) ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtfDiv), 4)}</td>
         </tr>`
         let trImpuestoigtfbs = `<tr>
-            <td class=" text-right" style="font-size: 7px;">IGTF 3%($${completarDecimales(Number(_baseigtfDiv))}) Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf))}</td>
+            <td class=" text-right" style="font-size: 7px;">IGTF 3%($${completarDecimales(Number(_baseigtfDiv), 4)}) Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoigtf), DECIMALES)}</td>
         </tr>`
 
         // const subtotalConDescuento = subtotal - descuento;        
@@ -906,7 +906,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         }
         let formasdepago = "";
         for (const forma of _formasdepago) {
-            formasdepago += `${forma.forma} Bs.: ${completarDecimales(Number(forma.valor))}<br>`            
+            formasdepago += `${forma.forma} ${prefijo}: ${completarDecimales(Number(forma.valor), DECIMALES)}<br>`            
         }
         if(formasdepago.length > 0) {
             contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", 'Formas de pago:');
@@ -1036,23 +1036,23 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         }
         let trsubtotaldivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Subtotal Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotalbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotalbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Subtotal ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal), DECIMALES)}</td>
         </tr>`
         let trsubtotalbs = `<tr>
             <td class=" text-right" style="font-size: 7px;">Subtotal Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal), DECIMALES)}</td>
         </tr>`
         let trtotaldivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Total Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(totalbs))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(totalbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Total ${prefijo}:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total), DECIMALES)}</td>
         </tr>`
         let trtotalbs = `<tr>
             <td class=" text-right" style="font-size: 7px;">Total Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total))}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total), DECIMALES)}</td>
         </tr>`
        
         let _trsubtotal = trsubtotalbs
@@ -1132,12 +1132,12 @@ function crearCodeQR (informacion: any, rif: any, annio: any, mes: any, numerodo
         if (err) throw err;
     });
 }
-function completarDecimales (cadena: any) {
+function completarDecimales (cadena: any, decimales: any) {
     
-    cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(DECIMALES))
+    cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(decimales))
     // const decimal = DECIMALES > 1 ? ',0000' : ',00'
     const arreglo = cadena.split(',')
-    if(DECIMALES > 2) {
+    if(decimales > 2) {
         cadena = arreglo.length === 1 ? cadena + ',0000' : arreglo[1].length === 1 ? cadena + '000' : arreglo[1].length === 2 ? cadena + '00' : arreglo[1].length === 3 ? cadena + '0' : cadena
     } else {
         cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena
