@@ -376,11 +376,12 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal ) '
         const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34) RETURNING id '
         const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal])
-        // console.log(respReg.rows[0].id)
+        console.log('DECIMALES, tipomoneda')
+        console.log(DECIMALES, tipomoneda)
         const idRegistro = respReg.rows[0].id
         for(const ind in cuerpofactura) {
             const item = cuerpofactura[ind]
-            // console.log(item)
+            console.log(item)
             // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
             if(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
 
@@ -675,9 +676,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         titulotabla += `</tr>`
      
     for (const producto of productos) {
-            const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(DECIMALES) : producto.monto
-            const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(DECIMALES) : producto.descuento
-            const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(DECIMALES) : producto.precio
+            const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio) : producto.monto
+            const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio) : producto.descuento
+            const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio) : producto.precio
             // console.log(_monto, _precio)
             // Aumentar el total
             const totalProducto = (producto.cantidad * _precio) - _descuento;
@@ -730,7 +731,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             if(producto.intipounidad > 0) {
                tdunidaditem = producto.intipounidad === '1' ? 'Unidad(es)' : producto.intipounidad === '2' ? 'Kilo(s)' : producto.intipounidad === '3' ? 'Litro(s)' : producto.intipounidad === '4' ? 'Metro(s)' :  'Caja(s)'
             }
-
+            // console.log('PRECIO UNIT: ', completarDecimales(Number(_precio), DECIMALES))
             tabla += `<tr style="height: 25px;">
                 <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
                 <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 2px;">${productoitem}</td>
@@ -1133,16 +1134,17 @@ function crearCodeQR (informacion: any, rif: any, annio: any, mes: any, numerodo
     });
 }
 function completarDecimales (cadena: any, decimales: any) {
-    
-    cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(decimales))
+    const cadena2 = cadena.toFixed(decimales).toString().replace('.',',')
     // const decimal = DECIMALES > 1 ? ',0000' : ',00'
-    const arreglo = cadena.split(',')
+    const arreglo = cadena2.split(',')
+    let cadenafinal = ''
     if(decimales > 2) {
-        cadena = arreglo.length === 1 ? cadena + ',0000' : arreglo[1].length === 1 ? cadena + '000' : arreglo[1].length === 2 ? cadena + '00' : arreglo[1].length === 3 ? cadena + '0' : cadena
+        cadenafinal = arreglo.length === 1 ? cadena2 + ',0000' : arreglo[1].length === 1 ? cadena2 + '000' : arreglo[1].length === 2 ? cadena2 + '00' : arreglo[1].length === 3 ? cadena2 + '0' : cadena2
     } else {
-        cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena
+        cadenafinal = arreglo.length === 1 ? cadena2 + ',00' : arreglo[1].length === 1 ? cadena2 + '0' : cadena2
     }
-    return cadena
+    // console.log('cadenafinal', cadenafinal)
+    return cadenafinal
 }
 async function obtenerLote (res: Response, id: any) {
     try {
