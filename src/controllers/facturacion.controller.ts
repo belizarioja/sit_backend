@@ -376,12 +376,12 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal ) '
         const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34) RETURNING id '
         const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal])
-        console.log('DECIMALES, tipomoneda')
-        console.log(DECIMALES, tipomoneda)
+        // console.log('DECIMALES, tipomoneda')
+        // console.log(DECIMALES, tipomoneda)
         const idRegistro = respReg.rows[0].id
         for(const ind in cuerpofactura) {
             const item = cuerpofactura[ind]
-            console.log(item)
+            // console.log(item)
             // console.log(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100, Math.round(item.monto * 100) / 100)
             if(Math.round((item.precio * item.cantidad - item.descuento) * 100) / 100 !== Math.round(item.monto * 100) / 100) {
 
@@ -399,7 +399,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
             const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(DECIMALES) : item.monto
             const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(DECIMALES) : item.descuento
             const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(DECIMALES) : item.precio
-            console.log(_monto, _descuento, _precio)
+            // console.log(_monto, _descuento, _precio)
             const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento, intipounidad ) '
             const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) '
             await pool.query(insertDet + valuesDet, [idRegistro, item.codigo, item.descripcion, _precio, item.cantidad, item.tasa, _monto, item.exento, item.comentario, _descuento, item.intipounidad])
@@ -676,10 +676,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         titulotabla += `</tr>`
      
     for (const producto of productos) {
-            const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio) : producto.monto
-            const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio) : producto.descuento
-            const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio) : producto.precio
-            // console.log(_monto, _precio)
+            const _monto = _tipomoneda > 1 ? (producto.monto / _tasacambio).toFixed(DECIMALES) : producto.monto
+            const _descuento = _tipomoneda > 1 ? (producto.descuento / _tasacambio).toFixed(DECIMALES) : producto.descuento
+            const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(DECIMALES) : producto.precio
             // Aumentar el total
             const totalProducto = (producto.cantidad * _precio) - _descuento;
             subtotal += totalProducto;
@@ -702,6 +701,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // baseiva += totalProducto;
 
             }
+            // console.log('_monto, _precio, totalProducto, _baseg')
+            // console.log(_monto, _precio, totalProducto, _baseg)
+
             let productoitem = `<span>${producto.descripcion}</span>`
            
             if(producto.comentario.length > 0) {
@@ -732,6 +734,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                tdunidaditem = producto.intipounidad === '1' ? 'Unidad(es)' : producto.intipounidad === '2' ? 'Kilo(s)' : producto.intipounidad === '3' ? 'Litro(s)' : producto.intipounidad === '4' ? 'Metro(s)' :  'Caja(s)'
             }
             // console.log('PRECIO UNIT: ', completarDecimales(Number(_precio), DECIMALES))
+            // console.log('TOTAL: ', completarDecimales(Number(_monto), DECIMALES))
             tabla += `<tr style="height: 25px;">
                 <td style="vertical-align: baseline;font-size: 7px;padding: 3px;">${producto.codigo}</td>
                 <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 2px;">${productoitem}</td>
