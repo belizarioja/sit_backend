@@ -43,7 +43,7 @@ function getFacturas(req, res) {
             const { idserviciosmasivo, idtipodocumento, numerodocumento, desde, hasta, exento, impuestog, impuestor, impuestoigtf, estatus, cedulacliente, idcodigocomercial } = req.body;
             const { page, size } = req.body;
             let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, c.enviocorreo, a.estatuscorreo, a.emailcliente, c.idcodigocomercial, ";
-            sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado, a.fechaanulado, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, ";
+            sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado, a.fechaanulado, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, a.regimenanterior, ";
             sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 2 limit 1) as notadebito, ";
             sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 3 limit 1) as notacredito ";
             const sqlCount = "select count (*) ";
@@ -119,7 +119,7 @@ function getFacturaNum(req, res) {
             const inicia = numerodocumento;
             const termina = numerodocumentofin || numerodocumento;
             let sql = "select a.id, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, d.abrev, ";
-            sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado , a.numerointerno ";
+            sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado, a.numerointerno ";
             const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c, t_tipocedulacliente d ";
             let where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id ";
             where += " and a.idserviciosmasivo = " + idserviciosmasivo + " and a.numerodocumento >= '" + inicia + "'  and a.numerodocumento <= '" + termina + "' ";

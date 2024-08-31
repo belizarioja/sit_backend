@@ -41,7 +41,7 @@ function setFacturacion(req, res) {
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
         const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, numerointerno, formasdepago, observacion, fechavence, serial } = req.body;
-        const { tasaa, basea, impuestoa, direccionsucursal, sucursal } = req.body;
+        const { tasaa, basea, impuestoa, direccionsucursal, sucursal, regimenanterior } = req.body;
         // console.log(req)
         // console.log('baseigtf, impuestog')
         // console.log('baseigtf, impuestog')
@@ -51,6 +51,7 @@ function setFacturacion(req, res) {
         const _fechavence = fechavence || null;
         const _serial = serial || null;
         const _direccionsucursal = direccionsucursal || null;
+        const _regimenanterior = regimenanterior || 0;
         const lotepiedepagina = yield obtenerLote(res, id);
         if (lotepiedepagina === '0') {
             yield database_1.pool.query('ROLLBACK');
@@ -231,28 +232,46 @@ function setFacturacion(req, res) {
         let numeroafectado = '';
         let fechaafectado = '';
         let idtipoafectado = '';
+        const observacionBD = observacion || '';
         if (idtipodocumento === 2 || idtipodocumento === 3) {
-            const sqlrel = " SELECT * FROM t_registros ";
-            const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
-            // console.log(sqlupd + whereupd)
-            const resprel = yield database_1.pool.query(sqlrel + whererel, [id, relacionado]);
-            if (resprel.rows.length === 0) {
-                yield database_1.pool.query('ROLLBACK');
-                return res.status(202).json({
-                    success: false,
-                    data: null,
-                    error: {
-                        code: 11,
-                        message: 'NUMERO DOCUMENTO no corresponde al cliente emisor!'
-                    }
-                });
+            // console.log('Regimen anterior: ', _regimenanterior)
+            if (Number(_regimenanterior) !== 1) {
+                const sqlrel = " SELECT * FROM t_registros ";
+                const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
+                // console.log(sqlupd + whereupd)
+                const resprel = yield database_1.pool.query(sqlrel + whererel, [id, relacionado]);
+                if (resprel.rows.length === 0) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 11,
+                            message: 'NUMERO DOCUMENTO no corresponde al cliente emisor!'
+                        }
+                    });
+                }
+                else {
+                    // console.log('resprel.rows[0]')
+                    // console.log(resprel.rows[0])
+                    numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : relacionado;
+                    fechaafectado = resprel.rows[0].fecha;
+                    idtipoafectado = resprel.rows[0].idtipodocumento;
+                }
             }
             else {
-                // console.log('resprel.rows[0]')
-                // console.log(resprel.rows[0])
-                numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : relacionado;
-                fechaafectado = resprel.rows[0].fecha;
-                idtipoafectado = resprel.rows[0].idtipodocumento;
+                // console.log('OBSERVACION Regimen anterior: ', observacionBD)
+                if (observacionBD.length === 0) {
+                    yield database_1.pool.query('ROLLBACK');
+                    return res.status(202).json({
+                        success: false,
+                        data: null,
+                        error: {
+                            code: 20,
+                            message: 'DEBE INCLUIR OBSERVACION PARA REGIMEN ANTERIOR!'
+                        }
+                    });
+                }
             }
         }
         if (cuerpofactura.length === 0 && idtipodocumento !== 2 && idtipodocumento !== 3) {
@@ -340,11 +359,10 @@ function setFacturacion(req, res) {
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
         const numerocompleto = identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0');
         const relacionadoBD = relacionado || '';
-        const observacionBD = observacion || '';
         const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal ) ';
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34) RETURNING id ';
-        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal]);
+        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal, regimenanterior ) ';
+        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35) RETURNING id ';
+        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal, _regimenanterior]);
         // console.log('DECIMALES, tipomoneda')
         // console.log(DECIMALES, tipomoneda)
         const idRegistro = respReg.rows[0].id;
@@ -461,7 +479,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
         console.log('va a Consultar registros');
         try {
             let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal ";
+            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
             const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
             const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
             yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
@@ -494,6 +512,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
                 const baser = response.rows[0].baser || 0;
                 const impuestor = response.rows[0].impuestor || 0;
                 const exento = response.rows[0].exento || 0;
+                const regimenanterior = response.rows[0].regimenanterior || 0;
                 const fechavence = response.rows[0].fechavence ? (0, moment_1.default)(response.rows[0].fechavence).format('DD/MM/YYYY') : '';
                 const estatus = response.rows[0].estatus;
                 const tipomoneda = response.rows[0].tipomoneda;
@@ -530,7 +549,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
                 // console.log(respdet.rows)
                 const formasdepago = respformas.rows;
                 // console.log('va a Crear PDF')
-                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal);
+                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior);
             }));
         }
         catch (e) {
@@ -539,7 +558,7 @@ function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
         }
     });
 }
-function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda, _fechavence, _serial, __total, __baseg, __impuestog, __baser, __impuestor, __exento, _sucursal, _direccionsucursal) {
+function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda, _fechavence, _serial, __total, __baseg, __impuestog, __baser, __impuestor, __exento, _sucursal, _direccionsucursal, _regimenanterior) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
@@ -894,7 +913,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                 }
             }
             let afectado = '';
-            if (docafectado.length > 0) {
+            // console.log('docafectado.length > 0, Number(_regimenanterior)')
+            // console.log(docafectado.length > 0, Number(_regimenanterior))
+            if (docafectado.length > 0 && Number(_regimenanterior) === 0) {
                 afectado = `<tr>
                 <td class="text-right afectado" style="font-size: 5px;font-weight: bolder;">${docafectado}</td>
                 <td class="text-left afectado" style="font-size: 5px;font-weight: bolder;">&nbsp;${numeroafectado}</td>

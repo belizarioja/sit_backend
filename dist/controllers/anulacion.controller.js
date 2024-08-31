@@ -70,7 +70,7 @@ function sendFacturaEmail(res, idserviciosmasivo, numerodocumento) {
     return __awaiter(this, void 0, void 0, function* () {
         // try {
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, a.emailcliente, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.id = $2";
         const respdoc = yield database_1.pool.query(sql + from + where, [numerodocumento, idserviciosmasivo]);
@@ -103,6 +103,7 @@ function sendFacturaEmail(res, idserviciosmasivo, numerodocumento) {
         const baser = respdoc.rows[0].baser || 0;
         const impuestor = respdoc.rows[0].impuestor || 0;
         const exento = respdoc.rows[0].exento || 0;
+        const regimenanterior = respdoc.rows[0].regimenanterior || 0;
         const estatus = respdoc.rows[0].estatus;
         const sendmail = 1;
         const fechaenvio = (0, moment_1.default)(respdoc.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss');
@@ -137,7 +138,7 @@ function sendFacturaEmail(res, idserviciosmasivo, numerodocumento) {
         // console.log(respdet.rows)
         const formasdepago = respformas.rows;
         console.log('va a Crear PDF Anulado');
-        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal)
+        yield (0, facturacion_controller_1.crearFactura)(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailcliente, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior)
             .then(() => {
             const data = {
                 success: true,
