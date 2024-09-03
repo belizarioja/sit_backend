@@ -101,11 +101,11 @@ function setFacturacion(req, res) {
                 }
             });
         }
-        // console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog))
+        console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog));
         let totalimp = 0;
         let totalbase = 0;
-        // console.log( (Number(baseg) * (Number(tasag) / 100)), Number(impuestog))
-        // console.log( (Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2))
+        console.log((Number(baseg) * (Number(tasag) / 100)), Number(impuestog));
+        console.log((Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2));
         if (Number(baseg) > 0 && Number(tasag) > 0) {
             if ((Number(baseg) * (Number(tasag) / 100)).toFixed(2) !== Number(impuestog).toFixed(2)) {
                 yield database_1.pool.query('ROLLBACK');
@@ -343,7 +343,7 @@ function setFacturacion(req, res) {
         }
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
         DECIMALES = tipomoneda > 1 ? 4 : 2;
-        // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
+        console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf);
         const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(DECIMALES) : subtotal;
         const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(DECIMALES) : total;
         const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(DECIMALES) : exento;
@@ -729,7 +729,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."'
             // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
             // COLETILLA
-            const coletilla1 = "<b>En caso que la " + tipodoc + " se genere con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras</b> de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
+            const coletilla1 = "<b>En caso que la " + tipodoc + " genere pago con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras</b> de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022.";
             const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: auto;">

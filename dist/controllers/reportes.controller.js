@@ -370,7 +370,7 @@ function getDocProcesados(req, res) {
         try {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
             let sql = "SELECT a.id, a.tipodocumento, ";
-            sql += " (select COUNT (*) from t_registros b where b.estatus = 1 ";
+            sql += " (select COUNT (*) from t_registros b where b.estatus >= 1 ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
             }
@@ -385,7 +385,7 @@ function getDocProcesados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            sql += " and b.estatus = 1 ) AS totaldoc,  ";
+            sql += " and b.estatus >= 1 ) AS totaldoc,  ";
             sql += " (select SUM (b.impuestog) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
@@ -393,7 +393,7 @@ function getDocProcesados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            sql += " and b.estatus = 1 ) AS sumadocg,  ";
+            sql += " and b.estatus >= 1 ) AS sumadocg,  ";
             sql += " (select SUM (b.impuestoigtf) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
@@ -401,7 +401,7 @@ function getDocProcesados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            sql += " and b.estatus = 1 ) AS sumadocigtf, ";
+            sql += " and b.estatus >= 1 ) AS sumadocigtf, ";
             sql += " (select SUM (b.impuestor) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
@@ -409,7 +409,7 @@ function getDocProcesados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            sql += " and b.estatus = 1 ) AS sumadocr, ";
+            sql += " and b.estatus >= 1 ) AS sumadocr, ";
             sql += " (select SUM (b.exento) from t_registros b where b.idtipodocumento = a.id ";
             if (idserviciosmasivo) {
                 sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
@@ -417,7 +417,7 @@ function getDocProcesados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            sql += " and b.estatus = 1 ) AS exentos ";
+            sql += " and b.estatus >= 1 ) AS exentos ";
             const from = " from t_tipodocumentos a ";
             // console.log(sql + from )
             const resp = yield database_1.pool.query(sql + from);
@@ -458,13 +458,13 @@ function getUltimaSemana(req, res) {
             const hace5dia = moment().subtract(5, 'days').format('YYYY-MM-DD')
             const hace6dia = moment().subtract(6, 'days').format('YYYY-MM-DD') */
             let sql = "SELECT a.id, a.razonsocial, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $1 ) AS lunes, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $2 ) AS martes, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $3 ) AS miercoles, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $4 ) AS jueves, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $5 ) AS viernes, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $6 ) AS sabado, ";
-            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and b.estatus = 1 and to_char(b.fecha, 'YYYY-MM-DD') = $7 ) AS domingo ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $1 ) AS lunes, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $2 ) AS martes, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $3 ) AS miercoles, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $4 ) AS jueves, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $5 ) AS viernes, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $6 ) AS sabado, ";
+            sql += " (select count (*) from t_registros b where b.idserviciosmasivo = a.id and to_char(b.fecha, 'YYYY-MM-DD') = $7 ) AS domingo ";
             const from = " from t_serviciosmasivos a ";
             let where = " where a.estatus = 1 ";
             if (idserviciosmasivo) {
@@ -501,7 +501,7 @@ function getAnual(req, res) {
             const annio = (0, moment_1.default)().format('YYYY');
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf, count (*) as cantidad";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
-            let where = " where a.idserviciosmasivo = c.id AND a.estatus = 1 AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
+            let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
             const groupBy = " group by 1 ORDER BY 1 ASC ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
@@ -573,11 +573,11 @@ function getTotalSemanasTodos(req, res) {
             for (let i = 0; i < arraysemana.length; i++) {
                 const desde = arraysemana[i][0];
                 const hasta = arraysemana[i][1];
-                sql += " (select count (*) from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ) ";
+                sql += " (select count (*) from t_registros where idserviciosmasivo = a.id and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ) ";
                 sql += ' AS "' + (0, moment_1.default)(desde, 'YYYY-MM-DD').format('DD') + '-' + (0, moment_1.default)(hasta, 'YYYY-MM-DD').format('DD') + '", ';
                 semanas.push((0, moment_1.default)(desde, 'YYYY-MM-DD').format('DD') + '-' + (0, moment_1.default)(hasta, 'YYYY-MM-DD').format('DD'));
-                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento asc limit 1) AS inicia" + i + ",";
-                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and estatus = 1 and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento desc limit 1) AS termina" + i;
+                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento asc limit 1) AS inicia" + i + ",";
+                sql += " (select numerodocumento from t_registros where idserviciosmasivo = a.id and fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp order by numerodocumento desc limit 1) AS termina" + i;
                 inicios.push('inicia' + i);
                 finales.push('termina' + i);
                 if (i < arraysemana.length - 1) {
