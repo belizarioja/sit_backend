@@ -98,11 +98,11 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 }
             });
         }
-        console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog))
+        // console.log(Number(baseg) * Number(tasag) / 100, Number(impuestog))
         let totalimp = 0
         let totalbase = 0
-        console.log( (Number(baseg) * (Number(tasag) / 100)), Number(impuestog))
-        console.log( (Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2))
+        // console.log( (Number(baseg) * (Number(tasag) / 100)), Number(impuestog))
+        // console.log( (Number(baseg) * (Number(tasag) / 100)).toFixed(2), Number(impuestog).toFixed(2))
         if(Number(baseg) > 0 && Number(tasag) > 0) {
             if((Number(baseg) * (Number(tasag) / 100)).toFixed(2) !== Number(impuestog).toFixed(2)) {
 
@@ -374,7 +374,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         }
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
         DECIMALES = tipomoneda > 1 ? 4 : 2
-        console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
+        // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
         const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(DECIMALES) : subtotal
         const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(DECIMALES) : total
         const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(DECIMALES) : exento
