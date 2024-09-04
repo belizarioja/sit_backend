@@ -663,6 +663,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let subtotal = 0;
         let subtotalbs = 0;
         let totalbs = 0;
+        let total = 0;
         let _exento = 0;
         let _exentobs = 0;
         let _impuestog = 0;
@@ -702,7 +703,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             const _precio = _tipomoneda > 1 ? (producto.precio / _tasacambio).toFixed(DECIMALES) : producto.precio
             // Aumentar el total
             const totalProducto = (producto.cantidad * _precio) - _descuento;
-            subtotal += totalProducto;
+            // subtotalbs += totalProducto;
             // descuento += producto.descuento
             if (producto.exento === true || producto.exento === 'true') {                 
                 _exento += totalProducto
@@ -722,9 +723,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // baseiva += totalProducto;
 
             }
-            // console.log('_monto, _precio, totalProducto, _baseg')
-            // console.log(_monto, _precio, totalProducto, _baseg)
-
+            // console.log('_monto, _precio, totalProducto, _baseg, _impuestog')
+            // console.log(_monto, _precio, totalProducto, _baseg, _impuestog)
+          
             let productoitem = `<span>${producto.descripcion}</span>`
            
             if(producto.comentario.length > 0) {
@@ -771,12 +772,6 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             
         }
         const tipodoc = Number(_idtipodoc) === 1 ? 'Factura' : Number(_idtipodoc) === 2 ? 'Nota de débito' : Number(_idtipodoc) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
-
-        // const coletillaigtf = "En caso de " + tipodoc + " emitida en divisas según articulo Nro. 25 del Decreto con rango valor y fuerza de ley que establece el IVA modificado en GACETA OFICIAL Nro. 6152 de fecha 18/11/2014. "
-        // const coletillabcv = "Artículo 25: "
-        // const coletillabcv2 = '"En los casos en que la base imponible de la venta o prestación de servicios estuviese expresada en moneda extranjera se establecerá la equivalencia en moneda nacional al tipo de cambio corriente en el mercado del día en que ocurra el hecho imponible salvo que este ocurra en un día no hábil para el sector financiero en cuyo caso se aplicará el vigente en el día hábil inmediatamente siguiente el de la operación."'
-        // let coletilla = coletillaigtf + coletillabcv + coletillabcv2
-
         // COLETILLA
         const coletilla1 = "<b>En caso que la " + tipodoc + " genere pago con Divisas, la misma estará sujeta al cobro adicional del 3% de Impuesto Grandes Transacciones Financieras</b> de conformidad a lo establecido en la Providencia Administrativa SNAT/2022/000013, publicada en Gaceta Oficial 42.339 de fecha 17/03/2022."
         const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " +_tasacambio + " </b>del día " + moment().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento."
@@ -794,22 +789,37 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
         }
         tabla += `</tr>`;
+        
         if(Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 ) {
-            _baseg = __baseg
-            _impuestog = __impuestog
-            _baser = __baser
-            _impuestor = __impuestor
-            _exento = __exento            
+            _basegbs = __baseg
+            _impuestogbs = __impuestog
+            _baserbs = __baser
+            _impuestorbs = __impuestor
+            // _baseabs = __basea
+            // _impuestoabs = __impuestoa
+            _exentobs = __exento
+            if( _tipomoneda > 1) {            
+                _impuestog = _impuestogbs / Number(_tasacambio)
+                _baseg = _basegbs / Number(_tasacambio)
+                _impuestor = _impuestorbs / Number(_tasacambio)
+                _baser = _baserbs / Number(_tasacambio)
+                _impuestoa = _impuestoabs / Number(_tasacambio)
+                _basea = _baseabs / Number(_tasacambio)
+                _exento = _exentobs / Number(_tasacambio)
+            }
+        } else {
+            if( _tipomoneda > 1) {            
+                _impuestogbs = _impuestog * Number(_tasacambio)
+                _basegbs = _baseg * Number(_tasacambio)
+                _impuestorbs = _impuestor * Number(_tasacambio)
+                _baserbs = _baser * Number(_tasacambio)
+                _impuestoabs = _impuestoa * Number(_tasacambio)
+                _baseabs = _basea * Number(_tasacambio)
+                _exentobs = _exento * Number(_tasacambio)
+            }
         }
-        if( _tipomoneda > 1) {
-            _impuestogbs = _impuestog * Number(_tasacambio)
-            _basegbs = _baseg * Number(_tasacambio)
-            _impuestorbs = _impuestor * Number(_tasacambio)
-            _baserbs = _baser * Number(_tasacambio)
-            _impuestoabs = _impuestoa * Number(_tasacambio)
-            _baseabs = _basea * Number(_tasacambio)
-            _exentobs = _exento * Number(_tasacambio)
-        }
+        // console.log('_impuestog', _impuestog)
+        // console.log('_impuestogbs', _impuestogbs)
         // IMP GENERAL 16%
         let trImpuestogdivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
@@ -910,11 +920,12 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const subtotalConDescuento = subtotal;
         // console.log(subtotalConDescuento, impuestos, _impuestoigtf)
         const igtfTotal = _tipomoneda > 1 ? _impuestoigtfDiv : _impuestoigtf
-        let total = subtotalConDescuento + _impuestog + _impuestor + _impuestoa + Number(igtfTotal);
+        // totalbs = subtotalConDescuento + _impuestogbs + _impuestorbs + _impuestoabs + Number(igtfTotal);
 
-        if(Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 ) {
-            total = __total
-        }
+        // if(Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 ) {
+        // console.log('__total:', __total)
+        totalbs = __total
+        // }
         // console.log(total)
         // const fecha = moment().format('DD/MM/YYYY hh:mm:ss a');
         // Remplazar el valor {{tablaProductos}} por el verdadero valor
@@ -926,18 +937,21 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             contenidoHtml = contenidoHtml.replace("{{tablaProductos}}", tabla);
         }
         if( _tipomoneda > 1) {
-            subtotalbs = subtotal * Number(_tasacambio)
-            totalbs = total * Number(_tasacambio)
+            // subtotal = subtotalbs / Number(_tasacambio)
+            total = totalbs / Number(_tasacambio)
         }
+        
+        // console.log('total:', total)
+        // console.log('totalbs:', totalbs)
         let formasdepago = "";
         for (const forma of _formasdepago) {
             formasdepago += `${forma.forma} ${prefijo}: ${completarDecimales(Number(forma.valor), DECIMALES)}<br>`            
         }
-        if(formasdepago.length > 0) {
+        /* if(formasdepago.length > 0) {
             contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", 'Formas de pago:');
-        } else {
-            contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", '');
-        }
+        } else { */
+        contenidoHtml = contenidoHtml.replace("{{tituloformasdepago}}", '');
+        // }
         if(_observacion.length > 0) {
             contenidoHtml = contenidoHtml.replace("{{tituloobservacion}}", 'Observación:');
             contenidoHtml = contenidoHtml.replace("{{observacion}}", _observacion);
@@ -1061,7 +1075,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         } else {
             contenidoHtml = contenidoHtml.replace("{{publicidad}}", '');
         }
-        let trsubtotaldivisa = `<tr>
+        /* let trsubtotaldivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Subtotal Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotalbs), 2)}</td>
             <td class="text-right" style="font-size: 7px;">Subtotal ${prefijo}:</td>
@@ -1070,7 +1084,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let trsubtotalbs = `<tr>
             <td class=" text-right" style="font-size: 7px;">Subtotal Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(subtotal), DECIMALES)}</td>
-        </tr>`
+        </tr>` */
         let trtotaldivisa = `<tr>
             <td class="text-right" style="font-size: 7px;">Total Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(totalbs), 2)}</td>
@@ -1079,18 +1093,18 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         </tr>`
         let trtotalbs = `<tr>
             <td class=" text-right" style="font-size: 7px;">Total Bs.:</td>
-            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(total), DECIMALES)}</td>
+            <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(totalbs), DECIMALES)}</td>
         </tr>`
        
-        let _trsubtotal = trsubtotalbs
+        // let _trsubtotal = trsubtotalbs
         let _trtotal = trtotalbs
 
         if(_tipomoneda > 1) {
-            _trsubtotal = trsubtotaldivisa
+            // _trsubtotal = trsubtotaldivisa
             _trtotal = trtotaldivisa
         }
         if (Number(_idtipodoc) === 5) {
-            _trsubtotal = ''
+            // _trsubtotal = ''
             _trtotal = ''
         }
         // contenidoHtml = contenidoHtml.replace("{{trsubtotal}}", _trsubtotal);
