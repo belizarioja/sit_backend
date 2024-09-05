@@ -72,7 +72,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const piedepagina = 'Este documento se emite bajo la providencia administrativa Nro. SNAT/2014/0032 de fecha 31/07/2014.<br>Imprenta SMART INNOVACIONES TECNOLOGICAS, C.A. RIF J-50375790-6, Autorizada según Providencia Administrativa Nro. SENIAT/INTI/011 de fecha 10/11/2023.<br>' + lotepiedepagina
         // console.log('rifcedulacliente')
         // console.log(rifcedulacliente)
-        if(rifcedulacliente.length === 0) {
+        if(rifcedulacliente === undefined || rifcedulacliente.length === 0) {
 
             await pool.query('ROLLBACK')
             
@@ -81,7 +81,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 data: null,
                 error: {
                     code: 2,
-                    message: 'Valor de RIF CLIENTE no válido!'
+                    message: 'Valor de RIF CLIENTE no válido. Debe incluir esa propiedad!'
                 }
             });
         }
@@ -94,7 +94,59 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
                 data: null,
                 error: {
                     code: 2,
-                    message: 'Valor de NOMBRE CLIENTE no válido!'
+                    message: 'Valor de NOMBRE CLIENTE no válido. Debe incluir esa propiedad!'
+                }
+            });
+        }
+        if(direccioncliente === undefined || direccioncliente.length === 0) {
+
+            await pool.query('ROLLBACK')
+
+            return res.status(202).json({
+                success: false,            
+                data: null,
+                error: {
+                    code: 21,
+                    message: 'Valor de DIRECCION CLIENTE no válido. Debe incluir esa propiedad!'
+                }
+            });
+        }
+        if(telefonocliente === undefined || telefonocliente.length === 0) {
+
+            await pool.query('ROLLBACK')
+
+            return res.status(202).json({
+                success: false,            
+                data: null,
+                error: {
+                    code: 22,
+                    message: 'Valor de TELEFONO CLIENTE no válido. Debe incluir esa propiedad!'
+                }
+            });
+        }
+        if(tipomoneda === undefined || Number(tipomoneda) === 0) {
+
+            await pool.query('ROLLBACK')
+
+            return res.status(202).json({
+                success: false,            
+                data: null,
+                error: {
+                    code: 24,
+                    message: 'Valor de TIPO MONEDA no válido. Debe incluir esa propiedad y valores 1, 2 ó 3!'
+                }
+            });
+        }
+        if(Number(tipomoneda) > 1 && Number(_tasacambio) === 0) {
+
+            await pool.query('ROLLBACK')
+
+            return res.status(202).json({
+                success: false,            
+                data: null,
+                error: {
+                    code: 23,
+                    message: 'Valor de TASA CAMBIO no válido. Debe incluir esa propiedad MAYOR QUE CERO (0)!'
                 }
             });
         }
