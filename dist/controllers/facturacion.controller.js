@@ -1160,7 +1160,23 @@ function completarDecimales(cadena, decimales) {
         cadenafinal = arreglo.length === 1 ? cadena2 + ',00' : arreglo[1].length === 1 ? cadena2 + '0' : cadena2;
     }
     // console.log('cadenafinal', cadenafinal)
-    return cadenafinal;
+    const arreglo2 = cadena2.split(',');
+    let str = arreglo2[0];
+    // Aquí almacenaremos los resultados.
+    let resultado = "";
+    // Recorremos el string con for "str.length" veces.
+    for (let i = 0; i < str.length; i++) {
+        // Cada número, lo concatenamos a "resultado".
+        resultado += str[i];
+        // y luego de concatenar el número, verifico si el iterador es un múltiplo de 3.
+        // ponemos "i < str.length - 1" para evitar que el punto se agregue al final del string.
+        if ((str.length - i - 1) % 3 === 0 && i < str.length - 1) {
+            resultado += ".";
+        }
+    }
+    const cadenafinal2 = resultado + ',' + arreglo2[1];
+    // console.log('cadenafinal2', cadenafinal2)
+    return cadenafinal2;
 }
 function obtenerLote(res, id) {
     return __awaiter(this, void 0, void 0, function* () {
