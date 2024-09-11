@@ -52,6 +52,7 @@ function setFacturacion(req, res) {
         const _serial = serial || null;
         const _direccionsucursal = direccionsucursal || null;
         const _regimenanterior = regimenanterior || 0;
+        const _tipomoneda = tipomoneda || 1;
         const lotepiedepagina = yield obtenerLote(res, id);
         if (lotepiedepagina === '0') {
             yield database_1.pool.query('ROLLBACK');
@@ -123,7 +124,7 @@ function setFacturacion(req, res) {
                 }
             });
         }
-        if (tipomoneda === undefined || Number(tipomoneda) === 0) {
+        if (Number(_tipomoneda) === 0) {
             yield database_1.pool.query('ROLLBACK');
             return res.status(202).json({
                 success: false,
@@ -134,7 +135,7 @@ function setFacturacion(req, res) {
                 }
             });
         }
-        if (Number(tipomoneda) > 1 && Number(_tasacambio) === 0) {
+        if (Number(_tipomoneda) > 1 && Number(_tasacambio) === 0) {
             yield database_1.pool.query('ROLLBACK');
             return res.status(202).json({
                 success: false,
@@ -386,17 +387,17 @@ function setFacturacion(req, res) {
             // console.log('Aqui función para validar numero interno :', numerointerno)
         }
         // AJUSTE PARA MULTIMONEDA Y PASARLOS A BOLIVARES
-        DECIMALES = tipomoneda > 1 ? 4 : 2;
+        DECIMALES = _tipomoneda > 1 ? 4 : 2;
         // console.log(tipomoneda, subtotal, total, exento, baser, impuestor, baseg, impuestog, baseigtf, impuestoigtf)
-        const _subtotal = tipomoneda > 1 ? (subtotal * tasacambio).toFixed(DECIMALES) : subtotal;
-        const _total = tipomoneda > 1 ? (total * tasacambio).toFixed(DECIMALES) : total;
-        const _exento = tipomoneda > 1 ? (exento * tasacambio).toFixed(DECIMALES) : exento;
-        const _baser = tipomoneda > 1 ? (baser * tasacambio).toFixed(DECIMALES) : baser;
-        const _impuestor = tipomoneda > 1 ? (impuestor * tasacambio).toFixed(DECIMALES) : impuestor;
-        const _baseg = tipomoneda > 1 ? (baseg * tasacambio).toFixed(DECIMALES) : baseg;
-        const _impuestog = tipomoneda > 1 ? (impuestog * tasacambio).toFixed(DECIMALES) : impuestog;
-        const _baseigtf = tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(DECIMALES) : baseigtf;
-        const _impuestoigtf = tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(DECIMALES) : impuestoigtf;
+        const _subtotal = _tipomoneda > 1 ? (subtotal * tasacambio).toFixed(DECIMALES) : subtotal;
+        const _total = _tipomoneda > 1 ? (total * tasacambio).toFixed(DECIMALES) : total;
+        const _exento = _tipomoneda > 1 ? (exento * tasacambio).toFixed(DECIMALES) : exento;
+        const _baser = _tipomoneda > 1 ? (baser * tasacambio).toFixed(DECIMALES) : baser;
+        const _impuestor = _tipomoneda > 1 ? (impuestor * tasacambio).toFixed(DECIMALES) : impuestor;
+        const _baseg = _tipomoneda > 1 ? (baseg * tasacambio).toFixed(DECIMALES) : baseg;
+        const _impuestog = _tipomoneda > 1 ? (impuestog * tasacambio).toFixed(DECIMALES) : impuestog;
+        const _baseigtf = _tipomoneda > 1 ? (baseigtf * tasacambio).toFixed(DECIMALES) : baseigtf;
+        const _impuestoigtf = _tipomoneda > 1 ? (impuestoigtf * tasacambio).toFixed(DECIMALES) : impuestoigtf;
         // const _baseigtf = baseigtf.toFixed(2)
         // const _impuestoigtf = impuestoigtf.toFixed(2)
         // console.log(_subtotal, _total, _exento, _baser, _impuestor, _baseg, _impuestog, _baseigtf, _impuestoigtf)
@@ -406,9 +407,9 @@ function setFacturacion(req, res) {
         const fechaenvio = (0, moment_1.default)().format('YYYY-MM-DD HH:mm:ss');
         const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal, regimenanterior ) ';
         const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35) RETURNING id ';
-        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, tipomoneda, _fechavence, _serial, _direccionsucursal, _regimenanterior]);
-        // console.log('DECIMALES, tipomoneda')
-        // console.log(DECIMALES, tipomoneda)
+        const respReg = yield database_1.pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, _tipomoneda, _fechavence, _serial, _direccionsucursal, _regimenanterior]);
+        // console.log('DECIMALES, _tipomoneda')
+        // console.log(DECIMALES, _tipomoneda)
         const idRegistro = respReg.rows[0].id;
         for (const ind in cuerpofactura) {
             const item = cuerpofactura[ind];
@@ -425,9 +426,9 @@ function setFacturacion(req, res) {
                     }
                 });
             }
-            const _monto = tipomoneda > 1 ? (item.monto * tasacambio).toFixed(DECIMALES) : item.monto;
-            const _descuento = tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(DECIMALES) : item.descuento;
-            const _precio = tipomoneda > 1 ? (item.precio * tasacambio).toFixed(DECIMALES) : item.precio;
+            const _monto = _tipomoneda > 1 ? (item.monto * tasacambio).toFixed(DECIMALES) : item.monto;
+            const _descuento = _tipomoneda > 1 ? (item.descuento * tasacambio).toFixed(DECIMALES) : item.descuento;
+            const _precio = _tipomoneda > 1 ? (item.precio * tasacambio).toFixed(DECIMALES) : item.precio;
             // console.log(_monto, _descuento, _precio)
             const insertDet = 'INSERT INTO t_registro_detalles (idregistro, codigo, descripcion, precio, cantidad, tasa, monto, exento, comentario, descuento, intipounidad ) ';
             const valuesDet = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ';
@@ -459,7 +460,7 @@ function setFacturacion(req, res) {
         if (cuerpofactura.length > 0 || (idtipodocumento === 2 || idtipodocumento === 3)) {
             console.log('va a Crear pdf correo_ ', sendmail);
             yield enviarCrearFactura(res, rif, numerocompleto, sendmail);
-            // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, tipomoneda)
+            // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, _tipomoneda)
         }
         else {
             console.log('Sin Factura pdf correo');
