@@ -775,15 +775,15 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const coletilla2 = " El equivalente en Bs., <b>A TASA DE CAMBIO OFICIAL BCV A Bs./USD DE " + _tasacambio + " </b>del día " + (0, moment_1.default)().format("DD/MM/YYYY") + ", según lo establecido en la Gaceta Oficial Nro. 6405 del convenio cambiario Nro. 1 de fecha 07/09/2018, expresándose en Bolívares, para dar cumplimiento a articulo Nro. 25 de la Ley de Impuesto al Valor Agregado y el articulo Nro. 38 de su respectivo reglamento.";
             let coletilla = coletilla1 + coletilla2;
             tabla += `<tr style="height: auto;">
-            <td style="border-bottom: 2px solid #65778D;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+            <td class="borderbottom" style="font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
             if (Number(_idtipodoc) !== 5) {
                 tabla += `
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
             }
             tabla += `</tr>`;
             if (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) {

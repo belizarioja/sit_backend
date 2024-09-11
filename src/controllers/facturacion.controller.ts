@@ -831,15 +831,15 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         let coletilla = coletilla1 + coletilla2
         
         tabla += `<tr style="height: auto;">
-            <td style="border-bottom: 2px solid #65778D;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-            <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+            <td class="borderbottom" style="font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+            <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
         if(Number(_idtipodoc) !== 5) {
             tabla += `
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
-                <td style="border-bottom: 2px solid #65778D;border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>
+                <td class="borderbottom" style="border-left: 1px dashed;font-size: 7px;line-height: 1;">&nbsp;</td>`;
         }
         tabla += `</tr>`;
         
