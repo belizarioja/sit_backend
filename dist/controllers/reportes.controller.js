@@ -447,7 +447,7 @@ function getUltimaSemana(req, res) {
             // console.log(numdayhoy, startdate, numdaystart)
             for (let i = 0; i < 7; i++) {
                 const newdate = (0, moment_1.default)(startdate).add(i, 'days').format('YYYY-MM-DD');
-                console.log(newdate);
+                // console.log(newdate)
                 week.push(newdate);
             }
             const hoy = (0, moment_1.default)().format('YYYY-MM-DD');

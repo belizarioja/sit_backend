@@ -425,7 +425,7 @@ export async function getUltimaSemana (req: Request, res: Response): Promise<Res
         // console.log(numdayhoy, startdate, numdaystart)
         for (let i = 0; i < 7; i++) {
             const newdate = moment(startdate).add(i, 'days').format('YYYY-MM-DD')
-            console.log(newdate)
+            // console.log(newdate)
             week.push(newdate)         
         }
         
