@@ -506,7 +506,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         await pool.query('COMMIT')
        
         if (cuerpofactura.length > 0 || (idtipodocumento === 2 || idtipodocumento === 3)) {
-            console.log('va a Crear pdf correo_ ', sendmail)
+            // console.log('va a Crear pdf correo_ ', sendmail)
             await enviarCrearFactura (res, rif, numerocompleto, sendmail)
             // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, _tipomoneda)
             
@@ -563,7 +563,7 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
 }
 
 async function enviarCrearFactura (res: Response , rif: any, numerodocumento: any, sendmail: any) {
-    console.log('va a Consultar registros')
+    // console.log('va a Consultar registros')
     try {
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
         sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
@@ -1020,7 +1020,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho'
         const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' ' +  _numeroafectado + ' del' : ''
         const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ?  ' ' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
-        console.log("AMBIENTE")
+        // console.log("AMBIENTE")
         console.log(AMBIENTE)
         
         if(Number(_estatus) === 2) { // Si es anulado
@@ -1206,7 +1206,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // console.log(enviocorreo, _sendmail, productos.length, _emailcliente, Number(_idtipodoc))
 
                 if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && _emailcliente?.length > 0) {
-                    console.log('va a Enviar correo')
+                    // console.log('va a Enviar correo')
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente)
 
                 } else {
