@@ -1394,8 +1394,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="text-align: center; padding: 3px;">
-                        <div style="background: #fff; font-size: 13px; margin: 7px;">
+                    <td colspan="3" style="text-align: center;">
+                        <div style="background: #fff; font-size: 13px; margin-bottom: 10px; margin-top: -20px;">
                           <a href="https://sitdemopay.factura-smart.com/#/pasarelaPago" style="background: #1d1d1d; color: white;border-radius: 7px; padding: 5px 15px; font-size: 12px;">REALIZAR PAGO</a>
                         </div>
                     </td>
