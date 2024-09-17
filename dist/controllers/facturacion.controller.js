@@ -957,8 +957,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const emailpdf = _emailcliente.split('|').join(', ');
             const tipocedula = Number(_idtipocedula) === 1 ? 'CI' : Number(_idtipocedula) === 2 ? 'Pasaporte' : 'RIF';
             const tipoafectado = Number(_idtipoafectado) === 1 ? 'Factura' : Number(_idtipoafectado) === 2 ? 'Nota de débito' : Number(_idtipoafectado) === 3 ? 'Nota de crédito' : Number(_idtipodoc) === 4 ? 'Orden de entrega' : 'Guía de despacho';
-            const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' ' + _numeroafectado + ' del' : '';
-            const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? ' ' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
+            const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' ' + _numeroafectado + ' ' : '';
+            const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? ' del ' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
             // console.log("AMBIENTE")
             console.log(AMBIENTE);
             if (Number(_estatus) === 2) { // Si es anulado
