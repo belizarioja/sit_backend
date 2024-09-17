@@ -1317,9 +1317,17 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             port: 25,
             secure: false */
         });
-        
+        const ISPASARELAPAGO = null
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
         let htmlpublicidad = ``
+        let htmlpasarelapago = ``
+        if(ISPASARELAPAGO === '1') {
+            htmlpasarelapago = `<tr>
+                <td style="padding:  0px 30px 20px;" colspan="3">               
+                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
+                </td>
+            </tr>`
+        }
         if(ISPUBLICIDAD === '1') {
             htmlpublicidad = `<tr>
                 <td style="padding:  0px 30px 20px;" colspan="3">               
@@ -1397,13 +1405,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td colspan="3" style="text-align: center;">
-                        <div style="background: #fff; font-size: 13px; margin-bottom: 10px; margin-top: -20px;">
-                          <a href="https://sitdemopay.factura-smart.com/#/pasarelaPago" style="background: #1d1d1d; color: white;border-radius: 7px; padding: 5px 15px; font-size: 12px;">REALIZAR PAGO</a>
-                        </div>
-                    </td>
-                </tr>
+                ${htmlpasarelapago}
                 ${htmlpublicidad}
                 <tr>
                     <td colspan="3" style="text-align: center; padding: 3px;">
