@@ -825,9 +825,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // console.log('_impuestogbs', _impuestogbs)
             // IMP GENERAL 16%
             let trImpuestogdivisa = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basegbs), 2)}</td>
-            <td class="text-right" style="font-size: 7px;">Base imponible 16% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 16% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg), DECIMALES)}</td>
         </tr>
         <tr>
@@ -837,7 +837,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestog), DECIMALES)}</td>
         </tr>`;
             let trImpuestogbs = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 16% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 16% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseg), DECIMALES)}</td>
         </tr>
         <tr>
@@ -846,9 +846,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
         </tr>`;
             // IMP REDUCIDO 8%
             let trImpuestordivisa = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 8% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baserbs), 2)}</td>
-            <td class="text-right" style="font-size: 7px;">Base imponible 8% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 8% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser), DECIMALES)}</td>
         </tr>
         <tr>
@@ -858,7 +858,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestor), DECIMALES)}</td>
         </tr>`;
             let trImpuestorbs = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 8% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 8% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baser), DECIMALES)}</td>
         </tr>
         <tr>
@@ -867,9 +867,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
         </tr>`;
             // IMP AL LUJO 31%
             let trImpuestoadivisa = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 31% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_baseabs), 2)}</td>
-            <td class="text-right" style="font-size: 7px;">Base imponible 31% ${prefijo}:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 31% ${prefijo}:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea), DECIMALES)}</td>
         </tr>
         <tr>
@@ -879,7 +879,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_impuestoa), DECIMALES)}</td>
         </tr>`;
             let trImpuestoabs = `<tr>
-            <td class="text-right" style="font-size: 7px;">Base imponible 31% Bs.:</td>
+            <td class="text-right" style="font-size: 7px;">Base imponible IVA 31% Bs.:</td>
             <td class="text-right" style="font-size: 7px;">${completarDecimales(Number(_basea), 2)}</td>
         </tr>
         <tr>
