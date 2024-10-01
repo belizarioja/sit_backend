@@ -35,7 +35,11 @@
                                 <td style="vertical-align: top; padding-top: 10px;">
                                     <table style="width: 95%; margin-left: 10px;">
                                         <tr>
-                                            <td colspan="2" class="text-right" style="font-size: 10px;font-weight: bolder;width: 56%;">
+                                            <td class="text-center" style="font-size: 10px;font-weight: bolder; padding: 5px;">
+                                                SERIE {{serial}}<br>
+                                                {{tipodocumento}} {{numerointerno}}
+                                            </td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder">
                                                 <div class="fondoCurvaGris">
                                                     <table style="width: 100%;">
                                                         <tr>
@@ -47,20 +51,15 @@
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                </div>
-                                                <div>
-                                                    <table style="width: 100%;">
-                                                        <tr>
-                                                            <td class="fechaEmision text-left" style="width: 50%; padding-left: 5px;">
-                                                                Fecha emisión <br>{{fecha}}                                              
-                                                            </td>
-                                                            <td class="fechaEmision text-right" style="width: 50%; padding-right: 5px;">
-                                                                Hora emisión <br>{{hora}}
-                                                            </td>
-                                                        </tr>
-                                                        {{afectado}}
-                                                    </table>
-                                                </div>
+                                                </div>                                                
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="font-size: 10px;font-weight: bolder; padding: 5px;">
+                                                <div class="tarjetaCliente"><b>Fecha emisión:</b> {{fecha}}</div>
+                                            </td>
+                                            <td class="text-right" style="font-size: 10px;font-weight: bolder">
+                                                <div class="tarjetaCliente"><b>Hora emisión:</b> {{hora}}</div>
                                             </td>
                                         </tr>
                                     </table>  
@@ -73,14 +72,13 @@
                     <td>
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 50%;">
+                                <td style="width: 75%;">
                                     {{trsucursal}}
                                 </td>
-                                <td style="width: 48%;">
+                                <td style="width: 24%;">                                    
                                     <table style="width: 95%; margin-left: 10px;">
                                         <tr>
-                                            <td class="text-right" style="font-size: 10px;font-weight: bolder;padding-right: 5px;">{{tipodocumento}} {{numerointerno}}</td>
-                                            <td class="text-centar" style="font-size: 9px;"><div class="tarjetaCliente">Fecha: {{fechaasignacion}}</div></td>
+                                            <td colspan="2" class="text-centar" style="font-size: 9px; width: 50%;"><div class="tarjetaCliente" style="margin-top: 5px;"><b>Fecha asignación:</b> {{fechaasignacion}}</div></td>
                                         </tr>
                                         {{trfechavence}}
                                     </table>
@@ -93,31 +91,38 @@
             
         </div>
         <!--AREA DE CLIENTE CONSUMIDOR Y CODE QR -->
-        <div class="tarjetaCliente" style="margin-top: 10px; margin-bottom: 10px;">
-            <table style="width: 100%;margin-left: 20px;">
-                <tr>
-                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Cliente</td>
-                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Correo</td>
-                    <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 120px;">Teléfono</td>
-                    <td rowspan="4" class="text-center">
-                        <img class="img-fluid" src="{{codeqr}}" alt="Code QR" width="50" >
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{nombrecliente}}</td>
-                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{emailcliente}}</td>
-                    <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{telefonocliente}}</td>
-                </tr>
-                <tr>
-                    <td class="text-left" style="font-size: 7px;font-weight: bolder;">Documento</td>
-                    <td class="text-left" style="font-size: 7px;font-weight: bolder;">Dirección</td>
-                </tr>
-                <tr>
-                    <td class="text-left" style="vertical-align: baseline;font-size: 7px;">{{tipocedula}}: {{cedulacliente}}</td>
-                    <td colspan="2" class="text-left" style="vertical-align: baseline;font-size: 7px;">{{direccioncliente}}</td>
-                </tr>
-            </table>  
-        </div>
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 75%;">
+                    <div class="tarjetaCliente" style="margin-bottom: 10px;">
+                        <table style="width: 100%;margin-left: 20px;">
+                            <tr>
+                                <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Cliente</td>
+                                <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 180px;">Correo</td>
+                                <td class="text-left" style="font-size: 8px;font-weight: bolder;width: 120px;">Teléfono</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{nombrecliente}}</td>
+                                <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{emailcliente}}</td>
+                                <td class="text-left" style="font-size: 7px;vertical-align: baseline;">{{telefonocliente}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left" style="font-size: 7px;font-weight: bolder;">Documento</td>
+                                <td class="text-left" style="font-size: 7px;font-weight: bolder;">Dirección</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left" style="vertical-align: baseline;font-size: 7px;">{{tipocedula}}: {{cedulacliente}}</td>
+                                <td colspan="2" class="text-left" style="vertical-align: baseline;font-size: 7px;">{{direccioncliente}}</td>
+                            </tr>
+                        </table>  
+                    </div>
+                </td>
+                <td style="width: 25%;">
+                    <div style="text-align: center; width: 100%;">
+                        <img src="{{codeqr}}" alt="Code QR" width="50" >
+                    </div>
+                </td>
+            </tr>
         <!--AREA DE DETALLES PROPDUCTOS -->
         <div class="row" style="margin-left: 5px; margin-right: 5px;">
             <table class="{{csstabla}} curvatabla round_table">
@@ -140,13 +145,25 @@
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 50%;vertical-align: baseline;">
-                        <p style="font-size: 7px; font-weight: 700;">{{tituloobservacion}}<p>
-                        <p style="font-size: 7px; font-weight: 700; padding-left: 20px;">
-                            {{observacion}}
-                        <p>
+                        <table class="curvatabla round_table" style="width: 98%; margin-top: 5px; margin-right: 10px;">
+                            <thead>
+                                <tr class="fondoGris">
+                                    <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: 100%; color: white !important;border-top-left-radius: 10px !important; border-top-right-radius: 10px; ">{{tituloobservacion}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <p style="font-size: 7px; font-weight: 700; padding-left: 20px;">
+                                            {{observacion}}
+                                        <p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> 
                     </td>
                     <td style="width: 50%;">
-                        <table style="width: 100%;margin-top: 5px;">
+                        <table class="curvatabla round_table" style="width: 100%;margin-top: 5px; border-collapse: separate; border-spacing: 7px 2px;">
                             {{trexento}}
                             {{trbaseg}}
                             {{trbaser}}

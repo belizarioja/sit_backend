@@ -807,14 +807,15 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
             // console.log(productoitem)
             // Y concatenar los productos
             // const color = j % 2 === 0 ? '#ffffff' : '#ff0000'
-            const color = '#ffffff'
+            // const fondocolor = 'background: #ffffff  !important;'
+            const fondocolor = ''
             let tdunidaditem = '';
             if(producto.intipounidad > 0) {
                tdunidaditem = producto.intipounidad === '1' ? 'Unidad(es)' : producto.intipounidad === '2' ? 'Kilo(s)' : producto.intipounidad === '3' ? 'Litro(s)' : producto.intipounidad === '4' ? 'Metro(s)' :  'Caja(s)'
             }
             // console.log('PRECIO UNIT: ', completarDecimales(Number(_precio), DECIMALES))
             // console.log('TOTAL: ', completarDecimales(Number(_monto), DECIMALES))
-            tabla += `<tr style="height: 10px; background: ${color} !important;">
+            tabla += `<tr style="height: 10px; ${fondocolor}">
                 <td style="vertical-align: baseline;font-size: 7px;padding: 0 2px;">${producto.codigo}</td>
                 <td style="vertical-align: baseline;font-size: 7px;border-left: 1px dashed;padding: 0 2px;">${productoitem}</td>
                 <td class="text-center" style="vertical-align: baseline;border-left: 1px dashed;padding: 0 2px;font-size: 7px;">${producto.cantidad} ${tdunidaditem}</td>`;
@@ -1067,7 +1068,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         contenidoHtml = contenidoHtml.replace("{{rif}}", _rif);
         contenidoHtml = contenidoHtml.replace("{{telefono}}", _telefono);
         contenidoHtml = contenidoHtml.replace("{{numerodocumento}}", _pnumero);
-        contenidoHtml = contenidoHtml.replace("{{numerointerno}}",_serial+_numerointerno);
+        contenidoHtml = contenidoHtml.replace("{{serial}}",_serial);
+        contenidoHtml = contenidoHtml.replace("{{numerointerno}}",_numerointerno);
         contenidoHtml = contenidoHtml.replace("{{tipodocumento}}", tipodoc);
         contenidoHtml = contenidoHtml.replace("{{afectado}}", afectado);
         contenidoHtml = contenidoHtml.replace("{{trfechavence}}", trfechavence);
