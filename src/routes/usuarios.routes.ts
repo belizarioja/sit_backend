@@ -3,7 +3,7 @@ import { getUsuarios, setUsuarios, getLogin, getRoles, updateEstatus, updateClav
 
 const router = Router();
 
-router.route('/').get(getUsuarios)
+router.route('/').post(getUsuarios)
 router.route('/').post(setUsuarios)
 router.route('/login').post(getLogin)
 router.route('/roles').get(getRoles)
