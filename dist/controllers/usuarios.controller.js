@@ -71,7 +71,7 @@ exports.getLogin = getLogin;
 function getUsuarios(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const sql = "select a.id, a.idrol, a.usuario, a.clave, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida, a.fecharecuperacion ";
+            const sql = "select a.id, a.idrol, a.usuario, a.idserviciosmasivo, a.nombre, c.razonsocial, b.rol, a.estatus, a.emailbcc, a.emailrecuperacion, a.horaentrada, a.horasalida, a.fecharecuperacion ";
             const from = " from t_usuarios a ";
             let leftjoin = " left join t_roles b ON a.idrol = b.id  ";
             leftjoin += " left join t_serviciosmasivos c ON a.idserviciosmasivo = c.id  ";
