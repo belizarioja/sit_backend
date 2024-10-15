@@ -5,6 +5,10 @@ import fs from 'fs';
 import pdf from 'html-pdf';
 import path from 'path';
 import QRCode  from 'qrcode';
+import axios from 'axios';
+
+// @ts-ignore
+import shortUrl from 'node-url-shortener';
 
 import { pool } from '../database'
 
@@ -17,11 +21,14 @@ const IMGPDF = process.env.IMGPDF
 const HOSTSMTP = process.env.HOSTSMTP
 const AMBIENTE = process.env.AMBIENTE
 const URLFRN = process.env.URLFRN
+const APISMS = process.env.APISMS
+const TOKENAPISMS = process.env.TOKENAPISMS
 
 let DECIMALES = 2
 let EMAILBCC = ''
 let URLPUBLICIDADEMAIL = ''
 let ISPUBLICIDAD = '0'
+let ERRORINT = ''
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 process.env['OPENSSL_CONF'] = '/dev/null';
@@ -652,7 +659,7 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
 }
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any, _fechavence: any, _serial: any, __total: any, __baseg: any, __impuestog: any, __baser: any, __impuestor: any, __exento: any, _sucursal: any, _direccionsucursal: any, _regimenanterior: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial, a.enviosms  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         leftjoin += " left join t_codigoscomercial c ON a.idcodigocomercial = c.id ";
@@ -666,6 +673,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const colorfondo2 = respsede.rows[0].colorfondo2 || '#edfbf4'
         const colorfuente2 = respsede.rows[0].colorfuente2 || '#666666'
         const textoemail = respsede.rows[0].textoemail || '0'
+        const enviosms = respsede.rows[0].enviosms || '0'
         const banner = respsede.rows[0].banner || '1'
         const _telefono = respsede.rows[0].telefono
         const codigoactividad = respsede.rows[0].codigocomercial
@@ -1209,6 +1217,17 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 //////////////
                 // FIRMAR PDF
                 //////////////
+                
+                //////////////
+                // ENVIAR SMS
+                //////////////
+                if (enviosms == 1 && Number(_idtipodoc) === 1 && _telefonocliente.length > 0) {
+                    console.log('va a Enviar SMS')
+                    await envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero)
+
+                } else {
+                    console.log('Sin sms')                    
+                }
                 // console.log(enviocorreo, _sendmail, productos.length, _emailcliente, Number(_idtipodoc))
 
                 if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && _emailcliente?.length > 0) {
@@ -1470,6 +1489,48 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
     /* }
     catch (e) {
         return res.status(400).send('Error Externo Enviando correo :  ' + e);
+    } */
+
+}
+
+async function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, numerodocumento: any) {
+    // try {
+        shortUrl.short(SERVERFILE + rif + numerodocumento, async function (err: any, url: any) {
+            // console.log(SERVERFILE + rif + numerodocumento);
+            // console.log('Short link');
+            // console.log(url);
+            const operadora = '0412'
+            const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url
+            const codeshort = (operadora === '0412' || operadora === '0414') ? '5100' : '1215100'
+            const headersjwt = {
+                headers: {
+                Authorization: 'Bearer ' + TOKENAPISMS
+                }
+            }
+            const jsonbody = {
+                to: '584128342274',
+                from: codeshort,
+                content: contenidosms,
+                dlr: "no",
+                coding:"3"
+            }
+            // console.log(jsonbody)
+            const resp = await axios.post(urlapi, jsonbody, headersjwt)
+            // console.log(resp.status)
+            if(resp.status === 200) {
+                // console.log(resp.data)
+                return true
+            } else {
+                console.log(resp.data.status)
+                console.log(resp.data.statusText)
+                ERRORINT = resp.data.statusText
+                return false
+            }
+        });
+
+    /* }
+    catch (e) {
+        return res.status(400).send('Error Externo Enviando sms :  ' + e);
     } */
 
 }
