@@ -1459,7 +1459,7 @@ function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif,
                 const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
                 // console.log(resp.status)
                 if (resp.status === 200) {
-                    // console.log(resp.data)
+                    console.log(resp.data);
                     return true;
                 }
                 else {
