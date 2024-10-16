@@ -1221,7 +1221,9 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 //////////////
                 // ENVIAR SMS
                 //////////////
-                if (enviosms == 1 && Number(_idtipodoc) === 1 && _telefonocliente.length > 0) {
+                const respSMS = await validarTelefonoSMS(_telefonocliente)
+                // console.log('Validar Telefono SMS:', respSMS)
+                if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                     console.log('va a Enviar SMS')
                     await envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero)
 
@@ -1243,6 +1245,24 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         return res.status(400).send('Error Externo Creando pdf :  ' + e);
     }
 
+}
+async function validarTelefonoSMS (telefonocliente: any) {
+    // console.log('telefonocliente.length: ', telefonocliente.length)
+    if(telefonocliente.length < 12){
+        // console.log('Error cantidad de digitos telefono')
+        return false;
+    }
+    // console.log('telefonocliente.substring(0, 2): ', telefonocliente.substring(0, 2))
+    if(telefonocliente.substring(0, 2) !== '58'){
+        // console.log('Error código pais venezuela')
+        return false;
+    }
+    // console.log('telefonocliente.substring(2, 5): ', telefonocliente.substring(2, 5))
+    if(telefonocliente.substring(2, 5) !== '412' && telefonocliente.substring(2, 5) !== '414' && telefonocliente.substring(2, 5) !== '424' && telefonocliente.substring(2, 5) !== '416' && telefonocliente.substring(2, 5) !== '426'){
+        // console.log('Error código operadora')
+        return false;
+    }
+    return true;
 }
 function crearCodeQR (informacion: any, rif: any, annio: any, mes: any, numerodocumento: any ) {
     const folderPath = __dirname + '/temp/' + rif + '/codeqr/' + annio + '-' + mes; // Reemplaza con la ruta de tu carpeta
@@ -1499,16 +1519,16 @@ async function envioSms (res: Response, _numerotelefono: any, urlapi: any, numer
             // console.log(SERVERFILE + rif + numerodocumento);
             // console.log('Short link');
             // console.log(url);
-            const operadora = '0412'
+            const operadora = _numerotelefono.substring(2, 5)
             const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url
-            const codeshort = (operadora === '0412' || operadora === '0414') ? '5100' : '1215100'
+            const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100'
             const headersjwt = {
                 headers: {
                 Authorization: 'Bearer ' + TOKENAPISMS
                 }
             }
             const jsonbody = {
-                to: '584128342274',
+                to: _numerotelefono,
                 from: codeshort,
                 content: contenidosms,
                 dlr: "no",

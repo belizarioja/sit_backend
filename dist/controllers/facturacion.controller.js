@@ -1141,7 +1141,9 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     //////////////
                     // ENVIAR SMS
                     //////////////
-                    if (enviosms == 1 && Number(_idtipodoc) === 1 && _telefonocliente.length > 0) {
+                    const respSMS = yield validarTelefonoSMS(_telefonocliente);
+                    // console.log('Validar Telefono SMS:', respSMS)
+                    if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                         console.log('va a Enviar SMS');
                         yield envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero);
                     }
@@ -1165,6 +1167,26 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
     });
 }
 exports.crearFactura = crearFactura;
+function validarTelefonoSMS(telefonocliente) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // console.log('telefonocliente.length: ', telefonocliente.length)
+        if (telefonocliente.length < 12) {
+            // console.log('Error cantidad de digitos telefono')
+            return false;
+        }
+        // console.log('telefonocliente.substring(0, 2): ', telefonocliente.substring(0, 2))
+        if (telefonocliente.substring(0, 2) !== '58') {
+            // console.log('Error código pais venezuela')
+            return false;
+        }
+        // console.log('telefonocliente.substring(2, 5): ', telefonocliente.substring(2, 5))
+        if (telefonocliente.substring(2, 5) !== '412' && telefonocliente.substring(2, 5) !== '414' && telefonocliente.substring(2, 5) !== '424' && telefonocliente.substring(2, 5) !== '416' && telefonocliente.substring(2, 5) !== '426') {
+            // console.log('Error código operadora')
+            return false;
+        }
+        return true;
+    });
+}
 function crearCodeQR(informacion, rif, annio, mes, numerodocumento) {
     const folderPath = __dirname + '/temp/' + rif + '/codeqr/' + annio + '-' + mes; // Reemplaza con la ruta de tu carpeta
     fs_1.default.mkdirSync(folderPath, { recursive: true });
@@ -1418,16 +1440,16 @@ function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif,
                 // console.log(SERVERFILE + rif + numerodocumento);
                 // console.log('Short link');
                 // console.log(url);
-                const operadora = '0412';
+                const operadora = _numerotelefono.substring(2, 5);
                 const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url;
-                const codeshort = (operadora === '0412' || operadora === '0414') ? '5100' : '1215100';
+                const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
                 const headersjwt = {
                     headers: {
                         Authorization: 'Bearer ' + TOKENAPISMS
                     }
                 };
                 const jsonbody = {
-                    to: '584128342274',
+                    to: _numerotelefono,
                     from: codeshort,
                     content: contenidosms,
                     dlr: "no",
