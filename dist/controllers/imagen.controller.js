@@ -41,7 +41,7 @@ function getImagenCodeQr(req, res) {
         try {
             const { rif, anniomes, filecodeqr } = req.params;
             const path = __dirname + '/temp/' + rif + '/codeqr/' + anniomes + '/' + filecodeqr;
-            console.log(path);
+            // console.log(path)
             if (fs_1.default.existsSync(path)) {
                 // const imgbase64 = fs.readFileSync(path, { encoding: 'base64' })
                 return res.sendFile(path);

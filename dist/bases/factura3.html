@@ -59,7 +59,14 @@
                                                 <div class="tarjetaCliente"><b>Fecha emisión:</b> {{fecha}}</div>
                                             </td>
                                             <td class="text-center" style="font-size: 8px;font-weight: bolder">
+                                                <div class="tarjetaCliente"><b>Fecha asignación:</b> {{fechaasignacion}}</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 5px;">
                                                 <div class="tarjetaCliente"><b>Hora emisión:</b> {{hora}}</div>
+                                            </td>
+                                            <td class="text-center" style="font-size: 8px;font-weight: bolder">
                                             </td>
                                         </tr>
                                     </table>  
@@ -72,16 +79,8 @@
                     <td>
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 70%;">
+                                <td>
                                     {{trsucursal}}
-                                </td>
-                                <td style="width: 30%;">                                    
-                                    <table style="width: 95%; margin-left: 10px;">
-                                        <tr>
-                                            <td colspan="2" class="text-center" style="font-size: 8px; width: 50%;"><div class="tarjetaCliente" style="margin-top: 5px;"><b>Fecha asignación:</b> {{fechaasignacion}}</div></td>
-                                        </tr>
-                                        {{trfechavence}}
-                                    </table>
                                 </td>
                             </tr>
                         </table>

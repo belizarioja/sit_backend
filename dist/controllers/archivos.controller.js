@@ -125,7 +125,7 @@ function exportFacturas(req, res) {
                 const mes = seleccion[i].mes;
                 const correlativo = seleccion[i].correlativo;
                 const folderPath = __dirname + '/temp/' + rif + '/' + annio + '-' + mes + '/'; // Reemplaza con la ruta de tu carpeta
-                console.log(folderPath);
+                // console.log(folderPath)
                 fs_1.default.readdir(folderPath, (err, files) => {
                     if (err) {
                         console.error('Error al leer la carpeta:', err);

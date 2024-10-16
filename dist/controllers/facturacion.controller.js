@@ -528,85 +528,84 @@ exports.getNumerointerno = getNumerointerno;
 function enviarCrearFactura(res, rif, numerodocumento, sendmail) {
     return __awaiter(this, void 0, void 0, function* () {
         // console.log('va a Consultar registros')
-        try {
-            let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-            sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
-            const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
-            const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
-            yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
-                // console.log(response)
-                // console.log(response.rows[0])
-                const idregistro = response.rows[0].id;
-                const idserviciosmasivo = response.rows[0].idserviciosmasivo;
-                const razonsocial = response.rows[0].razonsocial;
-                const emailemisor = response.rows[0].email;
-                const emailcliente = response.rows[0].emailcliente;
-                const nombrecliente = response.rows[0].nombrecliente;
-                const direccion = response.rows[0].direccion;
-                const cedulacliente = response.rows[0].cedulacliente;
-                const idtipocedulacliente = response.rows[0].idtipocedulacliente;
-                const idtipodocumento = response.rows[0].idtipodocumento;
-                const telefonocliente = response.rows[0].telefonocliente || '';
-                const direccioncliente = response.rows[0].direccioncliente || '';
-                const impuestoigtf = response.rows[0].impuestoigtf;
-                const baseigtf = response.rows[0].baseigtf;
-                const numerointerno = response.rows[0].numerointerno;
-                const piedepagina = response.rows[0].piedepagina;
-                const tasacambio = response.rows[0].tasacambio;
-                const observacion = response.rows[0].observacion || '';
-                const sucursal = response.rows[0].sucursal || '';
-                const direccionsucursal = response.rows[0].direccionsucursal || '';
-                const serial = response.rows[0].serial || '';
-                const total = response.rows[0].total || 0;
-                const baseg = response.rows[0].baseg || 0;
-                const impuestog = response.rows[0].impuestog || 0;
-                const baser = response.rows[0].baser || 0;
-                const impuestor = response.rows[0].impuestor || 0;
-                const exento = response.rows[0].exento || 0;
-                const regimenanterior = response.rows[0].regimenanterior || 0;
-                const fechavence = response.rows[0].fechavence ? (0, moment_1.default)(response.rows[0].fechavence).format('DD/MM/YYYY') : '';
-                const estatus = response.rows[0].estatus;
-                const tipomoneda = response.rows[0].tipomoneda;
-                // const sendmail = 1 
-                const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss a');
-                // console.log('respdoc.rows[0].fecha, fechaenvio')
-                // console.log(response.rows[0].fecha, fechaenvio)
-                let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : '';
-                let fechaafectado = '';
-                let idtipoafectado = '';
-                if (idtipodocumento === '2' || idtipodocumento === '3') {
-                    const sqlrel = " SELECT * FROM t_registros ";
-                    const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
-                    // console.log(sqlupd + whereupd)
-                    const resprel = yield database_1.pool.query(sqlrel + whererel, [idserviciosmasivo, response.rows[0].relacionado]);
-                    if (resprel.rows.length > 0) {
-                        numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : numeroafectado;
-                        fechaafectado = resprel.rows[0].fecha;
-                        idtipoafectado = resprel.rows[0].idtipodocumento;
-                    }
+        // try {
+        let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
+        const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
+        const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
+        yield database_1.pool.query(sql + from + where, [numerodocumento, rif]).then((response) => __awaiter(this, void 0, void 0, function* () {
+            // console.log(response)
+            // console.log(response.rows[0])
+            const idregistro = response.rows[0].id;
+            const idserviciosmasivo = response.rows[0].idserviciosmasivo;
+            const razonsocial = response.rows[0].razonsocial;
+            const emailemisor = response.rows[0].email;
+            const emailcliente = response.rows[0].emailcliente;
+            const nombrecliente = response.rows[0].nombrecliente;
+            const direccion = response.rows[0].direccion;
+            const cedulacliente = response.rows[0].cedulacliente;
+            const idtipocedulacliente = response.rows[0].idtipocedulacliente;
+            const idtipodocumento = response.rows[0].idtipodocumento;
+            const telefonocliente = response.rows[0].telefonocliente || '';
+            const direccioncliente = response.rows[0].direccioncliente || '';
+            const impuestoigtf = response.rows[0].impuestoigtf;
+            const baseigtf = response.rows[0].baseigtf;
+            const numerointerno = response.rows[0].numerointerno;
+            const piedepagina = response.rows[0].piedepagina;
+            const tasacambio = response.rows[0].tasacambio;
+            const observacion = response.rows[0].observacion || '';
+            const sucursal = response.rows[0].sucursal || '';
+            const direccionsucursal = response.rows[0].direccionsucursal || '';
+            const serial = response.rows[0].serial || '';
+            const total = response.rows[0].total || 0;
+            const baseg = response.rows[0].baseg || 0;
+            const impuestog = response.rows[0].impuestog || 0;
+            const baser = response.rows[0].baser || 0;
+            const impuestor = response.rows[0].impuestor || 0;
+            const exento = response.rows[0].exento || 0;
+            const regimenanterior = response.rows[0].regimenanterior || 0;
+            const fechavence = response.rows[0].fechavence ? (0, moment_1.default)(response.rows[0].fechavence).format('DD/MM/YYYY') : '';
+            const estatus = response.rows[0].estatus;
+            const tipomoneda = response.rows[0].tipomoneda;
+            // const sendmail = 1 
+            const fechaenvio = (0, moment_1.default)(response.rows[0].fecha).format('YYYY-MM-DD hh:mm:ss a');
+            // console.log('respdoc.rows[0].fecha, fechaenvio')
+            // console.log(response.rows[0].fecha, fechaenvio)
+            let numeroafectado = response.rows[0].relacionado.length > 0 ? response.rows[0].relacionado : '';
+            let fechaafectado = '';
+            let idtipoafectado = '';
+            if (idtipodocumento === '2' || idtipodocumento === '3') {
+                const sqlrel = " SELECT * FROM t_registros ";
+                const whererel = " where idserviciosmasivo = $1 AND numerodocumento = $2 ";
+                // console.log(sqlupd + whereupd)
+                const resprel = yield database_1.pool.query(sqlrel + whererel, [idserviciosmasivo, response.rows[0].relacionado]);
+                if (resprel.rows.length > 0) {
+                    numeroafectado = resprel.rows[0].numerointerno.length > 0 ? resprel.rows[0].numerointerno : numeroafectado;
+                    fechaafectado = resprel.rows[0].fecha;
+                    idtipoafectado = resprel.rows[0].idtipodocumento;
                 }
-                const sqldet = "select id, codigo, descripcion, precio, cantidad, tasa, monto, exento, descuento, comentario, intipounidad ";
-                const fromdet = " from t_registro_detalles ";
-                const wheredet = " where idregistro = " + idregistro;
-                // console.log(sql + from + where)
-                const respdet = yield database_1.pool.query(sqldet + fromdet + wheredet);
-                // console.log(respdet.rows)
-                const cuerpofactura = respdet.rows;
-                const sqlformas = "select forma, valor ";
-                const fromformas = " from t_formasdepago ";
-                const whereformas = " where idregistro = " + idregistro;
-                // console.log(sql + from + where)
-                const respformas = yield database_1.pool.query(sqlformas + fromformas + whereformas);
-                // console.log(respdet.rows)
-                const formasdepago = respformas.rows;
-                // console.log('va a Crear PDF')
-                yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior);
-            }));
-        }
-        catch (e) {
-            console.log('Error enviarCrearFactura >>>> ' + e);
+            }
+            const sqldet = "select id, codigo, descripcion, precio, cantidad, tasa, monto, exento, descuento, comentario, intipounidad ";
+            const fromdet = " from t_registro_detalles ";
+            const wheredet = " where idregistro = " + idregistro;
+            // console.log(sql + from + where)
+            const respdet = yield database_1.pool.query(sqldet + fromdet + wheredet);
+            // console.log(respdet.rows)
+            const cuerpofactura = respdet.rows;
+            const sqlformas = "select forma, valor ";
+            const fromformas = " from t_formasdepago ";
+            const whereformas = " where idregistro = " + idregistro;
+            // console.log(sql + from + where)
+            const respformas = yield database_1.pool.query(sqlformas + fromformas + whereformas);
+            // console.log(respdet.rows)
+            const formasdepago = respformas.rows;
+            // console.log('va a Crear PDF')
+            yield crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior);
+        }));
+        /* }catch (e) {
+            console.log('Error enviarCrearFactura >>>> ' + e)
             return res.status(400).send('Error enviarCrearFactura >>>> ' + e);
-        }
+        } */
     });
 }
 function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombrecliente, productos, _emailcliente, _rifcliente, _idtipocedula, _telefonocliente, _direccioncliente, _numerointerno, _id, _emailemisor, _idtipodoc, _numeroafectado, _impuestoigtf, _fechaafectado, _idtipoafectado, _piedepagina, _baseigtf, _fechaenvio, _formasdepago, _sendmail, _tasacambio, _observacion, _estatus, _tipomoneda, _fechavence, _serial, __total, __baseg, __impuestog, __baser, __impuestor, __exento, _sucursal, _direccionsucursal, _regimenanterior) {
@@ -968,7 +967,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' ' + _numeroafectado + ' ' : '';
             const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? ' del ' + (0, moment_1.default)(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : '';
             // console.log("AMBIENTE")
-            console.log(AMBIENTE);
+            // console.log(AMBIENTE)
             if (Number(_estatus) === 2) { // Si es anulado
                 const ANULADO = FILEPDF + 'utils/anulado.gif';
                 const fondoanulado = `<img src="${ANULADO}" style="position: absolute; left:0; top:0; z-index:-10; width: 100%; height: 100%; "/>`;
@@ -1130,7 +1129,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // console.log(Number(plantillapdf), formatoPdf)
             html_pdf_1.default.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
-                    // console.log("Error creando PDF: " + error)
+                    console.log("Error creando PDF: " + error);
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
@@ -1142,10 +1141,10 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     // ENVIAR SMS
                     //////////////
                     const respSMS = yield validarTelefonoSMS(_telefonocliente);
-                    // console.log('Validar Telefono SMS:', respSMS)
+                    console.log('Validar Telefono SMS:', respSMS);
                     if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
-                        console.log('va a Enviar SMS');
-                        yield envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero);
+                        // console.log('va a Enviar SMS')
+                        envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-" + mesenvio);
                     }
                     else {
                         console.log('Sin sms');
@@ -1432,47 +1431,45 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
     });
 }
 exports.envioCorreo = envioCorreo;
-function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, numerodocumento) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // try {
-        node_url_shortener_1.default.short(SERVERFILE + rif + numerodocumento, function (err, url) {
-            return __awaiter(this, void 0, void 0, function* () {
-                // console.log(SERVERFILE + rif + numerodocumento);
-                // console.log('Short link');
-                // console.log(url);
-                const operadora = _numerotelefono.substring(2, 5);
-                const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url;
-                const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
-                const headersjwt = {
-                    headers: {
-                        Authorization: 'Bearer ' + TOKENAPISMS
-                    }
-                };
-                const jsonbody = {
-                    to: _numerotelefono,
-                    from: codeshort,
-                    content: contenidosms,
-                    dlr: "no",
-                    coding: "3"
-                };
-                // console.log(jsonbody)
-                const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
-                console.log('Status: ', resp.status);
-                if (resp.status === 200) {
-                    console.log(resp.data);
-                    return true;
+function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, numerodocumento, anniomeso) {
+    // try {
+    node_url_shortener_1.default.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, function (err, url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
+            // console.log('Short link');
+            // console.log(url);
+            const operadora = _numerotelefono.substring(2, 5);
+            const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url;
+            const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
+            const headersjwt = {
+                headers: {
+                    Authorization: 'Bearer ' + TOKENAPISMS
                 }
-                else {
-                    console.log(resp.data.status);
-                    console.log(resp.data.statusText);
-                    ERRORINT = resp.data.statusText;
-                    return false;
-                }
-            });
+            };
+            const jsonbody = {
+                to: _numerotelefono,
+                from: codeshort,
+                content: contenidosms,
+                dlr: "no",
+                coding: "3"
+            };
+            // console.log(jsonbody)
+            const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
+            console.log('Status: ', resp.status);
+            if (resp.status === 200) {
+                console.log(resp.data);
+                return true;
+            }
+            else {
+                console.log(resp.data.status);
+                console.log(resp.data.statusText);
+                ERRORINT = resp.data.statusText;
+                return false;
+            }
         });
-        /* }
-        catch (e) {
-            return res.status(400).send('Error Externo Enviando sms :  ' + e);
-        } */
     });
+    /* }
+    catch (e) {
+        return res.status(400).send('Error Externo Enviando sms :  ' + e);
+    } */
 }

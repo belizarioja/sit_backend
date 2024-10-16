@@ -571,7 +571,7 @@ export async function getNumerointerno (req: Request, res: Response): Promise<Re
 
 async function enviarCrearFactura (res: Response , rif: any, numerodocumento: any, sendmail: any) {
     // console.log('va a Consultar registros')
-    try {
+    // try {
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
         sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
@@ -652,10 +652,10 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
             // console.log('va a Crear PDF')
             await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior)
         })
-    }catch (e) {
+    /* }catch (e) {
         console.log('Error enviarCrearFactura >>>> ' + e)
         return res.status(400).send('Error enviarCrearFactura >>>> ' + e);
-    }
+    } */
 }
 export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any, _fechavence: any, _serial: any, __total: any, __baseg: any, __impuestog: any, __baser: any, __impuestor: any, __exento: any, _sucursal: any, _direccionsucursal: any, _regimenanterior: any) {
     try {
@@ -1034,7 +1034,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const docafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ? 'Aplica a ' + tipoafectado + ' ' +  _numeroafectado + ' ' : ''
         const numeroafectado = (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3) ?  ' del ' + moment(_fechaafectado).format('DD/MM/YYYY hh:mm:ss a') : ''
         // console.log("AMBIENTE")
-        console.log(AMBIENTE)
+        // console.log(AMBIENTE)
         
         if(Number(_estatus) === 2) { // Si es anulado
             const ANULADO = FILEPDF + 'utils/anulado.gif'
@@ -1210,7 +1210,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
         pdf.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, async (error) => {
             if (error) {
-                // console.log("Error creando PDF: " + error)
+                console.log("Error creando PDF: " + error)
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
             } else {
                 console.log("PDF creado correctamente");               
@@ -1222,10 +1222,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // ENVIAR SMS
                 //////////////
                 const respSMS = await validarTelefonoSMS(_telefonocliente)
-                // console.log('Validar Telefono SMS:', respSMS)
+                console.log('Validar Telefono SMS:', respSMS)
                 if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
-                    console.log('va a Enviar SMS')
-                    await envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero)
+                    // console.log('va a Enviar SMS')
+                    envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-"  + mesenvio)
 
                 } else {
                     console.log('Sin sms')                    
@@ -1513,10 +1513,10 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
 
 }
 
-async function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, numerodocumento: any) {
+function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, numerodocumento: any, anniomeso: any) {
     // try {
-        shortUrl.short(SERVERFILE + rif + numerodocumento, async function (err: any, url: any) {
-            // console.log(SERVERFILE + rif + numerodocumento);
+        shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
+            // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
             // console.log('Short link');
             // console.log(url);
             const operadora = _numerotelefono.substring(2, 5)
