@@ -1457,7 +1457,7 @@ function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif,
                 };
                 // console.log(jsonbody)
                 const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
-                // console.log(resp.status)
+                console.log('Status: ', resp.status);
                 if (resp.status === 200) {
                     console.log(resp.data);
                     return true;

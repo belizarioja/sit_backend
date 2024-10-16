@@ -1536,7 +1536,7 @@ async function envioSms (res: Response, _numerotelefono: any, urlapi: any, numer
             }
             // console.log(jsonbody)
             const resp = await axios.post(urlapi, jsonbody, headersjwt)
-            // console.log(resp.status)
+            console.log('Status: ', resp.status)
             if(resp.status === 200) {
                 console.log(resp.data)
                 return true
