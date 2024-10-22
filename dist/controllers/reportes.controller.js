@@ -208,7 +208,7 @@ function getAnulados(req, res) {
             const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
             let sql = "select COUNT (*) AS totalanu ";
             const from = " from t_registros a ";
-            let where = " where (a.estatus = 2 or a.idtipodocumento = 3) ";
+            let where = " where a.estatus = 2 ";
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
             }
