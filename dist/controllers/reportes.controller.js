@@ -20,7 +20,7 @@ function getFacturaDet(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { id } = req.params;
-            const sql = "select id, codigo, descripcion, comentario, precio, cantidad, tasa, monto, exento, descuento ";
+            const sql = "select id, codigo, descripcion, comentario, precio, cantidad, tasa, monto, exento, descuento, intipounidad ";
             const from = " from t_registro_detalles ";
             const where = " where idregistro = " + id;
             // console.log(sql + from + where)
@@ -42,7 +42,7 @@ function getFacturas(req, res) {
         try {
             const { idserviciosmasivo, idtipodocumento, numerodocumento, desde, hasta, exento, impuestog, impuestor, impuestoigtf, estatus, cedulacliente, idcodigocomercial } = req.body;
             const { page, size } = req.body;
-            let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, c.enviocorreo, a.estatuscorreo, a.emailcliente, c.idcodigocomercial, ";
+            let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.direccion, c.telefono, a.numerodocumento, a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, c.enviocorreo, a.estatuscorreo, a.emailcliente, c.idcodigocomercial, a.serial, a.tasacambio, a.tipomoneda, ";
             sql += " a.trackingid, a.fecha, a.tasag, a.baseg, a.impuestog, a.tasar, a.baser, a.impuestor, a.tasaigtf, a.baseigtf, a.impuestoigtf, a.subtotal, a.total, a.exento, a.estatus, a.observacion, a.relacionado, a.fechaanulado, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, a.regimenanterior, ";
             sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 2 limit 1) as notadebito, ";
             sql += " (select numerodocumento from t_registros where idserviciosmasivo=a.idserviciosmasivo and relacionado = a.numerodocumento and idtipodocumento = 3 limit 1) as notacredito ";
