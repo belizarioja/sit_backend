@@ -7,8 +7,8 @@ import path from 'path';
 import QRCode  from 'qrcode';
 import axios from 'axios';
 
-// @ts-ignore
-import shortUrl from 'node-url-shortener';
+
+// import shortUrl from 'node-url-shortener';
 
 import { pool } from '../database'
 
@@ -150,7 +150,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
             await pool.query('ROLLBACK')
 
             return res.status(202).json({
-                success: false,            
+                success: false,
                 data: null,
                 error: {
                     code: 23,
@@ -513,7 +513,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         await pool.query('COMMIT')
        
         if (cuerpofactura.length > 0 || (idtipodocumento === 2 || idtipodocumento === 3)) {
-            // console.log('va a Crear pdf correo_ ', sendmail)
+            console.log('va a Crear pdf idtipodocumento:  ', idtipodocumento)
             await enviarCrearFactura (res, rif, numerocompleto, sendmail)
             // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, _tipomoneda)
             
@@ -1213,7 +1213,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 console.log("Error creando PDF: " + error)
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
             } else {
-                console.log("PDF creado correctamente");               
+                // console.log("PDF creado correctamente");               
                 //////////////
                 // FIRMAR PDF
                 //////////////
@@ -1222,7 +1222,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // ENVIAR SMS
                 //////////////
                 const respSMS = await validarTelefonoSMS(_telefonocliente)
-                console.log('Validar Telefono SMS:', respSMS)
+                // console.log('Validar Telefono SMS:', respSMS)
                 if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                     // console.log('va a Enviar SMS')
                     envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-"  + mesenvio)
@@ -1515,37 +1515,56 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
 
 function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, numerodocumento: any, anniomeso: any) {
     // try {
-        shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
+        // console.log(_numerotelefono);
+        const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
+ 
+        const headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+        }
+        const body = {
+            url: urlcorter
+        }
+        // shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
+            axios.post('https://spoo.me/', body, { headers }).then(async response => {
             // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
-            // console.log('Short link');
-            // console.log(url);
-            const operadora = _numerotelefono.substring(2, 5)
-            const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url
-            const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100'
-            const headersjwt = {
-                headers: {
-                Authorization: 'Bearer ' + TOKENAPISMS
+            // console.log('response.status corter:', response.status);
+            // console.log('response.statusText corter:', response.statusText);
+            if (response.status = 201) {
+                console.log('response:', response.data);
+                const url = response.data.short_url;
+                
+                const operadora = _numerotelefono.substring(2, 5)
+                const contenidosms = razonsocial + ' informa: Factura ' + numerointerno + ' ya fue generada. Para ver: ' + url
+                const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100'
+                const headersjwt = {
+                    headers: {
+                    Authorization: 'Bearer ' + TOKENAPISMS
+                    }
+                }
+                const jsonbody = {
+                    to: _numerotelefono,
+                    from: codeshort,
+                    content: contenidosms,
+                    dlr: "no",
+                    coding:"3"
+                }
+                // console.log(jsonbody)
+                const resp = await axios.post(urlapi, jsonbody, headersjwt)
+                console.log('resp.status sms: ', resp.status)
+                console.log('resp.statusText sms: ', resp.statusText)
+
+                if(resp.status === 200) {
+                    console.log(resp.data)
+                    return true
+                } else {
+                    console.log(resp.status)
+                    ERRORINT = resp.statusText
+                    return false
                 }
             }
-            const jsonbody = {
-                to: _numerotelefono,
-                from: codeshort,
-                content: contenidosms,
-                dlr: "no",
-                coding:"3"
-            }
-            // console.log(jsonbody)
-            const resp = await axios.post(urlapi, jsonbody, headersjwt)
-            console.log('Status: ', resp.status)
-            if(resp.status === 200) {
-                console.log(resp.data)
-                return true
-            } else {
-                console.log(resp.data.status)
-                console.log(resp.data.statusText)
-                ERRORINT = resp.data.statusText
-                return false
-            }
+           /*   */
         });
 
     /* }

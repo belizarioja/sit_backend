@@ -20,8 +20,7 @@ const html_pdf_1 = __importDefault(require("html-pdf"));
 const path_1 = __importDefault(require("path"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const axios_1 = __importDefault(require("axios"));
-// @ts-ignore
-const node_url_shortener_1 = __importDefault(require("node-url-shortener"));
+// import shortUrl from 'node-url-shortener';
 const database_1 = require("../database");
 const USERMAIL = process.env.USERMAIL;
 const PASSMAIL = process.env.PASSMAIL;
@@ -464,7 +463,7 @@ function setFacturacion(req, res) {
         }
         yield database_1.pool.query('COMMIT');
         if (cuerpofactura.length > 0 || (idtipodocumento === 2 || idtipodocumento === 3)) {
-            // console.log('va a Crear pdf correo_ ', sendmail)
+            console.log('va a Crear pdf idtipodocumento:  ', idtipodocumento);
             yield enviarCrearFactura(res, rif, numerocompleto, sendmail);
             // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, _tipomoneda)
         }
@@ -1133,7 +1132,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
-                    console.log("PDF creado correctamente");
+                    // console.log("PDF creado correctamente");               
                     //////////////
                     // FIRMAR PDF
                     //////////////
@@ -1141,7 +1140,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     // ENVIAR SMS
                     //////////////
                     const respSMS = yield validarTelefonoSMS(_telefonocliente);
-                    console.log('Validar Telefono SMS:', respSMS);
+                    // console.log('Validar Telefono SMS:', respSMS)
                     if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                         // console.log('va a Enviar SMS')
                         envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-" + mesenvio);
@@ -1433,13 +1432,26 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
 exports.envioCorreo = envioCorreo;
 function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, numerodocumento, anniomeso) {
     // try {
-    node_url_shortener_1.default.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, function (err, url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
-            // console.log('Short link');
-            // console.log(url);
+    // console.log(_numerotelefono);
+    const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento;
+    // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
+    const headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+    };
+    const body = {
+        url: urlcorter
+    };
+    // shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
+    axios_1.default.post('https://spoo.me/', body, { headers }).then((response) => __awaiter(this, void 0, void 0, function* () {
+        // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
+        // console.log('response.status corter:', response.status);
+        // console.log('response.statusText corter:', response.statusText);
+        if (response.status = 201) {
+            console.log('response:', response.data);
+            const url = response.data.short_url;
             const operadora = _numerotelefono.substring(2, 5);
-            const contenidosms = 'Estimado cliente, ' + razonsocial + ' le informa que su factura ' + numerointerno + ', ya fue generada. Puede visualizarlo por el siguiente enlace: ' + url;
+            const contenidosms = razonsocial + ' informa: Factura ' + numerointerno + ' ya fue generada. Para ver: ' + url;
             const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
             const headersjwt = {
                 headers: {
@@ -1455,19 +1467,20 @@ function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif,
             };
             // console.log(jsonbody)
             const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
-            console.log('Status: ', resp.status);
+            console.log('resp.status sms: ', resp.status);
+            console.log('resp.statusText sms: ', resp.statusText);
             if (resp.status === 200) {
                 console.log(resp.data);
                 return true;
             }
             else {
-                console.log(resp.data.status);
-                console.log(resp.data.statusText);
-                ERRORINT = resp.data.statusText;
+                console.log(resp.status);
+                ERRORINT = resp.statusText;
                 return false;
             }
-        });
-    });
+        }
+        /*   */
+    }));
     /* }
     catch (e) {
         return res.status(400).send('Error Externo Enviando sms :  ' + e);
