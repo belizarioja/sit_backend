@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTotalSemanasTodos = exports.getAnual = exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica_BK = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
+exports.getSmsEnviados = exports.getTotalSemanasTodos = exports.getAnual = exports.getUltimaSemana = exports.getDocProcesados = exports.getGrafica_BK = exports.getGrafica = exports.getTopClientes = exports.getTotalClientes = exports.getAnulados = exports.getImpProcesados = exports.getFacturaNum = exports.getFacturas = exports.getFacturaDet = void 0;
 const moment_1 = __importDefault(require("moment"));
 // DB
 const database_1 = require("../database");
@@ -616,3 +616,28 @@ function getTotalSemanasTodos(req, res) {
     });
 }
 exports.getTotalSemanasTodos = getTotalSemanasTodos;
+function getSmsEnviados(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { idserviciosmasivo, desde, hasta } = req.body;
+            let sql = "SELECT COUNT (*) from t_registros b where b.smsenviado is true ";
+            if (idserviciosmasivo) {
+                sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+            }
+            if (desde.length > 0 && hasta.length > 0) {
+                sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+            }
+            console.log(sql);
+            const resp = yield database_1.pool.query(sql);
+            const data = {
+                succes: true,
+                data: resp.rows
+            };
+            return res.status(200).json(data);
+        }
+        catch (e) {
+            return res.status(400).send('Error Reporte SMS' + e);
+        }
+    });
+}
+exports.getSmsEnviados = getSmsEnviados;

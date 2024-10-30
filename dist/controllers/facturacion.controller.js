@@ -1143,7 +1143,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     // console.log('Validar Telefono SMS:', respSMS)
                     if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                         // console.log('va a Enviar SMS')
-                        envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-" + mesenvio);
+                        envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _id, _pnumero, annioenvio + "-" + mesenvio);
                     }
                     else {
                         console.log('Sin sms');
@@ -1430,59 +1430,60 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
     });
 }
 exports.envioCorreo = envioCorreo;
-function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, numerodocumento, anniomeso) {
-    // try {
-    // console.log(_numerotelefono);
-    const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento;
-    // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
-    const headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json",
-    };
-    const body = {
-        url: urlcorter
-    };
-    // shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
-    axios_1.default.post('https://spoo.me/', body, { headers }).then((response) => __awaiter(this, void 0, void 0, function* () {
-        // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
-        // console.log('response.status corter:', response.status);
-        // console.log('response.statusText corter:', response.statusText);
-        if (response.status = 201) {
-            console.log('response:', response.data);
-            const url = response.data.short_url;
-            const operadora = _numerotelefono.substring(2, 5);
-            const contenidosms = razonsocial + ' informa: Factura ' + numerointerno + ' ya fue generada. Para ver: ' + url;
-            const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
-            const headersjwt = {
-                headers: {
-                    Authorization: 'Bearer ' + TOKENAPISMS
+function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, idserviciosmasivo, numerodocumento, anniomeso) {
+    try {
+        // console.log(_numerotelefono);
+        // const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento;
+        const headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+        };
+        const body = {
+            url: urlcorter
+        };
+        // shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
+        axios_1.default.post('https://spoo.me/', body, { headers }).then((response) => __awaiter(this, void 0, void 0, function* () {
+            // console.log('response.status corter:', response.status);
+            // console.log('response.statusText corter:', response.statusText);
+            if (response.status = 201) {
+                console.log('response:', response.data);
+                const url = response.data.short_url;
+                const operadora = _numerotelefono.substring(2, 5);
+                const contenidosms = razonsocial + ' informa: Factura ' + numerointerno + ' ya fue generada. Para ver: ' + url;
+                const codeshort = (operadora === '412' || operadora === '414' || operadora === '424') ? '5100' : '1215100';
+                const headersjwt = {
+                    headers: {
+                        Authorization: 'Bearer ' + TOKENAPISMS
+                    }
+                };
+                const jsonbody = {
+                    to: _numerotelefono,
+                    from: codeshort,
+                    content: contenidosms,
+                    dlr: "no",
+                    coding: "3"
+                };
+                // console.log(jsonbody)
+                const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
+                console.log('resp.status sms: ', resp.status);
+                console.log('resp.statusText sms: ', resp.statusText);
+                if (resp.status === 200) {
+                    console.log(resp.data);
+                    const sqlupd = "update t_registros set smsenviado = $1 where numerodocumento = $2 and idserviciosmasivo = $3 ";
+                    yield database_1.pool.query(sqlupd, [true, numerodocumento, idserviciosmasivo]);
+                    return true;
                 }
-            };
-            const jsonbody = {
-                to: _numerotelefono,
-                from: codeshort,
-                content: contenidosms,
-                dlr: "no",
-                coding: "3"
-            };
-            // console.log(jsonbody)
-            const resp = yield axios_1.default.post(urlapi, jsonbody, headersjwt);
-            console.log('resp.status sms: ', resp.status);
-            console.log('resp.statusText sms: ', resp.statusText);
-            if (resp.status === 200) {
-                console.log(resp.data);
-                return true;
+                else {
+                    console.log(resp.status);
+                    ERRORINT = resp.statusText;
+                    return false;
+                }
             }
-            else {
-                console.log(resp.status);
-                ERRORINT = resp.statusText;
-                return false;
-            }
-        }
-        /*   */
-    }));
-    /* }
+            /*   */
+        }));
+    }
     catch (e) {
         return res.status(400).send('Error Externo Enviando sms :  ' + e);
-    } */
+    }
 }

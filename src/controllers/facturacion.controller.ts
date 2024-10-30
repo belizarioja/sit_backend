@@ -1225,7 +1225,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // console.log('Validar Telefono SMS:', respSMS)
                 if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                     // console.log('va a Enviar SMS')
-                    envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _pnumero, annioenvio + "-"  + mesenvio)
+                    envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _id, _pnumero, annioenvio + "-"  + mesenvio)
 
                 } else {
                     console.log('Sin sms')                    
@@ -1513,11 +1513,11 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
 
 }
 
-function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, numerodocumento: any, anniomeso: any) {
-    // try {
+function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, idserviciosmasivo: any, numerodocumento: any, anniomeso: any) {
+    try {
         // console.log(_numerotelefono);
-        const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
-        // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        // const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
  
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -1528,7 +1528,6 @@ function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointer
         }
         // shortUrl.short(SERVERFILE + '/' + rif + '/' + anniomeso + '/' + rif + numerodocumento, async function (err: any, url: any) {
             axios.post('https://spoo.me/', body, { headers }).then(async response => {
-            // console.log(SERVERFILE + rif + numerodocumento); /J-12345678-9/2024-10/
             // console.log('response.status corter:', response.status);
             // console.log('response.statusText corter:', response.statusText);
             if (response.status = 201) {
@@ -1557,6 +1556,8 @@ function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointer
 
                 if(resp.status === 200) {
                     console.log(resp.data)
+                    const sqlupd = "update t_registros set smsenviado = $1 where numerodocumento = $2 and idserviciosmasivo = $3 ";
+                    await pool.query(sqlupd, [true, numerodocumento, idserviciosmasivo])
                     return true
                 } else {
                     console.log(resp.status)
@@ -1567,9 +1568,9 @@ function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointer
            /*   */
         });
 
-    /* }
+    }
     catch (e) {
         return res.status(400).send('Error Externo Enviando sms :  ' + e);
-    } */
+    }
 
 }

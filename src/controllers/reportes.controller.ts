@@ -610,3 +610,27 @@ export async function getTotalSemanasTodos (req: Request, res: Response): Promis
         return res.status(400).send('Error Reporte' + e);
     }
 }
+
+export async function getSmsEnviados (req: Request, res: Response): Promise<Response | void> {
+    try {
+        const { idserviciosmasivo, desde, hasta } = req.body;
+
+        let sql = "SELECT COUNT (*) from t_registros b where b.smsenviado is true ";
+        if(idserviciosmasivo) {
+            sql += " and b.idserviciosmasivo = " + idserviciosmasivo;
+        }
+        if(desde.length > 0 && hasta.length > 0) {
+            sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
+        }
+        console.log(sql)
+        const resp = await pool.query(sql);
+        const data = {
+            succes: true,
+            data: resp.rows
+        };
+        return res.status(200).json(data);        
+    }
+    catch (e) {
+        return res.status(400).send('Error Reporte SMS' + e);
+    }
+}

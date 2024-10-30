@@ -15,4 +15,5 @@ router.route('/anual').post(reportes_controller_1.getAnual);
 router.route('/totaldocumentos').post(reportes_controller_1.getDocProcesados);
 router.route('/ultimasemana').post(reportes_controller_1.getUltimaSemana);
 router.route('/totalsemanastodos').post(reportes_controller_1.getTotalSemanasTodos);
+router.route('/totalsmsenviados').post(reportes_controller_1.getSmsEnviados);
 exports.default = router;

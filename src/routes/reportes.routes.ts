@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getFacturas, getImpProcesados, getTopClientes, getTotalClientes, getFacturaNum, getFacturaDet, getAnulados, getGrafica, getDocProcesados, getUltimaSemana, getTotalSemanasTodos, getAnual } from '../controllers/reportes.controller';
+import { getFacturas, getImpProcesados, getTopClientes, getTotalClientes, getFacturaNum, getFacturaDet, getAnulados, getGrafica, getDocProcesados, getUltimaSemana, getTotalSemanasTodos, getAnual, getSmsEnviados } from '../controllers/reportes.controller';
 
 const router = Router();
 
@@ -15,5 +15,6 @@ router.route('/anual').post(getAnual)
 router.route('/totaldocumentos').post(getDocProcesados)
 router.route('/ultimasemana').post(getUltimaSemana)
 router.route('/totalsemanastodos').post(getTotalSemanasTodos)
+router.route('/totalsmsenviados').post(getSmsEnviados)
 
 export default router;
