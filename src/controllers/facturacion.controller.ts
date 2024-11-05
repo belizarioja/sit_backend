@@ -1516,8 +1516,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
 function envioSms (res: Response, _numerotelefono: any, urlapi: any, numerointerno: any, razonsocial: any, rif: any, idserviciosmasivo: any, numerodocumento: any, anniomeso: any) {
     try {
         // console.log(_numerotelefono);
-        // const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
-        const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
+        // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
  
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",

@@ -1433,8 +1433,8 @@ exports.envioCorreo = envioCorreo;
 function envioSms(res, _numerotelefono, urlapi, numerointerno, razonsocial, rif, idserviciosmasivo, numerodocumento, anniomeso) {
     try {
         // console.log(_numerotelefono);
-        // const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento
-        const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento;
+        const urlcorter = SERVERFILE + rif + '/' + anniomeso + '/' + rif + numerodocumento;
+        // const urlcorter = 'https://bck-test.factura-smart.com/' + rif + '/' + anniomeso + '/' + rif + numerodocumento
         const headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
