@@ -160,6 +160,7 @@ function getImpProcesados(req, res) {
             let totalbaseg_cred = 0;
             let totalbaser_cred = 0;
             let totalbaseigtf_cred = 0;
+            let totalexento_cred = 0;
             if (idtipodocumento) {
                 where += " and a.idtipodocumento = " + idtipodocumento;
             }
@@ -176,6 +177,7 @@ function getImpProcesados(req, res) {
                 totalbaseg_cred = respcredito.rows[0].totalbaseg;
                 totalbaser_cred = respcredito.rows[0].totalbaser;
                 totalbaseigtf_cred = respcredito.rows[0].totalbaseigtf;
+                totalexento_cred = respcredito.rows[0].totalexento;
             }
             // console.log('sql + from + where')
             // console.log(sql + from + where)
@@ -188,8 +190,9 @@ function getImpProcesados(req, res) {
             resp.rows[0].totalbaseg = resp.rows[0].totalbaseg - totalbaseg_cred;
             resp.rows[0].totalbaser = resp.rows[0].totalbaser - totalbaser_cred;
             resp.rows[0].totalbaseigtf = resp.rows[0].totalbaseigtf - totalbaseigtf_cred;
-            // console.log('resp.rows despues')
-            // console.log(resp.rows)
+            resp.rows[0].totalexento = resp.rows[0].totalexento - totalexento_cred;
+            console.log('resp.rows despues');
+            console.log(resp.rows);
             const data = {
                 succes: true,
                 data: resp.rows
