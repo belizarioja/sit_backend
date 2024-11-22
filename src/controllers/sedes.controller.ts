@@ -157,11 +157,11 @@ export async function getTodosCorelativo (req: Request, res: Response): Promise<
 
 export async function updateSede (req: Request, res: Response): Promise<Response | void> {
     try {
-        const { rif, razonsocial, direccion, email, emailbcc, telefono, enviocorreo, enviosms, sitioweb, validarinterno, idcodigocomercial, publicidad } = req.body;
+        const { rif, razonsocial, direccion, email, emailbcc, telefono, enviocorreo, enviosms, sitioweb, validarinterno, idcodigocomercial, publicidad, botondepago } = req.body;
         const { id } = req.params;       
 
-        const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9, publicidad = $10, emailbcc = $11, enviosms = $12 where id = $13 ";
-        await pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad, emailbcc, enviosms, id]);
+        const sqlupd = "update t_serviciosmasivos set rif = $1, razonsocial = $2, direccion = $3, email = $4, telefono = $5, enviocorreo = $6, sitioweb = $7, validarinterno = $8, idcodigocomercial= $9, publicidad = $10, emailbcc = $11, enviosms = $12, botondepago = $13 where id = $14 ";
+        await pool.query(sqlupd, [rif, razonsocial, direccion, email, telefono, enviocorreo, sitioweb, validarinterno, idcodigocomercial, publicidad, emailbcc, enviosms, botondepago, id]);
         const datatoken = {
             id,
             rif, 

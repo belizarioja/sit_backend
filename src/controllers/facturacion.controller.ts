@@ -21,6 +21,7 @@ const IMGPDF = process.env.IMGPDF
 const HOSTSMTP = process.env.HOSTSMTP
 const AMBIENTE = process.env.AMBIENTE
 const URLFRN = process.env.URLFRN
+const URLPASARELADEPAGO = process.env.URLPASARELADEPAGO
 const APISMS = process.env.APISMS
 const TOKENAPISMS = process.env.TOKENAPISMS
 
@@ -39,7 +40,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const { id, rif, razonsocial, email, direccion, validarinterno } = req;
         const { rifcedulacliente, nombrecliente, telefonocliente, direccioncliente, idtipodocumento, trackingid, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, tasacambio, tipomoneda } = req.body;
         const { emailcliente, subtotal, total, exento, tasar, baser, impuestor, relacionado, idtipocedulacliente, cuerpofactura, sendmail, numerointerno, formasdepago, observacion, fechavence, serial } = req.body;
-        const { tasaa, basea, impuestoa, direccionsucursal, sucursal, regimenanterior } = req.body;
+        const { tasaa, basea, impuestoa, direccionsucursal, sucursal, regimenanterior, botondepago } = req.body;
         // console.log(req)
         // console.log('baseigtf, impuestog')
         // console.log('baseigtf, impuestog')
@@ -50,6 +51,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const _serial = serial || null
         const _direccionsucursal = direccionsucursal || null
         const _regimenanterior = regimenanterior || 0
+        const _botondepago = botondepago || 0
         const _tipomoneda = tipomoneda || 1
       
         const lotepiedepagina = await obtenerLote(res, id)
@@ -452,9 +454,9 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         const numerocompleto =  identificador.toString().padStart(2, '0') + '-' + corelativo.toString().padStart(8, '0')
         const relacionadoBD = relacionado || ''
         const fechaenvio = moment().format('YYYY-MM-DD HH:mm:ss')
-        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal, regimenanterior ) '
-        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35) RETURNING id '
-        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, _tipomoneda, _fechavence, _serial, _direccionsucursal, _regimenanterior])
+        const insert = 'INSERT INTO t_registros (numerodocumento, idtipodocumento, idserviciosmasivo, trackingid, cedulacliente, nombrecliente, subtotal, total, tasag, baseg, impuestog, tasaigtf, baseigtf, impuestoigtf, fecha, exento, tasar, baser, impuestor, estatus, relacionado, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, secuencial, tasacambio, observacion, tipomoneda, fechavence, serial, direccionsucursal, regimenanterior, botondepago ) '
+        const values = ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 1, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36) RETURNING id '
+        const respReg = await pool.query(insert + values, [numerocompleto, idtipodocumento, id, trackingid, rifcedulacliente, nombrecliente, _subtotal, _total, tasag, _baseg, _impuestog, tasaigtf, _baseigtf, _impuestoigtf, fechaenvio, _exento, tasar, _baser, _impuestor, relacionadoBD, idtipocedulacliente, emailcliente, sucursal, numerointerno, piedepagina, direccioncliente, telefonocliente, Number(numerointerno), _tasacambio, observacionBD, _tipomoneda, _fechavence, _serial, _direccionsucursal, _regimenanterior, _botondepago])
         // console.log('DECIMALES, _tipomoneda')
         // console.log(DECIMALES, _tipomoneda)
         const idRegistro = respReg.rows[0].id
@@ -513,7 +515,7 @@ export async function setFacturacion (req: Request, res: Response): Promise<Resp
         await pool.query('COMMIT')
        
         if (cuerpofactura.length > 0 || (idtipodocumento === 2 || idtipodocumento === 3)) {
-            console.log('va a Crear pdf idtipodocumento:  ', idtipodocumento)
+            // console.log('va a Crear pdf idtipodocumento:  ', idtipodocumento)
             await enviarCrearFactura (res, rif, numerocompleto, sendmail)
             // await crearFactura(res, rif, razonsocial, direccion, numerocompleto, nombrecliente, cuerpofactura, emailcliente, rifcedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, id, email, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, _tasacambio, observacionBD, 1, _tipomoneda)
             
@@ -573,7 +575,7 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
     // console.log('va a Consultar registros')
     // try {
         let sql = "select a.id, a.idserviciosmasivo, c.razonsocial, c.rif, c.email, c.direccion, c.telefono, a.numerodocumento, a.emailcliente,  a.cedulacliente, a.nombrecliente, a.direccioncliente, a.telefonocliente, a.idtipodocumento, b.tipodocumento, a.relacionado, a.impuestoigtf, a.baseigtf, a.fecha, ";
-        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior ";
+        sql += " a.trackingid, a.fecha, d.abrev, a.idtipocedulacliente, a.numerointerno, a.piedepagina, c.enviocorreo, a.tasacambio, a.observacion, a.estatus, a.tipomoneda, a.fechavence, a.serial, a.total, a.baseg, a.impuestog, a.baser, a.impuestor, a.exento, a.sucursal, a.direccionsucursal, a.regimenanterior, a.botondepago ";
         const from = " from t_registros a, t_tipodocumentos b, t_serviciosmasivos c , t_tipocedulacliente d ";
         const where = " where a.idtipodocumento = b.id and a.idserviciosmasivo = c.id and a.idtipocedulacliente = d.id and a.numerodocumento = $1 and c.rif = $2";
         await pool.query(sql + from + where, [numerodocumento, rif]).then(async response => {
@@ -608,6 +610,7 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
             const exento = response.rows[0].exento || 0
 
             const regimenanterior = response.rows[0].regimenanterior || 0
+            const botondepago = response.rows[0].botondepago || 0
 
             const fechavence = response.rows[0].fechavence ? moment(response.rows[0].fechavence).format('DD/MM/YYYY') : ''
             const estatus = response.rows[0].estatus
@@ -650,22 +653,23 @@ async function enviarCrearFactura (res: Response , rif: any, numerodocumento: an
             // console.log(respdet.rows)
             const formasdepago = respformas.rows
             // console.log('va a Crear PDF')
-            await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior)
+            await crearFactura(res, rif, razonsocial, direccion, numerodocumento, nombrecliente, cuerpofactura, emailcliente, cedulacliente, idtipocedulacliente, telefonocliente, direccioncliente, numerointerno, idserviciosmasivo, emailemisor, idtipodocumento, numeroafectado, impuestoigtf, fechaafectado, idtipoafectado, piedepagina, baseigtf, fechaenvio, formasdepago, sendmail, tasacambio, observacion, estatus, tipomoneda, fechavence, serial, total, baseg, impuestog, baser, impuestor, exento, sucursal, direccionsucursal, regimenanterior, botondepago)
         })
     /* }catch (e) {
         console.log('Error enviarCrearFactura >>>> ' + e)
         return res.status(400).send('Error enviarCrearFactura >>>> ' + e);
     } */
 }
-export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any, _fechavence: any, _serial: any, __total: any, __baseg: any, __impuestog: any, __baser: any, __impuestor: any, __exento: any, _sucursal: any, _direccionsucursal: any, _regimenanterior: any) {
+export async function crearFactura (res: Response,_rif: any, _razonsocial: any, _direccion: any, _pnumero: any, _nombrecliente: any, productos: any, _emailcliente: any, _rifcliente: any, _idtipocedula: any, _telefonocliente: any, _direccioncliente: any, _numerointerno: any, _id: any, _emailemisor: any, _idtipodoc: any, _numeroafectado: any, _impuestoigtf: any, _fechaafectado: any, _idtipoafectado: any, _piedepagina: any, _baseigtf: any, _fechaenvio: any, _formasdepago: any, _sendmail: any, _tasacambio: any, _observacion: any, _estatus: any, _tipomoneda: any, _fechavence: any, _serial: any, __total: any, __baseg: any, __impuestog: any, __baser: any, __impuestor: any, __exento: any, _sucursal: any, _direccionsucursal: any, _regimenanterior: any, _botondepago: any) {
     try {
-        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial, a.enviosms  ";
+        const sqlsede = "SELECT a.email, a.telefono, a.sitioweb, a.banner, a.plantillapdf, b.colorfondo1, b.colorfuente1, b.colorfondo2, b.colorfuente2, a.textoemail, b.banner, a.emailbcc, a.enviocorreo, a.publicidad, c.codigocomercial, a.enviosms, a.botondepago  ";
         const fromsede = " FROM t_serviciosmasivos a ";
         let leftjoin = " left join t_plantillacorreos b ON a.banner = b.banner and a.id = b.idserviciosmasivo  ";
         leftjoin += " left join t_codigoscomercial c ON a.idcodigocomercial = c.id ";
         const wheresede = " WHERE a.id = $1";
         const respsede = await pool.query(sqlsede + fromsede + leftjoin + wheresede, [_id]); 
         const enviocorreo = respsede.rows[0].enviocorreo || 0
+        const botondepago = respsede.rows[0].botondepago || 0
         const emailbcc = respsede.rows[0].emailbcc || ''
         const sitioweb = respsede.rows[0].sitioweb
         const colorfondo1 = respsede.rows[0].colorfondo1 || '#d4e5ff'
@@ -1222,7 +1226,10 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // ENVIAR SMS
                 //////////////
                 const respSMS = await validarTelefonoSMS(_telefonocliente)
-                // console.log('Validar Telefono SMS:', respSMS)
+                // console.log('botondepago:', botondepago)
+                // console.log('_botondepago:', _botondepago)
+                const isboton = (botondepago === '1' && _botondepago === '1' && Number(_idtipodoc) === 1) ? 1 : 0
+                // console.log('isboton:', isboton)
                 if (enviosms == 1 && Number(_idtipodoc) === 1 && respSMS) {
                     // console.log('va a Enviar SMS')
                     envioSms(res, _telefonocliente, APISMS, _numerointerno, _razonsocial, _rif, _id, _pnumero, annioenvio + "-"  + mesenvio)
@@ -1234,7 +1241,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
 
                 if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && _emailcliente?.length > 0) {
                     // console.log('va a Enviar correo')
-                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente)
+                    await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente, isboton)
 
                 } else {
                     console.log('Sin correo')                    
@@ -1343,7 +1350,7 @@ async function obtenerLote (res: Response, id: any) {
     }
 }
 
-export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any, _estatus: any, _rifcliente: any) {
+export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any, _estatus: any, _rifcliente: any, _isboton: any) {
     // try {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -1358,20 +1365,23 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             port: 25,
             secure: false */
         });
-        const ISPASARELAPAGO = null
+        // const ISPASARELAPAGO = null
         const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero
         let htmlpublicidad = ``
         let htmlpasarelapago = ``
-        if(ISPASARELAPAGO === '1') {
+        // console.log('_isboton dentro del correo:', _isboton)
+        if(_isboton === 1) {
             htmlpasarelapago = `<tr>
-                <td style="padding:  0px 30px 20px;" colspan="3">               
-                    <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
+                <td style="padding: 0px 30px 20px; text-align: center;" colspan="3">          
+                    <span style="font-weight: bolder; padding: 3px 10px;  background: #d6d6d6;border-radius: 10px;">
+                        <a href="${URLPASARELADEPAGO}${_prif}SM${_pnumero}">Pagar</a>
+                    </span>      
                 </td>
             </tr>`
         }
         if(ISPUBLICIDAD === '1') {
             htmlpublicidad = `<tr>
-                <td style="padding:  0px 30px 20px;" colspan="3">               
+                <td style="padding: 0px 30px 20px; text-align: center;" colspan="3">               
                     <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
                 </td>
             </tr>`
