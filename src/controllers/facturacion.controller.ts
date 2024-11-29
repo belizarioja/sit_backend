@@ -1209,7 +1209,8 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         // const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit"        
         // console.log(icFirmaDocumentosInput)
         // A3, A4, A5, Legal, Letter, Tabloid
-        const formatoPdf = Number(plantillapdf) === 4 ? 'A3' : 'Letter'
+        // const formatoPdf = Number(plantillapdf) === 4 ? 'A3' : 'Letter'
+        const formatoPdf = 'Letter'
         // console.log(Number(plantillapdf), formatoPdf)
 
         pdf.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, async (error) => {
