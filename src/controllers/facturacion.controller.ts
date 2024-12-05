@@ -748,6 +748,12 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         const _sixe1 = Number(_idtipodoc) === 5 ? 7 : 7
         const _sixe2 = Number(_idtipodoc) === 5 ? 82 : 38;
         const _sixe3 = Number(_idtipodoc) === 5 ? 10 : 10;
+        const tdobservaciones = _tipomoneda > 1 ? `<td style="width: 40%;vertical-align: baseline;">` : `<td style="width: 70%;vertical-align: baseline;">`
+        const tdtotales = _tipomoneda > 1 ? `<td style="width: 60%;vertical-align: baseline;">` : `<td style="width: 30%;vertical-align: baseline;">` 
+        if(Number(plantillapdf) === 3) {
+            contenidoHtml = contenidoHtml.replace("{{tdobservaciones}}", tdobservaciones);
+            contenidoHtml = contenidoHtml.replace("{{tdtotales}}", tdtotales);
+        }
         
         titulotabla += `<tr class="fondoGris">
                         <th class="text-center" style="padding: 3px; font-weight: 700;font-size: 7px;width: ${_sixe1}%;border-bottom: 2px solid #65778D;">Cod.</th>
