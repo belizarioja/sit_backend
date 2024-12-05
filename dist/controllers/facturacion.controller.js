@@ -662,8 +662,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             const infoQR = URLFRN + '/#/viewqrinvoice/' + _rif + 'SM' + _pnumero;
             yield crearCodeQR(infoQR, _rif, annioenvio, mesenvio, _pnumero);
             let trsucursal = `<div class="tarjetaSucursal">
-            <div style="font-size: 8px;">Sucursal: ${_sucursal}</div>
-            <div style="font-size: 8px;">${_direccionsucursal}</div>
+            <div style="font-size: 7px;">Sucursal: ${_sucursal}</div>
+            <div style="font-size: 7px;">${_direccionsucursal}</div>
         </div>`;
             if (_sucursal.length > 0) {
                 contenidoHtml = contenidoHtml.replace("{{trsucursal}}", trsucursal);
