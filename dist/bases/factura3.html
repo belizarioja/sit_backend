@@ -20,8 +20,8 @@
                     <td>
                         <table style="width: 100%;"> 
                             <tr>
-                                <td style="padding-right: 11px;">
-                                    <img class="img-fluid" src="{{logo}}" alt="Logotipo" width="85" >
+                                <td>
+                                    <img class="img-fluid" src="{{logo}}" alt="Logotipo" width="80" >
                                 </td>
                                 <td>
                                     <div class="tarjetaEmisores">
@@ -33,9 +33,9 @@
                                     </div>
                                 </td>
                                 <td style="vertical-align: top; padding-top: 10px;">
-                                    <table style="width: 95%; margin-left: 10px;">
+                                    <table style="width: 98%; margin-left: 10px;">
                                         <tr>
-                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 5px;">
+                                            <td class="text-center" style="font-size: 7px;font-weight: bolder; padding: 5px;">
                                                 SERIE {{serial}}<br>
                                                 {{tipodocumento}} {{numerointerno}}
                                             </td>
@@ -54,8 +54,9 @@
                                                 </div>                                                
                                             </td>
                                         </tr>
+                                        {{afectado}}
                                         <tr>
-                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 5px;">
+                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 2px;">
                                                 <div class="tarjetaCliente"><b>Fecha emisión:</b> {{fecha}}</div>
                                             </td>
                                             <td class="text-center" style="font-size: 8px;font-weight: bolder">
@@ -63,10 +64,21 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 5px;">
+                                            <td class="text-center" style="font-size: 8px;font-weight: bolder; padding: 2px;">
                                                 <div class="tarjetaCliente"><b>Hora emisión:</b> {{hora}}</div>
                                             </td>
                                             <td class="text-center" style="font-size: 8px;font-weight: bolder">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <table style="width: 100%;">
+                                                    <tr>
+                                                        <td>
+                                                            {{trsucursal}}
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
                                     </table>  
@@ -74,18 +86,7 @@
                             </tr>
                         </table>
                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table style="width: 100%;">
-                            <tr>
-                                <td>
-                                    {{trsucursal}}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
+                </tr>                
             </table>
             
         </div>
@@ -118,7 +119,7 @@
                 </td>
                 <td style="width: 20%;">
                     <div style="text-align: center; width: 100%;">
-                        <img src="{{codeqr}}" alt="Code QR" width="50" >
+                        <img src="{{codeqr}}" alt="Code QR" width="65" >
                     </div>
                 </td>
             </tr>
@@ -143,7 +144,7 @@
             <!--AREA DE SUBTOTALES, COLETILLAS Y PUBLICIDAD -->
             <table style="width: 100%;">
                 <tr>
-                    <td style="width: 40%;vertical-align: baseline;">
+                    <td style="width: 80%;vertical-align: baseline;">
                         <table class="curvatabla round_table" style="width: 98%; margin-top: 5px; margin-right: 10px;">
                             <thead>
                                 <tr class="fondoGris">
@@ -161,7 +162,7 @@
                             </tbody>
                         </table> 
                     </td>
-                    <td style="width: 60%;">
+                    <td style="width: 20%;">
                         <table class="curvatabla round_table" style="width: 100%;margin-top: 5px; border-collapse: separate; border-spacing: 7px 2px; margin-bottom: 5px;">
                             {{trexento}}
                             {{trbaseg}}
@@ -217,7 +218,7 @@
     .tarjetaEmisores {
         display: grid !important;
         padding: 10px !important;
-        width: 180px;
+        width: 220px;
     }
     .tarjetaSucursal {
         border-radius: 15px !important;
@@ -231,7 +232,7 @@
         background: #ECF6FF !important;
         border-radius: 10px !important;
         display: grid !important;
-        padding: 5px !important;
+        padding: 3px !important;
         width: 100% !important;
     }
     .celdaCurvaGris {

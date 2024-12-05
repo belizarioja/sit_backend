@@ -1128,7 +1128,8 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
             // const icFirmaDocumentosInput = "C:/Users/personal/proyectos/quasar/sit"        
             // console.log(icFirmaDocumentosInput)
             // A3, A4, A5, Legal, Letter, Tabloid
-            const formatoPdf = Number(plantillapdf) === 4 ? 'A3' : 'Letter';
+            // const formatoPdf = Number(plantillapdf) === 4 ? 'A3' : 'Letter'
+            const formatoPdf = 'Letter';
             // console.log(Number(plantillapdf), formatoPdf)
             html_pdf_1.default.create(contenidoHtml, { format: formatoPdf }).toFile(pathPdf1, (error) => __awaiter(this, void 0, void 0, function* () {
                 if (error) {
