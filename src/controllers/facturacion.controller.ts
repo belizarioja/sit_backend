@@ -808,7 +808,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                     for(let j = 0 ; j < arreglocom1.length - 1; j++) {
                         const ladoizq = arreglocom1[j].split('|')[0]                        
                         // console.log(ladoizq + ' >>>>>> ' + ladoder)
-                        productoitem += `<tr><td class="ladoizq">${ladoizq}</td>`
+                        productoitem += `<tr ><td class="ladoizq">${ladoizq}</td>`
                         if (arreglocom1[j].split('|').length > 1) {
                             const ladoder = arreglocom1[j].split('|')[1]
                             productoitem += `<td class="ladoder">${ladoder}</td>`
@@ -1030,7 +1030,26 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
         // }
         if(_observacion.length > 0) {
             contenidoHtml = contenidoHtml.replace("{{tituloobservacion}}", 'Observación:');
-            contenidoHtml = contenidoHtml.replace("{{observacion}}", _observacion);
+            const arregloobs = _observacion.split('//')
+            // console.log('arregloobs.length:', arregloobs.length)
+            let newobservacio = ''
+            if(arregloobs.length > 1) {
+                newobservacio += `<table style="width:98%;">`
+                for(let j = 0 ; j < arregloobs.length - 1; j++) {
+                    const ladoizqobs = arregloobs[j].split('|')[0]                        
+                    // console.log(ladoizqobs + ' >>>>>> ' + ladoderobs)
+                    newobservacio += `<tr style="padding: 3px; font-weight: 700;font-size: 7px;"><td class="ladoizq">${ladoizqobs}</td>`
+                    if (arregloobs[j].split('|').length > 1) {
+                        const ladoderobs = arregloobs[j].split('|')[1]
+                        newobservacio += `<td class="ladoder">${ladoderobs}</td>`
+                    }
+                    newobservacio += `</tr>`
+                }
+                newobservacio += `</table>`
+            } else {
+                newobservacio += _observacion
+            }
+            contenidoHtml = contenidoHtml.replace("{{observacion}}", newobservacio);
         } else {
             contenidoHtml = contenidoHtml.replace("{{tituloobservacion}}", '');
             contenidoHtml = contenidoHtml.replace("{{observacion}}", '');
