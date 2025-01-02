@@ -1163,7 +1163,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     return res.status(400).send('Error Interno Creando pdf :  ' + error);
                 }
                 else {
-                    // console.log("PDF creado correctamente");               
+                    console.log("PDF creado correctamente");
                     //////////////
                     // FIRMAR PDF
                     //////////////
@@ -1184,7 +1184,7 @@ function crearFactura(res, _rif, _razonsocial, _direccion, _pnumero, _nombreclie
                     }
                     // console.log(enviocorreo, _sendmail, productos.length, _emailcliente, Number(_idtipodoc))
                     if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && (_emailcliente === null || _emailcliente === void 0 ? void 0 : _emailcliente.length) > 0) {
-                        // console.log('va a Enviar correo')
+                        console.log('va a Enviar correo');
                         yield envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente, isboton);
                     }
                     else {
@@ -1298,42 +1298,42 @@ function obtenerLote(res, id) {
 }
 function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfondo1, _colorfuente1, _colorfondo2, _colorfuente2, _sitioweb, _texto, _banner, _emailemisor, _numerointerno, _tipodoc, _annioenvio, _mesenvio, _diaenvio, _emailbcc, _estatus, _rifcliente, _isboton) {
     return __awaiter(this, void 0, void 0, function* () {
-        // try {
-        let transporter = nodemailer_1.default.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: USERMAIL,
-                pass: PASSMAIL
-            }
-            /* host: HOSTSMTP,
-            port: 25,
-            secure: false */
-        });
-        // const ISPASARELAPAGO = null
-        const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
-        let htmlpublicidad = ``;
-        let htmlpasarelapago = ``;
-        // console.log('_isboton dentro del correo:', _isboton)
-        if (_isboton === 1) {
-            htmlpasarelapago = `<tr>
+        try {
+            let transporter = nodemailer_1.default.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: USERMAIL,
+                    pass: PASSMAIL
+                }
+                /* host: HOSTSMTP,
+                port: 25,
+                secure: false */
+            });
+            // const ISPASARELAPAGO = null
+            const numerocuerpo = _numerointerno.length > 0 ? _numerointerno : _pnumero;
+            let htmlpublicidad = ``;
+            let htmlpasarelapago = ``;
+            // console.log('_isboton dentro del correo:', _isboton)
+            if (_isboton === 1) {
+                htmlpasarelapago = `<tr>
                 <td style="padding: 0px 30px 20px; text-align: center;" colspan="3">          
                     <span style="font-weight: bolder; padding: 3px 10px;  background: #d6d6d6;border-radius: 10px;">
                         <a href="${URLPASARELADEPAGO}${_prif}SM${_pnumero}">Pagar</a>
                     </span>      
                 </td>
             </tr>`;
-        }
-        if (ISPUBLICIDAD === '1') {
-            htmlpublicidad = `<tr>
+            }
+            if (ISPUBLICIDAD === '1') {
+                htmlpublicidad = `<tr>
                 <td style="padding: 0px 30px 20px; text-align: center;" colspan="3">               
                     <img src="${URLPUBLICIDADEMAIL}" style="max-width: 540px;">
                 </td>
             </tr>`;
-        }
-        const texto_1 = _texto !== '0' ? `<tr>  
+            }
+            const texto_1 = _texto !== '0' ? `<tr>  
                             <td colspan="3">      
                                 <div style="background: ${_colorfondo2}; margin-bottom: 30px; padding: 15px; font-size: 16px; color: ${_colorfuente2};">
                                 <p style="text-align:left;">
@@ -1342,9 +1342,9 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                             </div> 
                             </td>
                         </tr>` : '';
-        // console.log(_estatus)
-        const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.';
-        const html_1 = `
+            // console.log(_estatus)
+            const mensaje = Number(_estatus) === 2 ? 'fué ANULADO.' : 'ya está disponible.';
+            const html_1 = `
         <table style="width: 100%;">
         <tr>
         <td style="text-align: -webkit-center !important; background: #d6d6d6;">
@@ -1421,49 +1421,49 @@ function envioCorreo(res, _pnombre, _pnumero, _prif, _email, _telefono, _colorfo
                 </tr>
             </table></div></td></tr></table>
             `;
-        // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
-        const htmlfinal = html_1;
-        const arregloemail = _email.split('|');
-        const arreglocorreobcc = _emailbcc.split('|');
-        // console.log('arreglocorreobcc')
-        // console.log(arreglocorreobcc)
-        const correobcc = arreglocorreobcc ? arreglocorreobcc.join(';') : '';
-        // console.log('correobcc')
-        // console.log(correobcc)
-        let p = 0;
-        for (let i = 0; i < arregloemail.length; i++) {
-            let mail_options = {
-                from: 'Mi Factura Digital<no-reply@smartfactura.net>',
-                to: arregloemail[i],
-                bcc: correobcc,
-                subject: 'Envío de ' + _tipodoc + ' digital',
-                html: htmlfinal,
-                attachments: [
-                    {
-                        filename: _tipodoc + '-' + numerocuerpo + '.pdf',
-                        path: FILEPDF + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
+            // const htmlfinal = _banner === '1' ? html_1 : _banner === '2' ? html_2 : html_3
+            const htmlfinal = html_1;
+            const arregloemail = _email.split('|');
+            const arreglocorreobcc = _emailbcc.split('|');
+            console.log('arregloemail');
+            console.log(arregloemail);
+            const correobcc = arreglocorreobcc ? arreglocorreobcc.join(';') : '';
+            // console.log('correobcc')
+            // console.log(correobcc)
+            let p = 0;
+            for (let i = 0; i < arregloemail.length; i++) {
+                let mail_options = {
+                    from: 'Mi Factura Digital<no-reply@smartfactura.net>',
+                    to: arregloemail[i],
+                    bcc: correobcc,
+                    subject: 'Envío de ' + _tipodoc + ' digital',
+                    html: htmlfinal,
+                    attachments: [
+                        {
+                            filename: _tipodoc + '-' + numerocuerpo + '.pdf',
+                            path: FILEPDF + _prif + '/' + _annioenvio + '-' + _mesenvio + '/' + _prif + _pnumero
+                        }
+                    ]
+                };
+                transporter.sendMail(mail_options, (error, info) => __awaiter(this, void 0, void 0, function* () {
+                    if (error) {
+                        console.log(error);
+                        return res.status(400).send('Error Interno Enviando correo :  ' + error);
                     }
-                ]
-            };
-            transporter.sendMail(mail_options, (error, info) => __awaiter(this, void 0, void 0, function* () {
-                if (error) {
-                    // console.log(error);
-                    return res.status(400).send('Error Interno Enviando correo :  ' + error);
-                }
-                else {
-                    if (p === 0) {
-                        const updcorreo = 'UPDATE t_registros SET estatuscorreo = 1 WHERE numerodocumento = $1 ';
-                        yield database_1.pool.query(updcorreo, [_pnumero]);
-                        p = 1;
+                    else {
+                        if (p === 0) {
+                            const updcorreo = 'UPDATE t_registros SET estatuscorreo = 1 WHERE numerodocumento = $1 ';
+                            yield database_1.pool.query(updcorreo, [_pnumero]);
+                            p = 1;
+                        }
+                        console.log('El correo a ' + arregloemail[i] + ' se envío correctamente ' + info.response);
                     }
-                    console.log('El correo a ' + arregloemail[i] + ' se envío correctamente ' + info.response);
-                }
-            }));
+                }));
+            }
         }
-        /* }
         catch (e) {
             return res.status(400).send('Error Externo Enviando correo :  ' + e);
-        } */
+        }
     });
 }
 exports.envioCorreo = envioCorreo;

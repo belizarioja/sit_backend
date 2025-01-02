@@ -1243,7 +1243,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 console.log("Error creando PDF: " + error)
                 return res.status(400).send('Error Interno Creando pdf :  ' + error);
             } else {
-                // console.log("PDF creado correctamente");               
+                console.log("PDF creado correctamente");               
                 //////////////
                 // FIRMAR PDF
                 //////////////
@@ -1266,7 +1266,7 @@ export async function crearFactura (res: Response,_rif: any, _razonsocial: any, 
                 // console.log(enviocorreo, _sendmail, productos.length, _emailcliente, Number(_idtipodoc))
 
                 if (enviocorreo == 1 && _sendmail == 1 && (Number(_idtipodoc) === 2 || Number(_idtipodoc) === 3 || productos.length > 0) && _emailcliente?.length > 0) {
-                    // console.log('va a Enviar correo')
+                    console.log('va a Enviar correo')
                     await envioCorreo(res, _nombrecliente, _pnumero, _rif, _emailcliente, _telefono, colorfondo1, colorfuente1, colorfondo2, colorfuente2, sitioweb, textoemail, banner, _emailemisor, _numerointerno, tipodoc, annioenvio, mesenvio, diaenvio, emailbcc, _estatus, _rifcliente, isboton)
 
                 } else {
@@ -1377,7 +1377,7 @@ async function obtenerLote (res: Response, id: any) {
 }
 
 export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, _prif: any, _email: any, _telefono: any, _colorfondo1: any, _colorfuente1: any, _colorfondo2: any, _colorfuente2: any, _sitioweb: any, _texto: any, _banner: any, _emailemisor: any, _numerointerno: any, _tipodoc: any, _annioenvio: any, _mesenvio: any, _diaenvio: any, _emailbcc: any, _estatus: any, _rifcliente: any, _isboton: any) {
-    // try {
+    try {
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
@@ -1505,8 +1505,8 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         const htmlfinal = html_1
         const arregloemail = _email.split('|')
         const arreglocorreobcc = _emailbcc.split('|')
-        // console.log('arreglocorreobcc')
-        // console.log(arreglocorreobcc)
+        console.log('arregloemail')
+        console.log(arregloemail)
         const correobcc = arreglocorreobcc ? arreglocorreobcc.join(';') : ''
         // console.log('correobcc')
         // console.log(correobcc)
@@ -1528,7 +1528,7 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
             };
             transporter.sendMail(mail_options, async (error: any, info: { response: string; }) => {
                 if (error) {
-                    // console.log(error);
+                    console.log(error);
                     return res.status(400).send('Error Interno Enviando correo :  ' + error);
                 } else {                          
                     if(p === 0) {
@@ -1542,10 +1542,10 @@ export async function envioCorreo (res: Response, _pnombre: any, _pnumero: any, 
         }
         
 
-    /* }
+    }
     catch (e) {
         return res.status(400).send('Error Externo Enviando correo :  ' + e);
-    } */
+    }
 
 }
 

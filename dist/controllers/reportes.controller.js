@@ -191,8 +191,8 @@ function getImpProcesados(req, res) {
             resp.rows[0].totalbaser = resp.rows[0].totalbaser - totalbaser_cred;
             resp.rows[0].totalbaseigtf = resp.rows[0].totalbaseigtf - totalbaseigtf_cred;
             resp.rows[0].totalexento = resp.rows[0].totalexento - totalexento_cred;
-            console.log('resp.rows despues');
-            console.log(resp.rows);
+            // console.log('resp.rows despues')
+            // console.log(resp.rows)
             const data = {
                 succes: true,
                 data: resp.rows
@@ -500,8 +500,10 @@ exports.getUltimaSemana = getUltimaSemana;
 function getAnual(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta } = req.body;
-            const annio = (0, moment_1.default)().format('YYYY');
+            const { idtipodocumento, idserviciosmasivo, idcodigocomercial, desde, hasta, annioreporte } = req.body;
+            // console.log('annioreporte')
+            // console.log(annioreporte)
+            const annio = annioreporte || (0, moment_1.default)().format('YYYY');
             const sql = "SELECT distinct EXTRACT(MONTH FROM a.fecha) as mes, sum(a.impuestog) as totaliva, sum(a.impuestor) as totalr, sum(a.impuestoigtf) as totaligtf, count (*) as cantidad";
             const from = " FROM t_registros a, t_serviciosmasivos c  ";
             let where = " where a.idserviciosmasivo = c.id AND EXTRACT(YEAR FROM a.fecha) = '" + annio + "'  ";
@@ -630,7 +632,7 @@ function getSmsEnviados(req, res) {
             if (desde.length > 0 && hasta.length > 0) {
                 sql += " and b.fecha BETWEEN '" + desde + "'::timestamp AND '" + hasta + " 23:59:59'::timestamp ";
             }
-            console.log(sql);
+            // console.log(sql)
             const resp = yield database_1.pool.query(sql);
             const data = {
                 succes: true,
